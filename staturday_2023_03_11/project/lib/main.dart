@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:project/Screen1.dart';
+import 'package:project/Screen2.dart';
+import 'package:project/Screen3.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,7 +27,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const Project_Screen2(),
     );
   }
 }
