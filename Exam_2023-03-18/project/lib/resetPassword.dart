@@ -10,11 +10,14 @@ class resetPasswordPage extends StatefulWidget {
 }
 
 class _resetPasswordPageState extends State<resetPasswordPage> {
+  final _keyForm = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
+            child: Form(
+          key: _keyForm,
           child: Container(
             child: Column(
               children: [
@@ -97,7 +100,7 @@ class _resetPasswordPageState extends State<resetPasswordPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 22),
-                  child: TextField(
+                  child: TextFormField(
                     keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -105,6 +108,12 @@ class _resetPasswordPageState extends State<resetPasswordPage> {
                       ),
                       hintText: '0787006524',
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter an Phone";
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 SizedBox(
@@ -122,7 +131,9 @@ class _resetPasswordPageState extends State<resetPasswordPage> {
                           ),
                           backgroundColor: Color(0xFF3669C9)),
                       onPressed: () {
-                        Navigator.pushNamed(context, "/verification");
+                        if (_keyForm.currentState!.validate()) {
+                          Navigator.pushNamed(context, "/verification");
+                        }
                       },
                       child: const Text(
                         'Reset',
@@ -138,7 +149,7 @@ class _resetPasswordPageState extends State<resetPasswordPage> {
               ],
             ),
           ),
-        ),
+        )),
       ),
     );
   }

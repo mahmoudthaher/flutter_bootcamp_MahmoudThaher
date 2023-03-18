@@ -184,7 +184,9 @@ class _ForgotPaswwordPageState extends State<ForgotPaswwordPage> {
                             backgroundColor: Color(0xFF3669C9)),
                         onPressed: () {
                           setState(() {
-                            if (_keyForm.currentState!.validate()) {}
+                            if (_keyForm.currentState!.validate()) {
+                              Navigator.pushNamed(context, "/loginPage");
+                            }
                           });
                         },
                         child: const Text(
