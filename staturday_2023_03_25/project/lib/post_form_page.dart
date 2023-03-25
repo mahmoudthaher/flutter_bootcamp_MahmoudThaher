@@ -56,6 +56,8 @@ class _PostFormPageState extends State<PostFormPage> {
     ))
         .then((value) {
       EasyLoading.showSuccess("Created successfully");
+      _titleController.text = "";
+      _bodyController.text = "";
     }).catchError((ex) {
       EasyLoading.showError(ex.toString());
     });
