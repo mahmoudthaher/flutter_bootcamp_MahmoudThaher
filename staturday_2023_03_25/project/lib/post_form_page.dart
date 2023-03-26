@@ -24,7 +24,9 @@ class _PostFormPageState extends State<PostFormPage> {
   @override
   void initState() {
     super.initState();
-    _getPostDetails();
+    if (widget.check.checkdata != 1) {
+      _getPostDetails();
+    }
   }
 
   _getPostDetails() {
@@ -36,10 +38,6 @@ class _PostFormPageState extends State<PostFormPage> {
       });
       _titleController.text = post!.title;
       _bodyController.text = post!.body;
-      if (widget.check.checkdata == 1) {
-        _titleController.text = "";
-        _bodyController.text = "";
-      }
     }).catchError((ex) {
       EasyLoading.dismiss();
       EasyLoading.showError(ex.toString());
