@@ -1,5 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import {schema,rules} from '@ioc:Adonis/Core/Validator'
+import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import User from 'App/Models/User';
 import I18n from '@ioc:Adonis/Addons/I18n'
 export default class UsersController {
@@ -53,7 +53,7 @@ export default class UsersController {
     }
     public async getById(ctx: HttpContextContract) {
         var id = ctx.params.id;
-        var result = await User.query().preload('city').preload('country').preload('gender').preload('type').where('id',id);
+        var result = await User.query().preload('city').preload('country').preload('gender').preload('type').where('id', id);
         return result;
     }
     public async login(ctx: HttpContextContract) {
@@ -73,7 +73,7 @@ export default class UsersController {
 
         const newSchema = schema.create({
             fist_name: schema.string(),
-            last_name: schema.string({trim:true}),
+            last_name: schema.string({ trim: true }),
             phone_number: schema.string([
                 rules.unique({
                     table: 'users',
@@ -87,7 +87,7 @@ export default class UsersController {
                     column: 'email',
                 })
             ]),
-            
+
             user_name: schema.string([
                 rules.unique({
                     table: 'users',
@@ -96,30 +96,32 @@ export default class UsersController {
             ]),
             password: schema.string(),
             address: schema.string(),
-            gender_id:schema.number(),
-            type_id:schema.number(),
-            country_id:schema.number(),
-            city_id:schema.number(),
+            gender_id: schema.number(),
+            type_id: schema.number(),
+            country_id: schema.number(),
+            city_id: schema.number(),
         });
 
-        const fields = await ctx.request.validate({ schema: newSchema,
-            messages :{
-                'fist_name.required':I18n.locale('ar').formatMessage('users.fistNameIsRequired'),
-                'last_name.required':I18n.locale('ar').formatMessage('users.lastNameIsRequired'),
-                'phone_number.required':I18n.locale('ar').formatMessage('users.lastNameIsRequired'),
-                'phone_number.unique':I18n.locale('ar').formatMessage('users.phoneNumber.unique'),
-                'email.required':I18n.locale('ar').formatMessage('users.emailIsRequired'),
-                'email.unique':I18n.locale('ar').formatMessage('users.email.unique'),
-                'email.email':I18n.locale('ar').formatMessage('users.email.email'),
-                'user_name.required':I18n.locale('ar').formatMessage('users.userNameIsRequired'),
-                'user_name.unique':I18n.locale('ar').formatMessage('users.userName.unique'),
-                'password.required':I18n.locale('ar').formatMessage('users.passwordIsRequired'),
-                'address.required':I18n.locale('ar').formatMessage('users.addressIsRequired'),
-                'gender_id.required':I18n.locale('ar').formatMessage('users.genderIdIsRequired'),
-                'type_id.required':I18n.locale('ar').formatMessage('users.typeIdIsRequired'),
-                'country_id.required':I18n.locale('ar').formatMessage('users.countryIdIsRequired'),
-                'city_id.required':I18n.locale('ar').formatMessage('users.cityIdIsRequired'),
-            }});
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'fist_name.required': I18n.locale('ar').formatMessage('users.fistNameIsRequired'),
+                'last_name.required': I18n.locale('ar').formatMessage('users.lastNameIsRequired'),
+                'phone_number.required': I18n.locale('ar').formatMessage('users.lastNameIsRequired'),
+                'phone_number.unique': I18n.locale('ar').formatMessage('users.phoneNumber.unique'),
+                'email.required': I18n.locale('ar').formatMessage('users.emailIsRequired'),
+                'email.unique': I18n.locale('ar').formatMessage('users.email.unique'),
+                'email.email': I18n.locale('ar').formatMessage('users.email.email'),
+                'user_name.required': I18n.locale('ar').formatMessage('users.userNameIsRequired'),
+                'user_name.unique': I18n.locale('ar').formatMessage('users.userName.unique'),
+                'password.required': I18n.locale('ar').formatMessage('users.passwordIsRequired'),
+                'address.required': I18n.locale('ar').formatMessage('users.addressIsRequired'),
+                'gender_id.required': I18n.locale('ar').formatMessage('users.genderIdIsRequired'),
+                'type_id.required': I18n.locale('ar').formatMessage('users.typeIdIsRequired'),
+                'country_id.required': I18n.locale('ar').formatMessage('users.countryIdIsRequired'),
+                'city_id.required': I18n.locale('ar').formatMessage('users.cityIdIsRequired'),
+            }
+        });
         var user = new User();
         user.fistName = fields.fist_name;
         user.lastName = fields.last_name;
@@ -134,7 +136,6 @@ export default class UsersController {
         user.cityId = fields.city_id;
         await user.save();
         return { message: "The user has been created!" };
-        
     }
     public async update(ctx: HttpContextContract) {
         const newSchema = schema.create({
@@ -142,38 +143,79 @@ export default class UsersController {
             fist_name: schema.string(),
             last_name: schema.string(),
             phone_number: schema.string(),
-            email: schema.string({}, [
-                rules.email(),
-                rules.unique({
-                    table: 'users',
-                    column: 'email',
-                })
-            ]),
+            email: schema.string(),
             user_name: schema.string(),
             password: schema.string(),
             address: schema.string(),
-            gender_id:schema.number(),
-            type_id:schema.number(),
-            country_id:schema.number(),
-            city_id:schema.number(),
+            gender_id: schema.number(),
+            type_id: schema.number(),
+            country_id: schema.number(),
+            city_id: schema.number(),
         });
-
-        const fields = await ctx.request.validate({ schema: newSchema })
-        var id = fields.id;
-        var user = await User.findOrFail(id);
-        user.fistName = fields.fist_name;
-        user.lastName = fields.last_name;
-        user.phoneNumber = fields.phone_number;
-        user.email = fields.email;
-        user.userName = fields.user_name;
-        user.password = fields.password;
-        user.address = fields.address;
-        user.genderId = fields.gender_id;
-        user.typeId = fields.type_id;
-        user.countryId = fields.country_id;
-        user.cityId = fields.city_id;
-        await user.save();
-        return { message: "The user has been updated!" };
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'fist_name.required': I18n.locale('ar').formatMessage('users.fistNameIsRequired'),
+                'last_name.required': I18n.locale('ar').formatMessage('users.lastNameIsRequired'),
+                'phone_number.required': I18n.locale('ar').formatMessage('users.lastNameIsRequired'),
+                'phone_number.unique': I18n.locale('ar').formatMessage('users.phoneNumber.unique'),
+                'email.required': I18n.locale('ar').formatMessage('users.emailIsRequired'),
+                'email.email': I18n.locale('ar').formatMessage('users.email.email'),
+                'user_name.required': I18n.locale('ar').formatMessage('users.userNameIsRequired'),
+                'user_name.unique': I18n.locale('ar').formatMessage('users.userName.unique'),
+                'password.required': I18n.locale('ar').formatMessage('users.passwordIsRequired'),
+                'address.required': I18n.locale('ar').formatMessage('users.addressIsRequired'),
+                'gender_id.required': I18n.locale('ar').formatMessage('users.genderIdIsRequired'),
+                'type_id.required': I18n.locale('ar').formatMessage('users.typeIdIsRequired'),
+                'country_id.required': I18n.locale('ar').formatMessage('users.countryIdIsRequired'),
+                'city_id.required': I18n.locale('ar').formatMessage('users.cityIdIsRequired'),
+            }
+        })
+        let errorMessage = ''
+        try {
+            var id = fields.id;
+            var user = await User.findOrFail(id);
+            try {
+                await User.query()
+                    .where('email', fields.email)
+                    .whereNot('id', fields.id)
+                    .firstOrFail()
+                errorMessage += 'Email address is already in use. '
+            } catch (error) { }
+            try {
+                await User.query()
+                    .where('phone_number', fields.phone_number)
+                    .whereNot('id', fields.id)
+                    .firstOrFail()
+                errorMessage += 'Phone number is already in use.'
+            } catch (error) { }
+            try {
+                await User.query()
+                    .where('user_name', fields.user_name)
+                    .whereNot('id', fields.id)
+                    .firstOrFail()
+                errorMessage += 'User Name is already in use. '
+            } catch (error) { }
+            if (errorMessage !== '') {
+                return { error: errorMessage }
+            }
+            user.fistName = fields.fist_name;
+            user.lastName = fields.last_name;
+            user.phoneNumber = fields.phone_number;
+            user.email = fields.email;
+            user.userName = fields.user_name;
+            user.password = fields.password;
+            user.address = fields.address;
+            user.genderId = fields.gender_id;
+            user.typeId = fields.type_id;
+            user.countryId = fields.country_id;
+            user.cityId = fields.city_id;
+            await user.save();
+            return { message: "The user has been updated!" };
+        }
+        catch (error) {
+            return { error: 'User not found' }
+        }
     }
     public async destory(ctx: HttpContextContract) {
         var id = ctx.params.id;

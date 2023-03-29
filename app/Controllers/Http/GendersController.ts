@@ -24,11 +24,13 @@ export default class GendersController {
                 })
             ]),
         });
-        const fields = await ctx.request.validate({ schema: newSchema,
-            messages:{
-                'gender.required':I18n.locale('ar').formatMessage('genders.genderIsRequired'),
-                'gender.unique':I18n.locale('ar').formatMessage('genders.gender.unique')
-            } });
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'gender.required': I18n.locale('ar').formatMessage('genders.genderIsRequired'),
+                'gender.unique': I18n.locale('ar').formatMessage('genders.gender.unique')
+            }
+        });
         var gender = new Gender();
         gender.gender = fields.gender;
         await gender.save();
@@ -37,19 +39,30 @@ export default class GendersController {
     public async update(ctx: HttpContextContract) {
         const newSchema = schema.create({
             id: schema.number(),
-            gender: schema.string([
-                rules.unique({
-                    table: 'genders',
-                    column: 'gender',
-                })
-            ]),
+            gender: schema.string(),
         });
-        const fields = await ctx.request.validate({ schema: newSchema })
-        var id = fields.id;
-        var gender = await Gender.findOrFail(id);
-        gender.gender = fields.gender;
-        await gender.save();
-        return { message: "The gender has been updated!" };
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'gender.required': I18n.locale('ar').formatMessage('genders.genderIsRequired'),
+            }
+        })
+        try {
+            var id = fields.id;
+            var gender = await Gender.findOrFail(id);
+            try {
+                await Gender.query()
+                    .where('gender', fields.gender)
+                    .whereNot('id', fields.id)
+                    .firstOrFail()
+                return { message: 'gender is already in use. ' };
+            } catch (error) { }
+            gender.gender = fields.gender;
+            await gender.save();
+            return { message: "The gender has been updated!" };
+        } catch (error) {
+            return { error: 'Gender not found' }
+        }
     }
     public async destory(ctx: HttpContextContract) {
         var id = ctx.params.id;

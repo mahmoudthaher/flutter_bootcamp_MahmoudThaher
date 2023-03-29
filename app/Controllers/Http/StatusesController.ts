@@ -24,33 +24,47 @@ export default class StatusesController {
                 })
             ]),
         });
-        const fields = await ctx.request.validate({ schema: newSchema,
-            messages:{
-                'status.required':I18n.locale('ar').formatMessage('statuses.statusIsRequired'),
-                'status.unique':I18n.locale('ar').formatMessage('statuses.status.unique')
-            }});
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'status.required': I18n.locale('ar').formatMessage('statuses.statusIsRequired'),
+                'status.unique': I18n.locale('ar').formatMessage('statuses.status.unique')
+            }
+        });
         var status = new Status();
         status.status = fields.status;
         await status.save();
         return { message: "The status has been created!" };
-        
+
     }
     public async update(ctx: HttpContextContract) {
         const newSchema = schema.create({
             id: schema.number(),
-            status: schema.string([
-                rules.unique({
-                    table: 'statuses',
-                    column: 'status',
-                })
-            ]),
+            status: schema.string(),
         });
-        const fields = await ctx.request.validate({ schema: newSchema })
-        var id = fields.id;
-        var status = await Status.findOrFail(id);
-        status.status = fields.status;
-        await status.save();
-        return { message: "The status has been updated!" };
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'status.required': I18n.locale('ar').formatMessage('statuses.statusIsRequired'),
+            }
+        })
+        try {
+            var id = fields.id;
+            var status = await Status.findOrFail(id);
+            try {
+                await Status.query()
+                    .where('status', fields.status)
+                    .whereNot('id', fields.id)
+                    .firstOrFail()
+                return { message: 'status is already in use. ' };
+
+            } catch (error) { }
+            status.status = fields.status;
+            await status.save();
+            return { message: "The status has been updated!" };
+        } catch (error) {
+            return { error: 'Status not found' }
+        }
     }
     public async destory(ctx: HttpContextContract) {
         var id = ctx.params.id;

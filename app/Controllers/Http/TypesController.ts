@@ -24,33 +24,47 @@ export default class TypesController {
                 })
             ]),
         });
-        const fields = await ctx.request.validate({ schema: newSchema,
-            messages:{
-                'type.required':I18n.locale('ar').formatMessage('types.typeIsRequired'),
-                'type.unique':I18n.locale('ar').formatMessage('types.type.unique')
-            } });
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'type.required': I18n.locale('ar').formatMessage('types.typeIsRequired'),
+                'type.unique': I18n.locale('ar').formatMessage('types.type.unique')
+            }
+        });
         var type = new Type();
         type.type = fields.type;
         await type.save();
         return { message: "The type has been created!" };
-        
+
     }
     public async update(ctx: HttpContextContract) {
         const newSchema = schema.create({
             id: schema.number(),
-            type: schema.string([
-                rules.unique({
-                    table: 'types',
-                    column: 'type',
-                })
-            ]),
+            type: schema.string(),
         });
-        const fields = await ctx.request.validate({ schema: newSchema })
-        var id = fields.id;
-        var type = await Type.findOrFail(id);
-        type.type = fields.type;
-        await type.save();
-        return { message: "The type has been updated!" };
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'type.required': I18n.locale('ar').formatMessage('types.typeIsRequired'),
+            }
+        })
+        try {
+            var id = fields.id;
+            var type = await Type.findOrFail(id);
+            try {
+                await Type.query()
+                    .where('type', fields.type)
+                    .whereNot('id', fields.id)
+                    .firstOrFail()
+                return { message: 'type is already in use. ' };
+            } catch (error) { }
+            type.type = fields.type;
+            await type.save();
+            return { message: "The type has been updated!" };
+        }
+        catch (error) {
+            return { error: 'Type not found' }
+        }
     }
     public async destory(ctx: HttpContextContract) {
         var id = ctx.params.id;

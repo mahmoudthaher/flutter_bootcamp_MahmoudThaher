@@ -6,7 +6,7 @@ export default class CitiesController {
     public async getAll(ctx: HttpContextContract) {
         const token = await ctx.auth.authenticate();
         var city = ctx.request.input("city");
-        var query = City.query();
+        var query = City.query().preload('country');
         const page = ctx.request.input('page', 1)
         const limit = 10
         if (city) {
@@ -14,11 +14,11 @@ export default class CitiesController {
         }
         else
             return query.paginate(page, limit);
-        
+
     }
     public async getById(ctx: HttpContextContract) {
         var id = ctx.params.id;
-        var result = await City.findOrFail(id);
+        var result = await City.query().preload('country').where('id', id);
         return result;
     }
     public async create(ctx: HttpContextContract) {
@@ -29,33 +29,53 @@ export default class CitiesController {
                     column: 'City',
                 })
             ]),
+            country_id:schema.number()
         });
-        const fields = await ctx.request.validate({ schema: newSchema,
-            messages:{
-                'city.required':I18n.locale('ar').formatMessage('cities.cityIsRequired'),
-                'city.unique':I18n.locale('ar').formatMessage('cities.city.unique')
-            } });
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'city.required': I18n.locale('ar').formatMessage('cities.cityIsRequired'),
+                'city.unique': I18n.locale('ar').formatMessage('cities.city.unique'),
+                'country_id.required': I18n.locale('ar').formatMessage('cities.countryIdIsRequired'),
+            }
+        });
         var city = new City();
         city.city = fields.city;
+        city.countryId=fields.country_id;
         await city.save();
         return { message: "The city has been created!" };
     }
     public async update(ctx: HttpContextContract) {
         const newSchema = schema.create({
             id: schema.number(),
-            city: schema.string([
-                rules.unique({
-                    table: 'cities',
-                    column: 'City',
-                })
-            ]),
+            city: schema.string(),
+            country_id:schema.number()
         });
-        const fields = await ctx.request.validate({ schema: newSchema })
-        var id = fields.id;
-        var city = await City.findOrFail(id);
-        city.city = fields.city;
-        await city.save();
-        return { message: "The city has been updated!" };
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'city.required': I18n.locale('ar').formatMessage('cities.cityIsRequired'),
+                'country_id.required': I18n.locale('ar').formatMessage('cities.countryIdIsRequired'),
+            }
+        })
+
+        try {
+            var id = fields.id;
+            var city = await City.findOrFail(id);
+            try {
+                await City.query()
+                .where('city', fields.city)
+                .whereNot('id', fields.id)
+                .firstOrFail()
+            return { message: 'city is already in use. ' };
+            } catch (error) {}
+            city.city = fields.city;
+            city.countryId=fields.country_id;
+            await city.save();
+            return { message: "The city has been updated!" };
+        } catch (error) {
+            return { error: 'City not found' }
+        }
     }
     public async destory(ctx: HttpContextContract) {
         var id = ctx.params.id;

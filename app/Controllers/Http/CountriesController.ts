@@ -29,11 +29,13 @@ export default class CountriesController {
                 })
             ]),
         });
-        const fields = await ctx.request.validate({ schema: newSchema,
-            messages:{
-                'country.required':I18n.locale('ar').formatMessage('countries.countryIsRequired'),
-                'country.unique':I18n.locale('ar').formatMessage('countries.country.unique')
-            } });
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'country.required': I18n.locale('ar').formatMessage('countries.countryIsRequired'),
+                'country.unique': I18n.locale('ar').formatMessage('countries.country.unique')
+            }
+        });
         var country = new Country();
         country.country = fields.country;
         await country.save();
@@ -42,19 +44,30 @@ export default class CountriesController {
     public async update(ctx: HttpContextContract) {
         const newSchema = schema.create({
             id: schema.number(),
-            country: schema.string([
-                rules.unique({
-                    table: 'countries',
-                    column: 'Country',
-                })
-            ]),
+            country: schema.string(),
         });
-        const fields = await ctx.request.validate({ schema: newSchema })
-        var id = fields.id;
-        var country = await Country.findOrFail(id);
-        country.country = fields.country;
-        await country.save();
-        return { message: "The country has been updated!" };
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'country.required': I18n.locale('ar').formatMessage('countries.countryIsRequired'),
+            }
+        })
+        try {
+            var id = fields.id;
+            var country = await Country.findOrFail(id);
+            try {
+                await Country.query()
+                    .where('country', fields.country)
+                    .whereNot('id', fields.id)
+                    .firstOrFail()
+                return { message: 'country is already in use. ' };
+            } catch (error) {}
+            country.country = fields.country;
+            await country.save();
+            return { message: "The country has been updated!" };
+        } catch (error) {
+            return { error: 'Country not found' }
+        }
     }
     public async destory(ctx: HttpContextContract) {
         var id = ctx.params.id;

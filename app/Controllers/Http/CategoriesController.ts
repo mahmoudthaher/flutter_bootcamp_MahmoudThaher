@@ -29,33 +29,46 @@ export default class CategoriesController {
                 })
             ]),
         });
-        const fields = await ctx.request.validate({ schema: newSchema,
-            messages:{
-                'category.required':I18n.locale('ar').formatMessage('categories.categoryIsRequired'),
-                'category.unique':I18n.locale('ar').formatMessage('categories.category.unique')
-            } });
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'category.required': I18n.locale('ar').formatMessage('categories.categoryIsRequired'),
+                'category.unique': I18n.locale('ar').formatMessage('categories.category.unique')
+            }
+        });
         var category = new Category();
         category.category = fields.category;
         await category.save();
         return { message: "The category has been created!" };
-        
+
     }
     public async update(ctx: HttpContextContract) {
         const newSchema = schema.create({
             id: schema.number(),
-            category: schema.string([
-                rules.unique({
-                    table: 'categories',
-                    column: 'category',
-                })
-            ]),
+            category: schema.string(),
         });
-        const fields = await ctx.request.validate({ schema: newSchema })
-        var id = fields.id;
-        var category = await Category.findOrFail(id);
-        category.category = fields.category;
-        await category.save();
-        return { message: "The category has been updated!" };
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'category.required': I18n.locale('ar').formatMessage('categories.categoryIsRequired'),
+            }
+        })
+        try {
+            var id = fields.id;
+            var category = await Category.findOrFail(id);
+            try {
+                await Category.query()
+                    .where('category', fields.category)
+                    .whereNot('id', fields.id)
+                    .firstOrFail()
+                return { message: 'category is already in use. ' };
+            } catch (error) { }
+            category.category = fields.category;
+            await category.save();
+            return { message: "The category has been updated!" };
+        } catch (error) {
+            return { error: 'Category not found' }
+        }
     }
     public async destory(ctx: HttpContextContract) {
         var id = ctx.params.id;
