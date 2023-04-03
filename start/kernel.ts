@@ -47,3 +47,4 @@ Server.middleware.register([
 */
 Server.middleware.registerNamed({})
 
+
