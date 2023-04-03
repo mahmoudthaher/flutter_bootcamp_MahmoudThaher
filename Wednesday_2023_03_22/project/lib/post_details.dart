@@ -1,144 +1,146 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:project/Check.dart';
 
 import 'controllers/post_controller.dart';
-import 'fake_api_page.dart';
-import 'models/post.dart';
 import 'models/comment.dart';
+import 'models/post.dart';
 
-class PostDetails extends StatefulWidget {
-  Id id;
-  PostDetails(this.id, {super.key});
+class PostDetailsPage extends StatefulWidget {
+  int id;
+  PostDetailsPage(this.id, {super.key});
 
   @override
-  State<PostDetails> createState() => _PostDetailsState();
+  State<PostDetailsPage> createState() => _PostDetailsPageState();
 }
 
-class _PostDetailsState extends State<PostDetails> {
-  List<Post> _posts = [];
-  List<Comment> _comment = [];
+class _PostDetailsPageState extends State<PostDetailsPage> {
+  Post? post;
+  List<Comment> comments = [];
 
   @override
   void initState() {
     super.initState();
-    _getPostByID();
-    _getCommentByID();
+    _getPostDetails();
+    _getPostComments();
   }
 
-  _getPostByID() {
-    PostController().getByID(widget.id.id).then((result) {
+  _getPostDetails() {
+    EasyLoading.show(status: "Loading");
+    PostController().getByID(widget.id).then((value) {
+      EasyLoading.dismiss();
       setState(() {
-        _posts = result;
+        post = value;
       });
     }).catchError((ex) {
-      print(ex);
+      EasyLoading.dismiss();
+      EasyLoading.showError(ex.toString());
     });
   }
 
-  _getCommentByID() {
-    PostController().getCommentByID(widget.id.id).then((result) {
+  _getPostComments() {
+    PostController().getCommentByID(widget.id).then((value) {
       setState(() {
-        _comment = result;
+        comments = value;
       });
     }).catchError((ex) {
-      print(ex);
+      EasyLoading.dismiss();
+      EasyLoading.showError(ex.toString());
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Post Details')),
-      body: _posts.isEmpty && _comment.isEmpty
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Wrap(
-                children: [
-                  ListTile(
-                    leading: const Text(
-                      'Id',
-                      style: TextStyle(fontSize: 25),
-                    ),
-                    title: Text(
-                      '${_posts[0].id}',
-                      style: const TextStyle(
-                        fontSize: 17,
-                      ),
-                    ),
-                  ),
-                  ListTile(
-                    leading: const Text(
-                      'Title',
-                      style: TextStyle(fontSize: 25),
-                    ),
-                    title: Text(
-                      '${_posts[0].title}',
-                      style: const TextStyle(
-                        fontSize: 17,
-                      ),
-                    ),
-                  ),
-                  ListTile(
-                    leading: const Text(
-                      'Body',
-                      style: TextStyle(fontSize: 25),
-                    ),
-                    title: Text(
-                      '${_posts[0].body}',
-                      style: const TextStyle(
-                        fontSize: 17,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 35,
-                    child: ListTile(
-                      title: Text(''),
-                    ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 470,
-                    child: ListView.separated(
-                        itemCount: _comment.length,
-                        separatorBuilder: (context, index) => const Padding(
-                              padding: EdgeInsets.only(left: 20, right: 20),
-                              child: Divider(),
-                            ),
-                        itemBuilder: (context, index) => ListTile(
-                              leading: const CircleAvatar(
-                                radius: 15,
-                                backgroundColor: Colors.blue,
-                              ),
-                              title: Wrap(
-                                children: [
-                                  Text(
-                                    'Name :  ${_comment[index].name}',
-                                    style: const TextStyle(
-                                      fontSize: 17,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Email :  ${_comment[index].email}',
-                                    style: const TextStyle(
-                                      fontSize: 17,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Body :  ${_comment[index].body}',
-                                    style: const TextStyle(
-                                      fontSize: 17,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )),
-                  ),
-                ],
-              ),
-            ),
-    );
+        appBar: AppBar(
+          title: Text("Post Details"),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Check check = Check(id: post!.id, checkdata: 2);
+                  Navigator.pushNamed(context, "/postForm", arguments: check);
+                },
+                icon: Icon(Icons.edit)),
+            IconButton(
+                onPressed: () {
+                  Check check = Check(id: post!.id, checkdata: 3);
+                  Navigator.pushNamed(context, "/postForm", arguments: check);
+                },
+                icon: Icon(Icons.delete)),
+          ],
+        ),
+        body: post == null ? _widgetWaiting() : _widgetPostDetails());
   }
+
+  Widget _widgetWaiting() => Visibility(
+        visible: post == null,
+        child: Center(child: CircularProgressIndicator()),
+      );
+
+  Widget _widgetPostDetails() => Column(
+        children: [
+          Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text("ID"),
+                        ),
+                        Expanded(
+                            flex: 3,
+                            child: Text(
+                              "${post!.id}",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ))
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text("Title"),
+                        ),
+                        Expanded(
+                            flex: 3,
+                            child: Text(
+                              post!.title,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ))
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text("Body"),
+                        ),
+                        Expanded(
+                            flex: 3,
+                            child: Text(
+                              post!.body,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ))
+                      ],
+                    )
+                  ],
+                ),
+              )),
+          const Divider(),
+          Expanded(
+              flex: 3,
+              child: ListView.builder(
+                  itemCount: comments.length,
+                  itemBuilder: (context, index) => ListTile(
+                        title: Text(comments[index].name),
+                        subtitle: Text(comments[index].email),
+                      )))
+        ],
+      );
 }

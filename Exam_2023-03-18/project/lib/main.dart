@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/deteilProduct.dart';
+import 'package:project/fake_api_page.dart';
 import 'package:project/forgotPassword.dart';
 import 'package:project/loginpage.dart';
 import 'package:project/product.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        initialRoute: "/loginPage",
+        initialRoute: "/fakeApi",
         onGenerateRoute: (settings) {
           var routes = {
             "/": (context) => const MyHomePage(title: ''),
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
             "/resetPassword": (context) => const resetPasswordPage(),
             "/verification": (context) => const Verification(),
             "/fordotPassword": (context) => const ForgotPaswwordPage(),
+            "/fakeApi": (context) => const FakeApiPage(),
           };
           WidgetBuilder builder = routes[settings.name]!;
           return MaterialPageRoute(builder: (ctx) => builder(ctx));

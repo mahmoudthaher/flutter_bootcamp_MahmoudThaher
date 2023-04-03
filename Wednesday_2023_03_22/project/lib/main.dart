@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:project/fake_api_page.dart';
-import 'package:project/models/post.dart';
+
 import 'package:project/post_details.dart';
+import 'package:project/post_form_page.dart';
+
+import 'Check.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,12 +31,15 @@ class MyApp extends StatelessWidget {
           // is not restarted.
           primarySwatch: Colors.blue,
         ),
+        builder: EasyLoading.init(),
         initialRoute: "/fakeApi",
         onGenerateRoute: (settings) {
           var routes = {
             "/": (context) => const MyHomePage(title: ''),
             "/fakeApi": (context) => const FakeApiPage(),
-            "/postDetils": (context) => PostDetails(settings.arguments as Id),
+            "/postForm": (context) => PostFormPage(settings.arguments as Check),
+            "/postDetils": (context) =>
+                PostDetailsPage(settings.arguments as int),
           };
           WidgetBuilder builder = routes[settings.name]!;
           return MaterialPageRoute(builder: (ctx) => builder(ctx));
