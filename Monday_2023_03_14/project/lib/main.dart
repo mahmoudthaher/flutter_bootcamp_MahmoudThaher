@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/register.dart';
+import 'package:project/testmenu.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,10 +26,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-<<<<<<< HEAD
       debugShowCheckedModeBanner: false,
-=======
->>>>>>> parent of c8a4af8 (drawar)
       home: const regiter_page(),
     );
   }
