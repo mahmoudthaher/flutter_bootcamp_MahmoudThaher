@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:project/bottom_tabs_page.dart';
-import 'package:project/concats.dart';
-import 'package:project/custom_tab_page.dart';
-import 'package:project/dashboard.dart';
-import 'package:project/girdview.dart';
-import 'package:project/listview_page.dart';
 import 'package:project/profile.dart';
-import 'package:project/tab_page.dart';
+
+import 'girdview.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,21 +27,13 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      initialRoute: "/gridview",
+      initialRoute: "/",
       onGenerateRoute: (settings) {
         var routes = {
-          "/": (context) => const MyHomePage(
-                title: '',
-              ),
-          "/gridview": (context) => const GridViewPage(),
-          "/dashboard": (context) => const Dashboard(),
-          "/concats": (context) => const Concats(),
+          // "/listview": (context) => ListViewPage(),
+          "/": (context) => const GridViewPage(),
           "/profilepage": (context) =>
               Profile_Page(settings.arguments as Profile),
-          "/tabs": (context) => const TabPage(),
-          "/customTab": (context) => const CustomTabPage(),
-          "/bottomTab": (context) => const BottomTabsPage(),
-          "/listView": (context) => const ListViewPage(),
         };
         WidgetBuilder builder = routes[settings.name]!;
         return MaterialPageRoute(builder: (ctx) => builder(ctx));

@@ -12,10 +12,11 @@ class PostController {
     return result;
   }
 
-  Future<Post> getByID(int id) async {
+  Future<List<Post>> getByID(int id) async {
     var jsonObject = await ApiHelper().getRequest("posts/$id");
-
-    return Post.fromJson(jsonObject);
+    List<Post> result = [];
+    result.add(Post.fromJson(jsonObject));
+    return result;
   }
 
   Future<List<Comment>> getCommentByID(int id) async {
@@ -25,21 +26,5 @@ class PostController {
       result.add(Comment.fromJson(json));
     });
     return result;
-  }
-
-  Future<Post> create(Post post) async {
-    dynamic jsonObject = await ApiHelper().postRequest("posts", post.toJson());
-    return Post.fromJson(jsonObject);
-  }
-
-  Future<Post> put(Post post, int id) async {
-    dynamic jsonObject =
-        await ApiHelper().putRequest("posts/$id", post.toJson());
-    return Post.fromJson(jsonObject);
-  }
-
-  Future<Post> delete(int id) async {
-    dynamic jsonObject = await ApiHelper().deleteRequest("posts/$id");
-    return Post.fromJson(jsonObject);
   }
 }
