@@ -17,7 +17,7 @@ export default class UsersController {
         var cityId = ctx.request.input("city_id");
         var query = User.query().preload('city').preload('country').preload('gender').preload('type');
         const page = ctx.request.input('page', 1);
-        const limit = 10;
+        const limit = 2;
         if (fistName) {
             return query.where("fist_name", fistName).paginate(page, limit);
         }

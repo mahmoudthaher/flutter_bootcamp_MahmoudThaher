@@ -86,11 +86,4 @@ Route.group(() => {
     Route.put("/", "UsersController.update");
     Route.delete("/:id", "UsersController.destory");
   }).prefix("/Users");
-
-  Route.group(() => {
-    Route.get("/", "Users2sController.getAll");
-    Route.post("/login", "Users2sController.login");
-    Route.post("/logout", "Users2sController.logout");
-    Route.post("", "Users2sController.create");
-  }).prefix("/Users2");
 }).prefix("api")
