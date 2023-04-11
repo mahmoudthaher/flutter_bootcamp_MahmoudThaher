@@ -121,9 +121,6 @@ class _Project_Screen1State extends State<Project_Screen1> {
                 ),
               ),
               SizedBox(
-                height: 8.0,
-              ),
-              SizedBox(
                 width: double.infinity,
                 height: 1,
                 child: Container(
