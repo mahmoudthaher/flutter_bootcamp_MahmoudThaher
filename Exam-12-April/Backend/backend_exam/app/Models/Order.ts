@@ -15,7 +15,7 @@ export default class Order extends BaseModel {
   @column({ serializeAs: 'address' })
   public address: string
 
-  @column({ serializeAs: 'status_id' })
+  @column({ serializeAs: null })
   public statusId: number
 
   @column.dateTime({ autoCreate: true })

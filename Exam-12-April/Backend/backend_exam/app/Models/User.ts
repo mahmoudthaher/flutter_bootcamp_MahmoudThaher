@@ -32,8 +32,6 @@ export default class User extends BaseModel {
     } catch (error) {
       console.log("errro"+error)
     }
-    
-      
     }
   }
 }
