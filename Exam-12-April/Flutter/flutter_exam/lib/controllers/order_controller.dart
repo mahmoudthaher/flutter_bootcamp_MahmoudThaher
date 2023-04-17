@@ -1,19 +1,13 @@
 import 'package:flutter_exam/controllers/api_helper.dart';
-import 'package:flutter_exam/models/comment.dart';
-import 'package:flutter_exam/models/order.dart';
+import 'package:flutter_exam/models/order_model.dart';
 
-class PostController {
-  Future<List<Order>> getAllOrdersByAuth() async {
-    try {
-      dynamic jsonObject = await ApiHelper().getRequest("Orders");
-      List<Order> result = [];
-      jsonObject.forEach((json) {
-        result.add(Order.fromJson(json));
-      });
-      return result;
-    } catch (ex) {
-      print(ex);
-      rethrow;
-    }
+class OrderController {
+  Future<List<OrderModel>> getAllOrdersByAuth() async {
+    dynamic jsonObject = await ApiHelper().getRequest("api/Orders");
+    List<OrderModel> orders = [];
+    jsonObject.forEach((json) {
+      orders.add(OrderModel.fromJson(json));
+    });
+    return orders;
   }
 }

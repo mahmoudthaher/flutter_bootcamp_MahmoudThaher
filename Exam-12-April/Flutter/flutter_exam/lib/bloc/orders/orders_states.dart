@@ -1,3 +1,5 @@
+import 'package:flutter_exam/models/user_model.dart';
+
 import '../../models/order_model.dart';
 
 abstract class OrdersState {}

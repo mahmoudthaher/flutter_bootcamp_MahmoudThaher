@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_exam/models/user_model.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 import '../controllers/user_controller.dart';
 import 'idprofile.dart';
 
@@ -28,7 +24,6 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text("Edit User")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -113,19 +108,16 @@ class _ProfilePageState extends State<ProfilePage> {
       String password = passwordController.text;
       String username = usernameController.text;
       UserModel user = UserModel(
-        // id: 2.toString(), //await storage.read(key: 'token') as String,
+        // id: 3.toString(),
         username: username,
         email: email,
         password: password,
       );
-      //  print(user.id);
       EasyLoading.show(status: "Loading");
       UserController().update(user).then((value) {
         EasyLoading.dismiss();
         EasyLoading.showInfo("Done");
-        // Navigator.pushReplacementNamed(context, "/order");
       }).catchError((ex) {
-        print(ex);
         EasyLoading.dismiss();
         EasyLoading.showError(ex.toString());
       });

@@ -40,17 +40,11 @@ class UserController {
     }
   }
 
-  Future<bool> update(UserModel user) async {
+  Future<UserModel> update(UserModel user) async {
     try {
       dynamic jsonObject =
-          await ApiHelper().putRequest("api/Users", user.toJson());
-      String type = jsonObject["type"];
-      String token = jsonObject["token"];
-      print("type: $type ");
-      print("token: $token ");
-      final storage = FlutterSecureStorage();
-      await storage.write(key: "token", value: "$type $token");
-      return true;
+          await ApiHelper().putRequest("api/Users", user.toJsonC());
+      return UserModel.fromJson(jsonObject);
     } catch (ex) {
       print(ex);
       rethrow;

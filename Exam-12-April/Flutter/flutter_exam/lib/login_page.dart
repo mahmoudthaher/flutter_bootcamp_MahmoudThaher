@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                   Container(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         _handleLoginAction();
                       },
                       child: const Text("Login"),
@@ -112,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
       UserController().login(user).then((value) {
         EasyLoading.dismiss();
         EasyLoading.showInfo("Done");
-        Navigator.pushReplacementNamed(context, "/order");
+        Navigator.pushReplacementNamed(context, "/myhomepage");
       }).catchError((ex) {
         print(ex);
         EasyLoading.dismiss();

@@ -25,6 +25,15 @@ class ApiHelper {
     return resposneFunction(resposne);
   }
 
+  Future<dynamic> putRequest(String path, Map body) async {
+    Uri uriFunction = Uri.https(DOMAIN, path);
+    var token = await getToken();
+    var headers = {"Authorization": token};
+    http.Response resposne =
+        await http.put(uriFunction, headers: headers, body: body);
+    return resposneFunction(resposne);
+  }
+
   dynamic resposneFunction(http.Response resposne) {
     switch (resposne.statusCode) {
       case 200:
@@ -46,12 +55,6 @@ class ApiHelper {
       default:
         throw "Server Error :(";
     }
-  }
-
-  Future<dynamic> putRequest(String path, Map body) async {
-    Uri uriFunction = Uri.https(DOMAIN, path);
-    http.Response resposne = await http.put(uriFunction, body: body);
-    return resposneFunction(resposne);
   }
 
   Future<http.Response> updateAlbum(String title) async {
