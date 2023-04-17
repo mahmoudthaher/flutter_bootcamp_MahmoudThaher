@@ -83,15 +83,64 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('widget.title'),
-      ),
-      body: Center(
-        child: Text('hhhhhhhhhhh'),
-      ),
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+          appBar: AppBar(
+              bottom: const TabBar(isScrollable: true, tabs: [
+            Tab(
+              icon: Icon(Icons.home),
+              text: "Home",
+            ),
+            Tab(
+              icon: Icon(Icons.shopify_outlined),
+              text: "My Orders",
+            ),
+            Tab(
+              icon: Icon(Icons.account_box_rounded),
+              text: "Profile",
+            ),
+          ])),
+          body: TabBarView(
+            children: [
+              //Tab1Page(),
+              MyOrdersPage(),
+              _widgetTab3(),
+            ],
+          )),
     );
   }
+}
+
+Container _widgetTab3() {
+  return Container(
+      child: Center(
+    child: Text(
+      "Button 3",
+      style: TextStyle(fontSize: 30),
+    ),
+  ));
+}
+
+Container _widgetTab2() {
+  return Container(
+      child: Center(
+    child: Text(
+      "Button 2",
+      style: TextStyle(fontSize: 30),
+    ),
+  ));
+}
+
+Container _widgetTab1() {
+  return Container(
+    child: Center(
+      child: Text(
+        "Button 1",
+        style: TextStyle(fontSize: 30),
+      ),
+    ),
+  );
 }
 
 class User {
