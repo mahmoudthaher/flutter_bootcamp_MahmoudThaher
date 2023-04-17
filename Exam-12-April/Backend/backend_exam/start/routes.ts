@@ -6,13 +6,13 @@ Route.group(() => {
     Route.post("/logout", "UsersController.logout");
     Route.post("/", "UsersController.create");
     Route.put("/", "UsersController.update");
-  }).prefix("/users");
+  }).prefix("/Users");
   Route.group(() => {
     Route.get("", "ProductsController.getAll");
-  }).prefix("/products");
+  }).prefix("/Products");
     Route.group(() => {
       Route.get("/:id", "OrdersController.getOrderById");
       Route.get("", "OrdersController.getAllOrdersByAuth");
       Route.post("/", "OrdersController.createOrder");
-    }).prefix("/orders");
+    }).prefix("/Orders");
 }).prefix("api")
