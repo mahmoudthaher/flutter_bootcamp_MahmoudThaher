@@ -43,7 +43,7 @@ class UserController {
   Future<UserModel> update(UserModel user) async {
     try {
       dynamic jsonObject =
-          await ApiHelper().putRequest("api/Users", user.toJsonC());
+          await ApiHelper().putRequest("api/Users", user.toJson());
       return UserModel.fromJson(jsonObject);
     } catch (ex) {
       print(ex);

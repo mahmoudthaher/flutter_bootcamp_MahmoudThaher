@@ -5,9 +5,6 @@ import 'package:flutter_exam/bloc/products/products_events.dart';
 import 'package:flutter_exam/bloc/products/products_states.dart';
 import 'package:flutter_exam/models/product_model.dart';
 
-import '../bloc/users/users_bloc.dart';
-import '../bloc/users/users_events.dart';
-
 class ProductsPage extends StatefulWidget {
   const ProductsPage({Key? key}) : super(key: key);
 
@@ -50,42 +47,49 @@ class _ProductsPageState extends State<ProductsPage> {
       itemCount: _products!.length,
       itemBuilder: (context, index) {
         return ListTile(
-          onTap: () {
-            context.read<ProductsBloc>().add(GetProductsEvent());
-          },
-          title: Text(_products[index].name),
-          subtitle: Row(
+          title: SizedBox(
+            child: Text(_products[index].name),
+            height: 50,
+          ),
+          subtitle: Column(
+            children: [
+              Image(
+                image: NetworkImage(_products[index].image),
+                width: 70,
+                height: 70,
+              ),
+            ],
+          ),
+          trailing: Column(
             children: [
               SizedBox(
                   width: 50,
+                  height: 20,
                   child: ElevatedButton(
                       onPressed: () {
-                        // context.read<UsersBloc>().add(IncreaseUserEvent(index));
+                        context
+                            .read<ProductsBloc>()
+                            .add(IncreaseProductEvent(index));
                       },
                       child: Text("+"))),
               Padding(
                 padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-                child: Text("${_products[index].id}"),
+                child: Text("${_products[index].counter}"),
               ),
               SizedBox(
                 width: 50,
+                height: 20,
                 child: ElevatedButton(
                   onPressed: () {
-                    // context.read<UsersBloc>().add(DecreaseUserEvent(index));
+                    context
+                        .read<ProductsBloc>()
+                        .add(DecreaseProductEvent(index));
                   },
                   child: Text("-"),
                 ),
               ),
             ],
           ),
-          trailing: IconButton(
-              onPressed: () {
-                context.read<UsersBloc>().add(RemoveUserEvent(index));
-              },
-              icon: const Icon(
-                Icons.delete,
-                color: Colors.red,
-              )),
         );
       },
     );

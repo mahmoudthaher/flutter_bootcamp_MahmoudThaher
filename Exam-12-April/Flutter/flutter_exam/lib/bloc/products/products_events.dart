@@ -9,15 +9,15 @@ class RemoveProductEvent extends ProductEvents {
   RemoveProductEvent(this.index);
 }
 
-// class IncreaseUserEvent extends ProductEvents {
-//   int index;
-//   IncreaseUserEvent(this.index);
-// }
-//
-// class DecreaseUserEvent extends ProductEvents {
-//   int index;
-//   DecreaseUserEvent(this.index);
-// }
+class IncreaseProductEvent extends ProductEvents {
+  int index;
+  IncreaseProductEvent(this.index);
+}
+
+class DecreaseProductEvent extends ProductEvents {
+  int index;
+  DecreaseProductEvent(this.index);
+}
 
 // Add new User
 // Edit existing user;
