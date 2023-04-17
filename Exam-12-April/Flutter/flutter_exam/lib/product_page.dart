@@ -47,17 +47,33 @@ class _ProductsPageState extends State<ProductsPage> {
       itemCount: _products!.length,
       itemBuilder: (context, index) {
         return ListTile(
-          title: SizedBox(
-            child: Text(_products[index].name),
-            height: 50,
+          title: Column(
+            children: [
+              Row(
+                children: [
+                  Text(_products[index].name),
+                ],
+              ),
+              Row(
+                children: [
+                  Image(
+                    image: NetworkImage(_products[index].image),
+                    width: 70,
+                    height: 70,
+                  ),
+                  SizedBox(
+                    width: 50,
+                  ),
+                  Text("Price : ${_products[index].price.toString()}"),
+                ],
+              ),
+            ],
           ),
           subtitle: Column(
             children: [
-              Image(
-                image: NetworkImage(_products[index].image),
-                width: 70,
-                height: 70,
-              ),
+              SizedBox(
+                height: 30,
+              )
             ],
           ),
           trailing: Column(
