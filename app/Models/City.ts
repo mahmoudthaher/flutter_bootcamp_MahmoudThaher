@@ -8,8 +8,8 @@ export default class City extends BaseModel {
   @column({ serializeAs: 'city' })
   public city: string
 
-  @column({ serializeAs: 'country_id' })
-  public countryId: number
+  // @column({ serializeAs: 'country_id' })
+  // public countryId: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
@@ -17,8 +17,8 @@ export default class City extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
-  @belongsTo(() => Country, {
-    foreignKey: 'countryId'
-  })
-  public country: BelongsTo<typeof Country>
+  // @belongsTo(() => Country, {
+  //   foreignKey: 'countryId'
+  // })
+  // public country: BelongsTo<typeof Country>
 }

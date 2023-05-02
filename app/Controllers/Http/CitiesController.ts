@@ -4,21 +4,21 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import City from 'App/Models/City';
 export default class CitiesController {
     public async getAll(ctx: HttpContextContract) {
-        const token = await ctx.auth.authenticate();
+        
         var city = ctx.request.input("city");
-        var query = City.query().preload('country');
-        const page = ctx.request.input('page', 1)
-        const limit = 10
+        var query = City.query()
+       // const page = ctx.request.input('page', 1)
+       // const limit = 10
         if (city) {
-            return query.where("city", city).paginate(page, limit);
+            return query.where("city", city);
         }
         else
-            return query.paginate(page, limit);
+            return query;
 
     }
     public async getById(ctx: HttpContextContract) {
         var id = ctx.params.id;
-        var result = await City.query().preload('country').where('id', id);
+        var result = await  City.findOrFail(id);
         return result;
     }
     public async create(ctx: HttpContextContract) {
@@ -29,19 +29,19 @@ export default class CitiesController {
                     column: 'City',
                 })
             ]),
-            country_id:schema.number()
+          //  country_id:schema.number()
         });
         const fields = await ctx.request.validate({
             schema: newSchema,
             messages: {
                 'city.required': I18n.locale('ar').formatMessage('cities.cityIsRequired'),
                 'city.unique': I18n.locale('ar').formatMessage('cities.city.unique'),
-                'country_id.required': I18n.locale('ar').formatMessage('cities.countryIdIsRequired'),
+               // 'country_id.required': I18n.locale('ar').formatMessage('cities.countryIdIsRequired'),
             }
         });
         var city = new City();
         city.city = fields.city;
-        city.countryId=fields.country_id;
+      //  city.countryId=fields.country_id;
         await city.save();
         return { message: "The city has been created!" };
     }
@@ -49,13 +49,13 @@ export default class CitiesController {
         const newSchema = schema.create({
             id: schema.number(),
             city: schema.string(),
-            country_id:schema.number()
+          //  country_id:schema.number()
         });
         const fields = await ctx.request.validate({
             schema: newSchema,
             messages: {
                 'city.required': I18n.locale('ar').formatMessage('cities.cityIsRequired'),
-                'country_id.required': I18n.locale('ar').formatMessage('cities.countryIdIsRequired'),
+                //'country_id.required': I18n.locale('ar').formatMessage('cities.countryIdIsRequired'),
             }
         })
 
@@ -70,7 +70,7 @@ export default class CitiesController {
             return { message: 'city is already in use. ' };
             } catch (error) {}
             city.city = fields.city;
-            city.countryId=fields.country_id;
+            //city.countryId=fields.country_id;
             await city.save();
             return { message: "The city has been updated!" };
         } catch (error) {

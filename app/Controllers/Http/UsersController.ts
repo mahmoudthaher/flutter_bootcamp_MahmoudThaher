@@ -13,11 +13,11 @@ export default class UsersController {
         var address = ctx.request.input("address");
         var genderId = ctx.request.input("gender_id");
         var typeId = ctx.request.input("type_id");
-        var countryId = ctx.request.input("country_id");
-        var cityId = ctx.request.input("city_id");
-        var query = User.query().preload('city').preload('country').preload('gender').preload('type');
+       // var countryId = ctx.request.input("country_id");
+        var city = ctx.request.input("city");
+        var query = User.query().preload('gender').preload('type');
         const page = ctx.request.input('page', 1);
-        const limit = 2;
+        const limit = 10;
         if (fistName) {
             return query.where("fist_name", fistName).paginate(page, limit);
         }
@@ -42,18 +42,18 @@ export default class UsersController {
         if (typeId) {
             return query.where("type_id", typeId).paginate(page, limit);
         }
-        if (countryId) {
-            return query.where("country_id", countryId).paginate(page, limit);
-        }
-        if (cityId) {
-            return query.where("city_id", cityId).paginate(page, limit);
+        // if (countryId) {
+        //     return query.where("country_id", countryId).paginate(page, limit);
+        // }
+        if (city) {
+            return query.where("city", city).paginate(page, limit);
         }
         else
             return await query.paginate(page, limit);
     }
     public async getById(ctx: HttpContextContract) {
         var id = ctx.params.id;
-        var result = await User.query().preload('city').preload('country').preload('gender').preload('type').where('id', id);
+        var result = await User.query().preload('gender').preload('type').where('id', id);
         return result;
     }
     public async login(ctx: HttpContextContract) {
@@ -98,8 +98,8 @@ export default class UsersController {
             address: schema.string(),
             gender_id: schema.number(),
             type_id: schema.number(),
-            country_id: schema.number(),
-            city_id: schema.number(),
+           // country_id: schema.number(),
+            city: schema.string(),
         });
 
         const fields = await ctx.request.validate({
@@ -118,8 +118,8 @@ export default class UsersController {
                 'address.required': I18n.locale('ar').formatMessage('users.addressIsRequired'),
                 'gender_id.required': I18n.locale('ar').formatMessage('users.genderIdIsRequired'),
                 'type_id.required': I18n.locale('ar').formatMessage('users.typeIdIsRequired'),
-                'country_id.required': I18n.locale('ar').formatMessage('users.countryIdIsRequired'),
-                'city_id.required': I18n.locale('ar').formatMessage('users.cityIdIsRequired'),
+              //  'country_id.required': I18n.locale('ar').formatMessage('users.countryIdIsRequired'),
+                'city.required': I18n.locale('ar').formatMessage('users.cityIdIsRequired'),
             }
         });
         var user = new User();
@@ -132,8 +132,8 @@ export default class UsersController {
         user.address = fields.address;
         user.genderId = fields.gender_id;
         user.typeId = fields.type_id;
-        user.countryId = fields.country_id;
-        user.cityId = fields.city_id;
+       // user.countryId = fields.country_id;
+        user.city = fields.city;
         await user.save();
         return { message: "The user has been created!" };
     }
@@ -149,8 +149,8 @@ export default class UsersController {
             address: schema.string(),
             gender_id: schema.number(),
             type_id: schema.number(),
-            country_id: schema.number(),
-            city_id: schema.number(),
+           // country_id: schema.number(),
+            city: schema.string(),
         });
         const fields = await ctx.request.validate({
             schema: newSchema,
@@ -167,7 +167,7 @@ export default class UsersController {
                 'address.required': I18n.locale('ar').formatMessage('users.addressIsRequired'),
                 'gender_id.required': I18n.locale('ar').formatMessage('users.genderIdIsRequired'),
                 'type_id.required': I18n.locale('ar').formatMessage('users.typeIdIsRequired'),
-                'country_id.required': I18n.locale('ar').formatMessage('users.countryIdIsRequired'),
+             //   'country_id.required': I18n.locale('ar').formatMessage('users.countryIdIsRequired'),
                 'city_id.required': I18n.locale('ar').formatMessage('users.cityIdIsRequired'),
             }
         })
@@ -208,8 +208,8 @@ export default class UsersController {
             user.address = fields.address;
             user.genderId = fields.gender_id;
             user.typeId = fields.type_id;
-            user.countryId = fields.country_id;
-            user.cityId = fields.city_id;
+          //  user.countryId = fields.country_id;
+            user.city = fields.city;
             await user.save();
             return { message: "The user has been updated!" };
         }

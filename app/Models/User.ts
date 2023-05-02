@@ -40,8 +40,8 @@ export default class User extends BaseModel {
   @column({ serializeAs: 'country_id' })
   public countryId: number
 
-  @column({ serializeAs: 'city_id' })
-  public cityId: number
+  @column({ serializeAs: 'city' })
+  public city: string
 
   @column()
   public rememberMeToken: string | null
@@ -62,15 +62,15 @@ export default class User extends BaseModel {
   })
   public type: BelongsTo<typeof Type>
 
-  @belongsTo(() => Country, {
-    foreignKey: 'countryId',
-  })
-  public country: BelongsTo<typeof Country>
+  // @belongsTo(() => Country, {
+  //   foreignKey: 'countryId',
+  // })
+  // public country: BelongsTo<typeof Country>
 
-  @belongsTo(() => City, {
-    foreignKey: 'cityId',
-  })
-  public city: BelongsTo<typeof City>
+  // @belongsTo(() => City, {
+  //   foreignKey: 'cityId',
+  // })
+  // public city: BelongsTo<typeof City>
 
   @beforeSave()
   public static async hashPassword (user: User) {
