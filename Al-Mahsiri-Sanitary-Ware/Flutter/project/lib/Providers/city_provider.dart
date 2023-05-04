@@ -9,8 +9,6 @@ class CityProvider with ChangeNotifier {
     CityController().getAllCities().then((result) {
       cities = result;
       notifyListeners();
-    }).catchError((ex) {
-      print(ex);
-    });
+    }).catchError((ex) {});
   }
 }

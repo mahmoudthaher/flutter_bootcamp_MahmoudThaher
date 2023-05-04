@@ -1,8 +1,13 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/retry.dart';
 import 'package:project/Providers/city_provider.dart';
+import 'package:project/Providers/user_provider.dart';
+import 'package:project/controllers/api_helper.dart';
+import 'package:project/controllers/user_controller.dart';
 import 'package:project/models/city_model.dart';
+import 'package:project/models/user_model.dart';
 import 'package:provider/provider.dart';
 
 class CreateAndUpdateUser extends StatefulWidget {
@@ -16,21 +21,14 @@ class CreateAndUpdateUser extends StatefulWidget {
 enum SingingCharacter { Male, Female }
 
 class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
+  int checkemail = 0;
+  int checkphoneNumber = 0;
+  int checkuserName = 0;
+  UserModel? user;
   int? selectedName;
+  String? cityname;
   SingingCharacter? _character = SingingCharacter.Male;
   final dateController = TextEditingController();
-  String dropdownVale = "Jordan";
-  var items = [
-    'عمان',
-    'الزرقاء',
-    'المفرق',
-    'عجلون',
-    'جرش',
-    'مادبا',
-    'عجلون',
-    'جرش',
-    'مادبا',
-  ];
   bool obscureText = true;
   bool obscureText2 = true;
   final _keyForm = GlobalKey<FormState>();
@@ -44,7 +42,7 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
   final passwordController = TextEditingController();
   final repasswordController = TextEditingController();
   late bool visible = false;
-  String? drop;
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +53,7 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<CityProvider>(context);
+    var userProvider = Provider.of<UserProvider>(context);
     List<CityModel> cities = provider.cities;
     return Scaffold(
       body: SafeArea(
@@ -175,7 +174,7 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                   width: double.infinity,
                   height: 100,
                   child: TextFormField(
-                    controller: emailController,
+                    controller: phoneNumberController,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     style: const TextStyle(fontSize: 20, height: 2),
                     keyboardType: TextInputType.phone,
@@ -198,8 +197,11 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                       ),
                     ),
                     validator: (value) {
+                      checkPhoneNumber();
                       if (value == null || value.isEmpty) {
                         return "الرجاء إدخال رقم الهاتف";
+                      } else if (checkphoneNumber == 1) {
+                        return "رقم الهاتف موجود مسبقا";
                       }
                       return null;
                     },
@@ -232,10 +234,13 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                       ),
                     ),
                     validator: (value) {
+                      checkEmail();
                       if (value == null || value.isEmpty) {
                         return "الرجاء إدخال البريد الإلكتروني";
                       } else if (!EmailValidator.validate(value)) {
                         return "الرجاء إدخال البريد الإلكتروني بطريقة صحيحة";
+                      } else if (checkemail == 1) {
+                        return "الايميل موجود مسبقا";
                       }
                       return null;
                     },
@@ -268,8 +273,11 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                       ),
                     ),
                     validator: (value) {
+                      checkUserName();
                       if (value == null || value.isEmpty) {
                         return "الرجاء إدخال إسم المستخدم";
+                      } else if (checkuserName == 1) {
+                        return "إسم المستخدم موجود مسبقا";
                       }
                       return null;
                     },
@@ -279,7 +287,7 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                   width: double.infinity,
                   height: 100,
                   child: TextFormField(
-                    controller: emailController,
+                    controller: addressController,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     style: const TextStyle(fontSize: 20, height: 2),
                     keyboardType: TextInputType.name,
@@ -310,7 +318,6 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                   ),
                 ),
                 Container(
-                  width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(40),
                     border: Border.all(
@@ -318,8 +325,10 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                         width: 0.7,
                         color: const Color(0xFF686868)),
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 25),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButtonFormField(
                         isExpanded: true,
                         value: selectedName,
                         hint: const Text(
@@ -331,18 +340,28 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                         ),
                         items: cities.map((e) {
                           return DropdownMenuItem(
-                            child: Text(e.city),
                             value: e.id,
+                            child: Text(e.city),
                           );
                         }).toList(),
                         onChanged: (value) {
                           setState(() {
                             selectedName = value;
-                            if (value != null) {
-                              drop = "m";
-                            }
                           });
-                        }),
+                        },
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          // validate the selected option4
+                          if (value == null) {
+                            return 'الرجاء ادخال المدينة';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          cityname = value.toString();
+                        },
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -359,6 +378,9 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                   ),
                   child: Row(
                     children: [
+                      SizedBox.fromSize(
+                        size: const Size.fromRadius(20),
+                      ),
                       Expanded(
                         flex: 2,
                         child: ListTile(
@@ -375,6 +397,7 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                         ),
                       ),
                       Expanded(
+                        flex: 2,
                         child: ListTile(
                           title: const Text('انثى'),
                           leading: Radio<SingingCharacter>(
@@ -496,7 +519,38 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                     child: ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          if (_keyForm.currentState!.validate()) {}
+                          if (_keyForm.currentState!.validate()) {
+                            _keyForm.currentState!.save();
+                            // _character = SingingCharacter.Female; لتغير مكان الاختيار
+                            //  _character!.index
+                            //يمكن تزبط
+                            //if address ==0 _character = SingingCharacter.Female
+
+                            try {
+                              //EasyLoading.dismiss();
+                              EasyLoading.show(status: "Loading");
+
+                              UserController()
+                                  .create(userProvider.createUser(
+                                      firstnameController.text,
+                                      lastnameController.text,
+                                      phoneNumberController.text,
+                                      emailController.text,
+                                      userNameController.text,
+                                      addressController.text,
+                                      selectedName!.toString(),
+                                      (_character!.index + 1).toString(),
+                                      1.toString(),
+                                      passwordController.text))
+                                  .then((value) {})
+                                  .catchError((ex) {});
+                              EasyLoading.dismiss();
+                              EasyLoading.showInfo("Done");
+                            } catch (error) {
+                              EasyLoading.dismiss();
+                              EasyLoading.showError(error.toString());
+                            }
+                          }
                         });
                       },
                       child: Text(
@@ -513,13 +567,32 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
     );
   }
 
-  void dropdownCallback(String? selectValue) {
-    if (selectValue is String) {
-      setState(
-        () {
-          dropdownVale = selectValue;
-        },
-      );
-    }
+  Future<void> checkEmail() async {
+    final email = emailController.text;
+    dynamic json = await ApiHelper().getRequest2("api/Users/email/$email");
+    final count = json.isEmpty ? 0 : 1;
+    setState(() {
+      checkemail = count;
+    });
+  }
+
+  Future<void> checkPhoneNumber() async {
+    final phoneNumber = phoneNumberController.text;
+    dynamic json =
+        await ApiHelper().getRequest2("api/Users/phonenumber/$phoneNumber");
+    final count = json.isEmpty ? 0 : 1;
+    setState(() {
+      checkphoneNumber = count;
+    });
+  }
+
+  Future<void> checkUserName() async {
+    final userName = userNameController.text;
+    dynamic json =
+        await ApiHelper().getRequest2("api/Users/username/$userName");
+    final count = json.isEmpty ? 0 : 1;
+    setState(() {
+      checkuserName = count;
+    });
   }
 }
