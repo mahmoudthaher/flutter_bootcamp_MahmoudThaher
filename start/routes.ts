@@ -78,6 +78,9 @@ Route.group(() => {
     Route.delete("/:id", "TypesController.destory");
   }).prefix("/Types");
   Route.group(() => {
+    Route.get("/username/:userName", "UsersController.checkUserName");
+    Route.get("/phonenumber/:phoneNumber", "UsersController.checkPhoneNumber");
+    Route.get("/email/:email", "UsersController.checkEmail");
     Route.get("/:id", "UsersController.getById");
     Route.get("/", "UsersController.getAll");
     Route.post("/login", "UsersController.login");

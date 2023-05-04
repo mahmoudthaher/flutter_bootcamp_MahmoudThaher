@@ -2,7 +2,6 @@ import { DateTime } from 'luxon'
 import { BaseModel, beforeSave, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import Gender from './Gender'
 import Type from './Type'
-import Country from './Country'
 import City from './City'
 import Hash from '@ioc:Adonis/Core/Hash'
 
@@ -37,11 +36,11 @@ export default class User extends BaseModel {
   @column({ serializeAs: 'type_id' })
   public typeId: number
 
-  @column({ serializeAs: 'country_id' })
-  public countryId: number
+  // @column({ serializeAs: 'country_id' })
+  // public countryId: number
 
-  @column({ serializeAs: 'city' })
-  public city: string
+  @column({ serializeAs: 'city_id' })
+  public cityId: number
 
   @column()
   public rememberMeToken: string | null
@@ -67,10 +66,10 @@ export default class User extends BaseModel {
   // })
   // public country: BelongsTo<typeof Country>
 
-  // @belongsTo(() => City, {
-  //   foreignKey: 'cityId',
-  // })
-  // public city: BelongsTo<typeof City>
+  @belongsTo(() => City, {
+    foreignKey: 'cityId',
+  })
+  public city: BelongsTo<typeof City>
 
   @beforeSave()
   public static async hashPassword (user: User) {

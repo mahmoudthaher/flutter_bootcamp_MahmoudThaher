@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import User from 'App/Models/User';
 import I18n from '@ioc:Adonis/Addons/I18n'
+import Database from '@ioc:Adonis/Lucid/Database';
 export default class UsersController {
     public async getAll(ctx: HttpContextContract) {
         const token = await ctx.auth.authenticate();
@@ -14,8 +15,8 @@ export default class UsersController {
         var genderId = ctx.request.input("gender_id");
         var typeId = ctx.request.input("type_id");
        // var countryId = ctx.request.input("country_id");
-        var city = ctx.request.input("city");
-        var query = User.query().preload('gender').preload('type');
+        var cityId = ctx.request.input("city_id");
+        var query = User.query().preload('city').preload('gender').preload('type');
         const page = ctx.request.input('page', 1);
         const limit = 10;
         if (fistName) {
@@ -45,15 +46,15 @@ export default class UsersController {
         // if (countryId) {
         //     return query.where("country_id", countryId).paginate(page, limit);
         // }
-        if (city) {
-            return query.where("city", city).paginate(page, limit);
+        if (cityId) {
+            return query.where("city_id", cityId).paginate(page, limit);
         }
         else
             return await query.paginate(page, limit);
     }
     public async getById(ctx: HttpContextContract) {
         var id = ctx.params.id;
-        var result = await User.query().preload('gender').preload('type').where('id', id);
+        var result = await User.query().preload('city').preload('gender').preload('type').where('id', id);
         return result;
     }
     public async login(ctx: HttpContextContract) {
@@ -99,7 +100,7 @@ export default class UsersController {
             gender_id: schema.number(),
             type_id: schema.number(),
            // country_id: schema.number(),
-            city: schema.string(),
+            city_id: schema.number(),
         });
 
         const fields = await ctx.request.validate({
@@ -119,7 +120,7 @@ export default class UsersController {
                 'gender_id.required': I18n.locale('ar').formatMessage('users.genderIdIsRequired'),
                 'type_id.required': I18n.locale('ar').formatMessage('users.typeIdIsRequired'),
               //  'country_id.required': I18n.locale('ar').formatMessage('users.countryIdIsRequired'),
-                'city.required': I18n.locale('ar').formatMessage('users.cityIdIsRequired'),
+                'city_id.required': I18n.locale('ar').formatMessage('users.cityIdIsRequired'),
             }
         });
         var user = new User();
@@ -133,7 +134,7 @@ export default class UsersController {
         user.genderId = fields.gender_id;
         user.typeId = fields.type_id;
        // user.countryId = fields.country_id;
-        user.city = fields.city;
+        user.cityId = fields.city_id;
         await user.save();
         return { message: "The user has been created!" };
     }
@@ -150,7 +151,7 @@ export default class UsersController {
             gender_id: schema.number(),
             type_id: schema.number(),
            // country_id: schema.number(),
-            city: schema.string(),
+            city_id: schema.number(),
         });
         const fields = await ctx.request.validate({
             schema: newSchema,
@@ -209,7 +210,7 @@ export default class UsersController {
             user.genderId = fields.gender_id;
             user.typeId = fields.type_id;
           //  user.countryId = fields.country_id;
-            user.city = fields.city;
+            user.cityId = fields.city_id;
             await user.save();
             return { message: "The user has been updated!" };
         }
@@ -223,4 +224,21 @@ export default class UsersController {
         await user.delete();
         return { message: "The user has been deleted!" };
     }
+    public async checkEmail(ctx: HttpContextContract) {
+        var email = ctx.params.email;
+         var result = User.query().select('email').where("email",email);
+        return result;
+    }
+    public async checkPhoneNumber(ctx: HttpContextContract) {
+        var phoneNumber = ctx.params.phoneNumber;
+        var result = User.query().select('phone_number').where("phone_number",phoneNumber);
+        return result;
+    }
+    public async checkUserName(ctx: HttpContextContract) {
+        var userName = ctx.params.userName;
+        var result = User.query().select('user_name').where("user_name",userName);
+        return result;
+    }
 }
+      
+
