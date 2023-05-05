@@ -29,8 +29,8 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
   String? cityname;
   SingingCharacter? _character = SingingCharacter.Male;
   final dateController = TextEditingController();
-  bool obscureText = true;
-  bool obscureText2 = true;
+  bool obscureText = false;
+  bool obscureText2 = false;
   final _keyForm = GlobalKey<FormState>();
   final firstnameController = TextEditingController();
   final lastnameController = TextEditingController();
@@ -345,9 +345,11 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                           );
                         }).toList(),
                         onChanged: (value) {
-                          setState(() {
-                            selectedName = value;
-                          });
+                          if (mounted) {
+                            setState(() {
+                              selectedName = value;
+                            });
+                          }
                         },
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
@@ -389,9 +391,11 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                             value: SingingCharacter.Male,
                             groupValue: _character,
                             onChanged: (SingingCharacter? value) {
-                              setState(() {
-                                _character = value;
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  _character = value;
+                                });
+                              }
                             },
                           ),
                         ),
@@ -404,9 +408,11 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                             value: SingingCharacter.Female,
                             groupValue: _character,
                             onChanged: (SingingCharacter? value) {
-                              setState(() {
-                                _character = value;
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  _character = value;
+                                });
+                              }
                             },
                           ),
                         ),
@@ -518,40 +524,62 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
                     height: 40,
                     child: ElevatedButton(
                       onPressed: () {
-                        setState(() {
-                          if (_keyForm.currentState!.validate()) {
-                            _keyForm.currentState!.save();
-                            // _character = SingingCharacter.Female; لتغير مكان الاختيار
-                            //  _character!.index
-                            //يمكن تزبط
-                            //if address ==0 _character = SingingCharacter.Female
+                        if (mounted) {
+                          setState(() {
+                            if (_keyForm.currentState!.validate()) {
+                              _keyForm.currentState!.save();
+                              // _character = SingingCharacter.Female; لتغير مكان الاختيار
+                              //  _character!.index
+                              //يمكن تزبط
+                              //if address ==0 _character = SingingCharacter.Female
+                              try {
+                                EasyLoading.show(status: "Loading");
 
-                            try {
-                              //EasyLoading.dismiss();
-                              EasyLoading.show(status: "Loading");
-
-                              UserController()
-                                  .create(userProvider.createUser(
-                                      firstnameController.text,
-                                      lastnameController.text,
-                                      phoneNumberController.text,
-                                      emailController.text,
-                                      userNameController.text,
-                                      addressController.text,
-                                      selectedName!.toString(),
-                                      (_character!.index + 1).toString(),
-                                      1.toString(),
-                                      passwordController.text))
-                                  .then((value) {})
-                                  .catchError((ex) {});
-                              EasyLoading.dismiss();
-                              EasyLoading.showInfo("Done");
-                            } catch (error) {
-                              EasyLoading.dismiss();
-                              EasyLoading.showError(error.toString());
+                                UserController()
+                                    .create(userProvider.createUser(
+                                        // "",
+                                        firstnameController.text,
+                                        lastnameController.text,
+                                        phoneNumberController.text,
+                                        emailController.text,
+                                        userNameController.text,
+                                        addressController.text,
+                                        selectedName!.toString(),
+                                        (_character!.index + 1).toString(),
+                                        1.toString(),
+                                        passwordController.text))
+                                    .then((value) {
+                                  UserController()
+                                      .login(userProvider.login(
+                                          emailController.text,
+                                          passwordController.text))
+                                      .then((value) {
+                                    informationUser(userProvider.login(
+                                            emailController.text,
+                                            passwordController.text))
+                                        .then((value) {
+                                      Navigator.pushReplacementNamed(
+                                        context,
+                                        "/test",
+                                      );
+                                    }).catchError((ex) {
+                                      print("1$ex");
+                                    });
+                                  }).catchError((ex) {
+                                    print("2$ex");
+                                  });
+                                }).catchError((ex) {
+                                  print("3$ex");
+                                });
+                                EasyLoading.dismiss();
+                                EasyLoading.showSuccess("done");
+                              } catch (error) {
+                                EasyLoading.dismiss();
+                                EasyLoading.showError(error.toString());
+                              }
                             }
-                          }
-                        });
+                          });
+                        }
                       },
                       child: Text(
                         'Submit',
@@ -571,9 +599,11 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
     final email = emailController.text;
     dynamic json = await ApiHelper().getRequest2("api/Users/email/$email");
     final count = json.isEmpty ? 0 : 1;
-    setState(() {
-      checkemail = count;
-    });
+    if (mounted) {
+      setState(() {
+        checkemail = count;
+      });
+    }
   }
 
   Future<void> checkPhoneNumber() async {
@@ -581,9 +611,11 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
     dynamic json =
         await ApiHelper().getRequest2("api/Users/phonenumber/$phoneNumber");
     final count = json.isEmpty ? 0 : 1;
-    setState(() {
-      checkphoneNumber = count;
-    });
+    if (mounted) {
+      setState(() {
+        checkphoneNumber = count;
+      });
+    }
   }
 
   Future<void> checkUserName() async {
@@ -591,8 +623,21 @@ class _CreateAndUpdateUserState extends State<CreateAndUpdateUser> {
     dynamic json =
         await ApiHelper().getRequest2("api/Users/username/$userName");
     final count = json.isEmpty ? 0 : 1;
-    setState(() {
-      checkuserName = count;
-    });
+    if (mounted) {
+      setState(() {
+        checkuserName = count;
+      });
+    }
+  }
+
+  Future<void> informationUser(UserModel user) async {
+    try {
+      dynamic jsonObject = await ApiHelper()
+          .postRequest("api/Users/informationUser", user.toJsonLogin());
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      userProvider.user = UserModel.fromJson(jsonObject[0]);
+    } catch (ex) {
+      rethrow;
+    }
   }
 }

@@ -2,6 +2,13 @@ import 'dart:io';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:project/Providers/user_provider.dart';
+import 'package:project/controllers/api_helper.dart';
+import 'package:project/controllers/user_controller.dart';
+import 'package:project/models/user_model.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,13 +19,14 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _keyForm = GlobalKey<FormState>();
-  bool obscureText = true;
+  bool obscureText = false;
   final emailController = TextEditingController();
-
   bool enable = false;
   final passwordController = TextEditingController();
+  final loginController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    var userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -140,6 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                         errorStyle: const TextStyle(
                           fontSize: 15.0,
                         ),
+                        errorMaxLines: 2,
                         suffix: InkWell(
                           onTap: () {
                             setState(() {
@@ -154,6 +163,8 @@ class _LoginPageState extends State<LoginPage> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "الرجاء إدخال كلمة المرور";
+                        } else if (value.length < 8) {
+                          return "كلمة المرور يجب ان تكون مكونة من 8 خانات على الأقل";
                         }
                         return null;
                       },
@@ -193,7 +204,31 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         setState(() {
                           if (_keyForm.currentState!.validate()) {
-                            //Navigator.pushNamed(context, "/product");
+                            try {
+                              UserController()
+                                  .login(userProvider.login(
+                                      emailController.text,
+                                      passwordController.text))
+                                  .then((value) {
+                                informationUser(userProvider.login(
+                                        emailController.text,
+                                        passwordController.text))
+                                    .then((value) {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    "/test",
+                                  );
+                                }).catchError((ex) {
+                                  print(ex);
+                                });
+                              }).catchError((ex) {
+                                loginController.text =
+                                    "إسم المستخدم او كلمة المرور غير صحيحة";
+                              });
+                            } catch (ex) {
+                              EasyLoading.dismiss();
+                              EasyLoading.showError(ex.toString());
+                            }
                           }
                         });
                       },
@@ -207,8 +242,20 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  width: 350,
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    style: const TextStyle(fontSize: 20, color: Colors.red),
+                    controller: loginController,
+                    readOnly: true,
+                    decoration: const InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white))),
+                  ),
+                ),
                 const SizedBox(
-                  height: 50,
+                  height: 10,
                 ),
                 Column(
                   children: const [
@@ -255,5 +302,16 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  Future<void> informationUser(UserModel user) async {
+    try {
+      dynamic jsonObject = await ApiHelper()
+          .postRequest("api/Users/informationUser", user.toJsonLogin());
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      userProvider.user = UserModel.fromJson(jsonObject[0]);
+    } catch (ex) {
+      rethrow;
+    }
   }
 }

@@ -6,6 +6,7 @@ class UserProvider with ChangeNotifier {
   //List<UserModel> user = [];
   UserModel? user;
   createUser(
+      // String id,
       String firstName,
       String lastName,
       String phoneNumber,
@@ -17,6 +18,7 @@ class UserProvider with ChangeNotifier {
       String type,
       String password) {
     user = UserModel(
+        // id: id,
         firstName: firstName,
         lastName: lastName,
         phoneNumber: phoneNumber,
@@ -31,9 +33,9 @@ class UserProvider with ChangeNotifier {
     return user;
   }
 
-  // createUser(user) async {
-  //   UserController().create(user).then((value) {
-  //     notifyListeners();
-  //   }).catchError((ex) {});
-  // }
+  login(String email, String password) {
+    user = UserModel(email: email, password: password);
+    notifyListeners();
+    return user;
+  }
 }

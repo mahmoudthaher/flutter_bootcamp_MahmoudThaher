@@ -5,31 +5,36 @@ import 'package:project/controllers/api_helper.dart';
 import '../../models/user_model.dart';
 
 class UserController {
-  // Future<bool> login(UserModel user) async {
-  //   try {
-  //     dynamic jsonObject =
-  //         await ApiHelper().postRequest("api/Users/login", user.toJson2());
-  //     String type = jsonObject["type"];
-  //     String token = jsonObject["token"];
-  //     print("type: $type ");
-  //     print("token: $token ");
-  //     final storage = FlutterSecureStorage();
-  //     await storage.write(key: "token", value: "$type $token");
-  //     return true;
-  //   } catch (ex) {
-  //     print(ex);
-  //     rethrow;
-  //   }
-  // }
+  Future<bool> login(UserModel user) async {
+    try {
+      dynamic jsonObject =
+          await ApiHelper().postRequest("api/Users/login", user.toJsonLogin());
+      String type = jsonObject["type"];
+      String token = jsonObject["token"];
+      final storage = FlutterSecureStorage();
+      await storage.write(key: "token", value: "$type $token");
+      return true;
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  Future<UserModel> informationUser(UserModel user) async {
+    try {
+      dynamic jsonObject = await ApiHelper()
+          .postRequest("api/Users/informationUser", user.toJsonLogin());
+      // final userProvider = Provider.of<UserProvider>(context, listen: false);
+      return UserModel.fromJson(jsonObject[0]);
+    } catch (ex) {
+      print(ex);
+      rethrow;
+    }
+  }
 
   Future<UserModel> create(UserModel user) async {
     try {
       dynamic jsonObject =
           await ApiHelper().postRequest("api/Users", user.toJsonCreate());
-      String type = jsonObject["type"];
-      String token = jsonObject["token"];
-      final storage = FlutterSecureStorage();
-      await storage.write(key: "token", value: "$type $token");
       return UserModel.fromJson(jsonObject);
     } catch (ex) {
       rethrow;

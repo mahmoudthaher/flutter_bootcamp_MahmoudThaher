@@ -5,16 +5,16 @@ class UserModel {
 
   UserModel(
       {this.id,
-      required this.firstName,
-      required this.lastName,
-      required this.phoneNumber,
-      required this.email,
-      required this.username,
-      required this.address,
-      required this.city,
-      required this.gender,
-      required this.type,
-      required this.password});
+      this.firstName,
+      this.lastName,
+      this.phoneNumber,
+      this.email,
+      this.username,
+      this.address,
+      this.city,
+      this.gender,
+      this.type,
+      this.password});
   Map<String, dynamic> toJson() => {
         "id": id,
         "fist_name": firstName,
@@ -41,27 +41,24 @@ class UserModel {
         "type_id": type,
         "password": password,
       };
-  Map<String, dynamic> toJsonCheckEmail() => {
-        "email": email,
-      };
 
-  // Map<String, dynamic> toJson2() => {
-  //       "email": email,
-  //       "password": password,
-  //     };
+  Map<String, dynamic> toJsonLogin() => {
+        "email": email,
+        "password": password,
+      };
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json["id"],
+      id: json["id"].toString(),
       firstName: json["fist_name"],
       lastName: json["last_name"],
       phoneNumber: json["phone_number"],
       email: json["email"],
       username: json["user_name"],
       address: json["address"],
-      city: json["city_id"],
-      gender: json["gender_id"],
-      type: json["type_id"],
+      city: json["city_id"].toString(),
+      gender: json["gender_id"].toString(),
+      type: json["type_id"].toString(),
       password: json["password"],
     );
   }

@@ -5,6 +5,7 @@ import 'package:project/Providers/user_provider.dart';
 import 'package:project/ceate_update_user.dart';
 import 'package:project/login_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:project/testpage.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
               "/": (context) => const MyHomePage(),
               "/loginPage": (context) => const LoginPage(),
               "/createupdateuser": (context) => const CreateAndUpdateUser(),
-
+              "/test": (context) => const MyWidget(),
               // "/resetPassword": (context) => const resetPasswordPage(),
               // "/fordotPassword": (context) => const ForgotPaswwordPage(),
             };
