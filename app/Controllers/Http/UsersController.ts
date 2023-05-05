@@ -62,6 +62,15 @@ export default class UsersController {
         var email = object.email;
         var password = object.password;
         var result = await ctx.auth.attempt(email, password);
+       // var resultUser = await User.query().where('email',email).orWhere('password',password);
+        return result;
+    }
+
+    public async informationUser(ctx: HttpContextContract) {
+        var object = ctx.request.all();
+        var email = object.email;
+        var password = object.password;
+        var result = await User.query().where('email',email).orWhere('password',password);
         return result;
     }
 

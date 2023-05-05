@@ -84,6 +84,7 @@ Route.group(() => {
     Route.get("/:id", "UsersController.getById");
     Route.get("/", "UsersController.getAll");
     Route.post("/login", "UsersController.login");
+    Route.post("/informationUser", "UsersController.informationUser");
     Route.post("/logout", "UsersController.logout");
     Route.post("/", "UsersController.create");
     Route.put("/", "UsersController.update");
