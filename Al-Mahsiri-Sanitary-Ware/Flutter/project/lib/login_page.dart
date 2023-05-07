@@ -284,7 +284,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           backgroundColor: Color(0xFF6fafc8)),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/createupdateuser');
+                        Navigator.pushNamed(context, '/profilePage');
                       },
                       child: const Text(
                         'تسجيل حساب',

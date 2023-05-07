@@ -23,10 +23,8 @@ class UserController {
     try {
       dynamic jsonObject = await ApiHelper()
           .postRequest("api/Users/informationUser", user.toJsonLogin());
-      // final userProvider = Provider.of<UserProvider>(context, listen: false);
       return UserModel.fromJson(jsonObject[0]);
     } catch (ex) {
-      print(ex);
       rethrow;
     }
   }
@@ -47,6 +45,7 @@ class UserController {
           await ApiHelper().putRequest("api/Users", user.toJson());
       return UserModel.fromJson(jsonObject);
     } catch (ex) {
+      print(ex);
       rethrow;
     }
   }

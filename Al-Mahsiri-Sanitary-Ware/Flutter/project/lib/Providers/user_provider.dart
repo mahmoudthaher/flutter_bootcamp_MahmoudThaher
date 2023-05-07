@@ -5,8 +5,8 @@ import 'package:project/models/user_model.dart';
 class UserProvider with ChangeNotifier {
   //List<UserModel> user = [];
   UserModel? user;
-  createUser(
-      // String id,
+  profileUser(
+      String id,
       String firstName,
       String lastName,
       String phoneNumber,
@@ -18,7 +18,7 @@ class UserProvider with ChangeNotifier {
       String type,
       String password) {
     user = UserModel(
-        // id: id,
+        id: id,
         firstName: firstName,
         lastName: lastName,
         phoneNumber: phoneNumber,

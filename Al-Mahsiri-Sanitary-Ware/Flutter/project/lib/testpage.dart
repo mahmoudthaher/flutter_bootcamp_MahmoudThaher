@@ -34,7 +34,15 @@ class _MyWidgetState extends State<MyWidget> {
                   "/loginPage",
                 );
               },
-              child: Text("logout"))
+              child: Text("logout")),
+          ElevatedButton(
+              onPressed: () async {
+                Navigator.pushReplacementNamed(
+                  context,
+                  "/profilePage",
+                );
+              },
+              child: Text("profile"))
         ],
       ),
     ));

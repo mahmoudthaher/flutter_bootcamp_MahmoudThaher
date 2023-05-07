@@ -32,7 +32,7 @@ class ApiHelper {
   }
 
   Future<dynamic> putRequest(String path, Map body) async {
-    Uri uriFunction = Uri.https(DOMAIN, path);
+    Uri uriFunction = Uri.http(DOMAIN, path);
     http.Response resposne = await http.put(uriFunction, body: body);
     return resposneFunction(resposne);
   }

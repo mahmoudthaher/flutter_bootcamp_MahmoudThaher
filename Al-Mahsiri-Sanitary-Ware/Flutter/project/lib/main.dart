@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:project/Providers/city_provider.dart';
 import 'package:project/Providers/user_provider.dart';
-import 'package:project/ceate_update_user.dart';
 import 'package:project/login_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:project/profile_page.dart';
 import 'package:project/testpage.dart';
 import 'package:provider/provider.dart';
 
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
             var routes = {
               "/": (context) => const MyHomePage(),
               "/loginPage": (context) => const LoginPage(),
-              "/createupdateuser": (context) => const CreateAndUpdateUser(),
+              "/profilePage": (context) => const ProfilePage(),
               "/test": (context) => const MyWidget(),
               // "/resetPassword": (context) => const resetPasswordPage(),
               // "/fordotPassword": (context) => const ForgotPaswwordPage(),
