@@ -1,37 +1,34 @@
 class ProductModel {
   int id;
   String name;
-  String image;
   double price;
-  int currentQty;
-  String description;
-  int counter = 0;
 
-  ProductModel({
-    required this.id,
-    required this.name,
-    required this.image,
-    required this.price,
-    required this.currentQty,
-    required this.description,
-  });
+  int quantityInStock;
+  String image;
+  String? description;
+  int categoryId;
+  int? discountId;
 
-  Map<String, dynamic> toJson() => {
-        "name": name,
-        "image": image,
-        "description": description,
-        "current_qty": currentQty,
-        "price": price,
-      };
+  ProductModel(
+      {required this.id,
+      required this.name,
+      required this.price,
+      required this.quantityInStock,
+      required this.image,
+      this.description,
+      required this.categoryId,
+      this.discountId});
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
       id: json["id"],
       name: json["name"],
-      image: json["image"],
       price: json["price"],
-      currentQty: json["current_qty"],
+      quantityInStock: json["quantity_in_stock"],
+      image: json["image"],
       description: json["description"],
+      categoryId: json["category_id"],
+      discountId: json["discount_id"],
     );
   }
 }

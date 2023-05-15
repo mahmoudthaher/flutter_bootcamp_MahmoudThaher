@@ -13,10 +13,11 @@ class MyWidget extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<MyWidget> {
+  final storage = FlutterSecureStorage();
   @override
   Widget build(BuildContext context) {
     var userProvider = Provider.of<UserProvider>(context);
-
+    final storage = FlutterSecureStorage();
     return Scaffold(
         body: SafeArea(
       child: Column(
@@ -26,12 +27,14 @@ class _MyWidgetState extends State<MyWidget> {
           Text(userProvider.user?.firstName ?? ""),
           ElevatedButton(
               onPressed: () async {
+                var userProvider =
+                    Provider.of<UserProvider>(context, listen: false);
                 FlutterSecureStorage storage = const FlutterSecureStorage();
                 await storage.deleteAll();
-
+                userProvider.user = null;
                 Navigator.pushReplacementNamed(
                   context,
-                  "/loginPage",
+                  "/bottomnavigation",
                 );
               },
               child: Text("logout")),
@@ -42,7 +45,7 @@ class _MyWidgetState extends State<MyWidget> {
                   "/profilePage",
                 );
               },
-              child: Text("profile"))
+              child: Text("profile")),
         ],
       ),
     ));

@@ -1,6 +1,8 @@
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project/Providers/user_provider.dart';
 import 'package:project/controllers/api_helper.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/user_model.dart';
 
@@ -13,16 +15,42 @@ class UserController {
       String token = jsonObject["token"];
       final storage = FlutterSecureStorage();
       await storage.write(key: "token", value: "$type $token");
+
       return true;
     } catch (ex) {
       rethrow;
     }
   }
 
-  Future<UserModel> informationUser(UserModel user) async {
+  Future<UserModel> informationUser(
+      UserModel user, BuildContext context) async {
     try {
+      var userprovider = Provider.of<UserProvider>(context, listen: false);
       dynamic jsonObject = await ApiHelper()
           .postRequest("api/Users/informationUser", user.toJsonLogin());
+      int id = jsonObject[0]["id"];
+      String fistName = jsonObject[0]["fist_name"];
+      String lastName = jsonObject[0]["last_name"];
+      String phoneNumber = jsonObject[0]["phone_number"];
+      String email = jsonObject[0]["email"];
+      String userName = jsonObject[0]["user_name"];
+      String password = jsonObject[0]["password"];
+      String address = jsonObject[0]["address"];
+      int genderId = jsonObject[0]["gender_id"];
+      int typeId = jsonObject[0]["type_id"];
+      int cityId = jsonObject[0]["city_id"];
+      final storage = FlutterSecureStorage();
+      await storage.write(key: "id", value: "$id");
+      await storage.write(key: "fistName", value: fistName);
+      await storage.write(key: "lastName", value: lastName);
+      await storage.write(key: "phoneNumber", value: phoneNumber);
+      await storage.write(key: "email", value: email);
+      await storage.write(key: "userName", value: userName);
+      await storage.write(key: "password", value: password);
+      await storage.write(key: "address", value: address);
+      await storage.write(key: "genderId", value: "$genderId");
+      await storage.write(key: "typeId", value: "$typeId");
+      await storage.write(key: "cityId", value: "$cityId");
       return UserModel.fromJson(jsonObject[0]);
     } catch (ex) {
       rethrow;

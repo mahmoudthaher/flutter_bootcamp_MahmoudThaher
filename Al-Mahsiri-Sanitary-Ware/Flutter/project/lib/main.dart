@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project/Providers/city_provider.dart';
+import 'package:project/Providers/product_provider.dart';
 import 'package:project/Providers/user_provider.dart';
+import 'package:project/category_page.dart';
+import 'package:project/controllers/product_controller.dart';
+import 'package:project/design_product_page.dart';
 import 'package:project/login_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:project/models/product_model.dart';
 import 'package:project/profile_page.dart';
 import 'package:project/testpage.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +30,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => UserProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ProductProvider(),
+        )
       ],
       child: MaterialApp(
           localizationsDelegates: const [
@@ -37,12 +46,15 @@ class MyApp extends StatelessWidget {
           title: 'Flutter Demo',
           builder: EasyLoading.init(),
           theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFffffff)),
-          initialRoute: "/loginPage",
+          initialRoute: "/",
           onGenerateRoute: (settings) {
             var routes = {
-              "/": (context) => const MyHomePage(),
+              "/": (context) => const BottomNavigation(),
               "/loginPage": (context) => const LoginPage(),
               "/profilePage": (context) => const ProfilePage(),
+              "/myhomepage": (context) => const MyHomePage(),
+              "/bottomnavigation": (context) => const BottomNavigation(),
+              "/categoryPage": (context) => const CategoriesPage(),
               "/test": (context) => const MyWidget(),
               // "/resetPassword": (context) => const resetPasswordPage(),
               // "/fordotPassword": (context) => const ForgotPaswwordPage(),
@@ -50,6 +62,117 @@ class MyApp extends StatelessWidget {
             WidgetBuilder builder = routes[settings.name]!;
             return MaterialPageRoute(builder: (ctx) => builder(ctx));
           }),
+    );
+  }
+}
+
+class BottomNavigation extends StatefulWidget {
+  const BottomNavigation({super.key});
+
+  @override
+  State<BottomNavigation> createState() => _BottomNavigationState();
+}
+
+class _BottomNavigationState extends State<BottomNavigation> {
+  List pages = [
+    const MyHomePage(),
+    const CategoriesPage(),
+    const SplashScreen(),
+    const MyWidget(),
+  ];
+  int currentIndex = 0;
+  void onTap(int index) {
+    setState(() {
+      currentIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: pages[currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        unselectedLabelStyle:
+            const TextStyle(fontSize: 15, color: Colors.black),
+        selectedLabelStyle:
+            const TextStyle(fontSize: 15, color: Color(0xFF222766)),
+        showUnselectedLabels: true,
+        unselectedItemColor: Colors.grey,
+        selectedItemColor: const Color(0xFF222766),
+
+        //type: BottomNavigationBarType.shifting,طريقة الكبسة
+        onTap: onTap,
+        currentIndex: currentIndex,
+        // elevation: 0,الخط الفوق
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+            ),
+            label: "home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.category,
+            ),
+            label: "الاقسام",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+            ),
+            label: "profile",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+            ),
+            label: "logout",
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    _checkLogin();
+  }
+
+  _checkLogin() async {
+    Future.delayed(const Duration(milliseconds: 700), () async {
+      bool exists =
+          await const FlutterSecureStorage().containsKey(key: "token");
+
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => exists ? ProfilePage() : LoginPage(),
+          ));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: SizedBox(
+          width: 80,
+          height: 80,
+          child: CircularProgressIndicator(),
+        ),
+      ),
     );
   }
 }
@@ -62,39 +185,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    // var productProvider = Provider.of<ProductProvider>(context, listen: false);
+    // List<ProductModel> products = productProvider.products;
     return Scaffold(
-      appBar: AppBar(
-          //title: Text(widget.title),
-          ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        appBar: AppBar(
+          title: Text("products"),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
+        body: DesignProductsPage());
   }
 }

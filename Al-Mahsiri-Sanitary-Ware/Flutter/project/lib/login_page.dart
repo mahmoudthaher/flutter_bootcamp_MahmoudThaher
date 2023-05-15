@@ -7,7 +7,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project/Providers/user_provider.dart';
 import 'package:project/controllers/api_helper.dart';
 import 'package:project/controllers/user_controller.dart';
+import 'package:project/main.dart';
 import 'package:project/models/user_model.dart';
+import 'package:project/profile_page.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -24,6 +26,20 @@ class _LoginPageState extends State<LoginPage> {
   bool enable = false;
   final passwordController = TextEditingController();
   final loginController = TextEditingController();
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _checkLogin();
+  // }
+
+  // _checkLogin() async {
+  //   bool exists = await FlutterSecureStorage().containsKey(key: "token");
+  //   if (exists) {
+  //     Navigator.pushReplacementNamed(context, "/profilePage");
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     var userProvider = Provider.of<UserProvider>(context);
@@ -49,7 +65,9 @@ class _LoginPageState extends State<LoginPage> {
                         highlightColor: Colors.transparent,
                       ),
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, "/bottomnavigation");
+                        },
                         child: const Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 30),
@@ -64,10 +82,9 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
                 Column(
-                  children: const [
-                    Image(
-                      image: AssetImage('assets/images/login_page/login.png'),
-                    ),
+                  children: [
+                    Image.network(
+                        "https://mahmoud.nyc3.cdn.digitaloceanspaces.com/picture/login.png")
                   ],
                 ),
                 Row(
@@ -210,13 +227,15 @@ class _LoginPageState extends State<LoginPage> {
                                       emailController.text,
                                       passwordController.text))
                                   .then((value) {
-                                informationUser(userProvider.login(
-                                        emailController.text,
-                                        passwordController.text))
+                                UserController()
+                                    .informationUser(
+                                        userProvider.login(emailController.text,
+                                            passwordController.text),
+                                        context)
                                     .then((value) {
                                   Navigator.pushReplacementNamed(
                                     context,
-                                    "/test",
+                                    "/bottomnavigation",
                                   );
                                 }).catchError((ex) {
                                   print(ex);
@@ -296,6 +315,13 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+                Row(
+                  children: const [
+                    SizedBox(
+                      height: 30,
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -304,14 +330,17 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> informationUser(UserModel user) async {
-    try {
-      dynamic jsonObject = await ApiHelper()
-          .postRequest("api/Users/informationUser", user.toJsonLogin());
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      userProvider.user = UserModel.fromJson(jsonObject[0]);
-    } catch (ex) {
-      rethrow;
-    }
-  }
+  // Future<void> informationUser(UserModel user) async {
+  //   try {
+  //     dynamic jsonObject = await ApiHelper()
+  //         .postRequest("api/Users/informationUser", user.toJsonLogin());
+  //     String password = jsonObject[0]["password"];
+  //     String email = jsonObject[0]["email"];
+
+  //     final userProvider = Provider.of<UserProvider>(context, listen: false);
+  //     userProvider.user = UserModel.fromJson(jsonObject[0]);
+  //   } catch (ex) {
+  //     rethrow;
+  //   }
+  // }
 }

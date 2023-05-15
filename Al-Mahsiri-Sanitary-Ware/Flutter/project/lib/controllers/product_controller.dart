@@ -4,11 +4,26 @@ import 'package:project/models/product_model.dart';
 class ProductController {
   Future<List<ProductModel>> getProducts() async {
     try {
-      dynamic jsonObject = await ApiHelper().getRequest("api/Products");
+      dynamic jsonObject = await ApiHelper().getRequest2("api/Products");
+      List<ProductModel> products = [];
+      jsonObject["data"]
+          .forEach((v) => {products.add(ProductModel.fromJson(v))});
+      return products;
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  Future<List<ProductModel>> getProductByCategoryId(int categoryId) async {
+    try {
+      dynamic jsonObject =
+          await ApiHelper().getRequest2("api/Products/$categoryId");
+      print(categoryId);
       List<ProductModel> products = [];
       jsonObject.forEach((v) => {products.add(ProductModel.fromJson(v))});
       return products;
     } catch (ex) {
+      print(ex);
       rethrow;
     }
   }

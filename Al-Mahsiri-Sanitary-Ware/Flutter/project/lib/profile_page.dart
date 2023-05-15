@@ -1,12 +1,12 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project/Providers/city_provider.dart';
 import 'package:project/Providers/user_provider.dart';
 import 'package:project/controllers/api_helper.dart';
 import 'package:project/controllers/user_controller.dart';
 import 'package:project/models/city_model.dart';
-import 'package:project/models/user_model.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -20,14 +20,24 @@ class ProfilePage extends StatefulWidget {
 enum SingingCharacter { Male, Female }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final storage = FlutterSecureStorage();
+
+  bool _isLoggedIn = false;
+  String? idUser;
+  String? phoneNumber2;
+  String? userName2;
+  String? email2;
+
   int checkemail = 0;
   int checkphoneNumber = 0;
   int checkuserName = 0;
+
   //UserModel? user;
   int? selectedName;
   int? checkgender;
   String? cityname;
   SingingCharacter? _character = SingingCharacter.Male;
+
   final dateController = TextEditingController();
   bool obscureText = false;
   bool obscureText2 = false;
@@ -55,25 +65,41 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     var provider = Provider.of<CityProvider>(context, listen: false);
-    var userProvider = Provider.of<UserProvider>(context, listen: false);
     provider.getAllCities();
-    if (userProvider.user?.id != null) {
-      firstnameController.text = userProvider.user?.firstName ?? "";
-      lastnameController.text = userProvider.user?.lastName ?? "";
-      phoneNumberController.text = userProvider.user?.phoneNumber ?? "";
-      emailController.text = userProvider.user?.email ?? "";
-      userNameController.text = userProvider.user?.username ?? "";
-      addressController.text = userProvider.user?.address ?? "";
-      selectedName = int.parse(userProvider.user?.city ?? "");
-      int checkgender = int.parse(userProvider.user?.gender ?? "");
-      if (checkgender == 1) {
-        _character = SingingCharacter.Male;
-      } else {
-        _character = SingingCharacter.Female;
-      }
-      passwordController.text = userProvider.user?.password ?? "";
-      repasswordController.text = userProvider.user?.password ?? "";
-    }
+    _checkLogin().then(
+      (isLoggedIn) {
+        setState(
+          () {
+            _isLoggedIn = isLoggedIn;
+            if (_isLoggedIn) {
+              EasyLoading.dismiss();
+              EasyLoading.show(status: "Loading");
+              _showUserInfo();
+              EasyLoading.dismiss();
+              EasyLoading.showSuccess("تسطيع هنا تحديث معلوماتك");
+
+              // FutureBuilder(
+              //   future: _showUserInfo(),
+              //   builder: (context, snapshot) {
+              //     if (snapshot.connectionState == ConnectionState.waiting) {
+              //       return const Center(
+              //           child: SizedBox(
+              //               width: 80,
+              //               height: 80,
+              //               child: CircularProgressIndicator()));
+              //     }
+              //     if (snapshot.connectionState == ConnectionState.done) {
+              //       EasyLoading.dismiss();
+              //       EasyLoading.showSuccess("تسطيع هنا تحديث معلوماتك");
+              //     }
+              //     return Container();
+              //   },
+              // );
+            }
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -111,13 +137,23 @@ class _ProfilePageState extends State<ProfilePage> {
                         onTap: () {
                           Navigator.pushNamed(context, '/loginPage');
                         },
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 30),
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            size: 33,
-                            color: Color(0xFF1b0f0b),
+                          child: InkWell(
+                            child: const Icon(
+                              Icons.arrow_back_ios,
+                              size: 33,
+                              color: Color(0xFF1b0f0b),
+                            ),
+                            onTap: () {
+                              if (_isLoggedIn == false) {
+                                Navigator.pushNamed(context, "/loginPage");
+                              } else {
+                                Navigator.pushNamed(
+                                    context, "/bottomnavigation");
+                              }
+                            },
                           ),
                         ),
                       ),
@@ -231,12 +267,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         return "الرجاء إدخال رقم الهاتف";
                       } else if (!validateJordanianPhoneNumber(value)) {
                         return " الرجاء إدخال رقم الهاتف بطريقة صحيحة 07xxxxxxxx";
-                      } else if (userProvider.user?.id == null &&
+                      } else if (_isLoggedIn == false &&
                           checkphoneNumber == 1) {
                         return "رقم الهاتف موجود مسبقا";
-                      } else if (userProvider.user?.id != null &&
-                          phoneNumberController.text !=
-                              userProvider.user?.phoneNumber) {
+                      } else if (_isLoggedIn &&
+                          phoneNumberController.text != phoneNumber2) {
                         if (checkphoneNumber == 1) {
                           return "رقم الهاتف موجود مسبقا";
                         }
@@ -278,11 +313,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         return "الرجاء إدخال البريد الإلكتروني";
                       } else if (!EmailValidator.validate(value)) {
                         return "الرجاء إدخال البريد الإلكتروني بطريقة صحيحة";
-                      } else if (userProvider.user?.id == null &&
-                          checkemail == 1) {
+                      } else if (_isLoggedIn == false && checkemail == 1) {
                         return "الايميل موجود مسبقا";
-                      } else if (userProvider.user?.id != null &&
-                          emailController.text != userProvider.user?.email) {
+                      } else if (_isLoggedIn &&
+                          emailController.text != email2) {
                         if (checkemail == 1) {
                           return "الايميل موجود مسبقا";
                         }
@@ -322,12 +356,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       checkUserName();
                       if (value == null || value.isEmpty) {
                         return "الرجاء إدخال إسم المستخدم";
-                      } else if (userProvider.user?.id == null &&
-                          checkuserName == 1) {
+                      } else if (_isLoggedIn == false && checkuserName == 1) {
                         return "إسم المستخدم موجود مسبقا";
-                      } else if (userProvider.user?.id != null &&
-                          phoneNumberController.text !=
-                              userProvider.user?.phoneNumber) {
+                      } else if (_isLoggedIn &&
+                          phoneNumberController.text != phoneNumber2) {
                         if (checkuserName == 1) {
                           return "إسم المستخدم موجود مسبقا";
                         } else if (value.length < 8) {
@@ -583,7 +615,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       onPressed: () {
                         if (mounted) {
                           setState(() {
-                            if (userProvider.user?.id == null &&
+                            if (_isLoggedIn == false &&
                                 _keyForm.currentState!.validate()) {
                               try {
                                 _keyForm.currentState!.save();
@@ -607,13 +639,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                           emailController.text,
                                           passwordController.text))
                                       .then((value) {
-                                    informationUser(userProvider.login(
-                                            emailController.text,
-                                            passwordController.text))
+                                    UserController()
+                                        .informationUser(
+                                            userProvider.login(
+                                                emailController.text,
+                                                passwordController.text),
+                                            context)
                                         .then((value) {
                                       Navigator.pushReplacementNamed(
                                         context,
-                                        "/test",
+                                        "/bottomnavigation",
                                       );
                                     }).catchError((ex) {
                                       print("1$ex");
@@ -625,19 +660,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                   print("3$ex");
                                 });
                                 EasyLoading.dismiss();
-                                EasyLoading.showSuccess("done");
+                                EasyLoading.showSuccess("تم تسجيل الحساب");
                               } catch (error) {
                                 EasyLoading.dismiss();
                                 EasyLoading.showError(error.toString());
                               }
-                            } else if (userProvider.user?.id != null &&
+                            } else if (_isLoggedIn &&
                                 _keyForm.currentState!.validate()) {
                               try {
                                 _keyForm.currentState!.save();
                                 EasyLoading.show(status: "Loading");
                                 UserController()
                                     .update(userProvider.profileUser(
-                                        userProvider.user?.id ?? "",
+                                        idUser!,
                                         firstnameController.text,
                                         lastnameController.text,
                                         phoneNumberController.text,
@@ -649,13 +684,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                         1.toString(),
                                         passwordController.text))
                                     .then((value) {
-                                  informationUser(userProvider.login(
-                                          emailController.text,
-                                          passwordController.text))
+                                  UserController()
+                                      .informationUser(
+                                          userProvider.login(
+                                              emailController.text,
+                                              passwordController.text),
+                                          context)
                                       .then((value) {
                                     Navigator.pushReplacementNamed(
                                       context,
-                                      "/test",
+                                      "/bottomnavigation",
                                     );
                                   }).catchError((ex) {
                                     print("1$ex");
@@ -664,7 +702,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   print("2$ex");
                                 });
                                 EasyLoading.dismiss();
-                                EasyLoading.showSuccess("done");
+                                EasyLoading.showSuccess(
+                                    "تم تحديث معلومات الحساب");
                               } catch (error) {
                                 EasyLoading.dismiss();
                                 EasyLoading.showError(error.toString());
@@ -729,14 +768,53 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> informationUser(UserModel user) async {
-    try {
-      dynamic jsonObject = await ApiHelper()
-          .postRequest("api/Users/informationUser", user.toJsonLogin());
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      userProvider.user = UserModel.fromJson(jsonObject[0]);
-    } catch (ex) {
-      rethrow;
+  Future<void> _showUserInfo() async {
+    String? id = await storage.read(key: 'id');
+    String? fistName = await storage.read(key: 'fistName');
+    String? lastName = await storage.read(key: 'lastName');
+    String? phoneNumber = await storage.read(key: 'phoneNumber');
+    String? email = await storage.read(key: 'email');
+    String? userName = await storage.read(key: 'userName');
+    String? password = await storage.read(key: 'password');
+    String? address = await storage.read(key: 'address');
+    String? genderId = await storage.read(key: 'genderId');
+    //String? typeId = await storage.read(key: 'typeId');
+    String? cityId = await storage.read(key: 'cityId');
+    print(cityId.toString());
+    idUser = id;
+    phoneNumber2 = phoneNumber;
+    email2 = email;
+    userName2 = userName;
+    firstnameController.text = fistName!;
+    lastnameController.text = lastName!;
+    phoneNumberController.text = phoneNumber!;
+    emailController.text = email!;
+    userNameController.text = userName!;
+    addressController.text = address!;
+    selectedName = int.parse(cityId!);
+    int checkgender = int.parse(genderId!);
+    if (checkgender == 1) {
+      _character = SingingCharacter.Male;
+    } else {
+      _character = SingingCharacter.Female;
     }
+    passwordController.text = password!;
+    repasswordController.text = password;
   }
+
+  Future<bool> _checkLogin() async {
+    final hasToken = await storage.containsKey(key: "token");
+    return hasToken;
+  }
+
+  // Future<void> informationUser(UserModel user) async {
+  //   try {
+  //     dynamic jsonObject = await ApiHelper()
+  //         .postRequest("api/Users/informationUser", user.toJsonLogin());
+  //     final userProvider = Provider.of<UserProvider>(context, listen: false);
+  //     userProvider.user = UserModel.fromJson(jsonObject[0]);
+  //   } catch (ex) {
+  //     rethrow;
+  //   }
+  // }
 }
