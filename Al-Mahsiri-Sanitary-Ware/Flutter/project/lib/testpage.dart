@@ -27,11 +27,9 @@ class _MyWidgetState extends State<MyWidget> {
           Text(userProvider.user?.firstName ?? ""),
           ElevatedButton(
               onPressed: () async {
-                var userProvider =
-                    Provider.of<UserProvider>(context, listen: false);
                 FlutterSecureStorage storage = const FlutterSecureStorage();
                 await storage.deleteAll();
-                userProvider.user = null;
+
                 Navigator.pushReplacementNamed(
                   context,
                   "/bottomnavigation",

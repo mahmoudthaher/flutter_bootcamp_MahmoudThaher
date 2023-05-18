@@ -1,13 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:project/Providers/product_provider.dart';
 import 'package:project/controllers/product_controller.dart';
 import 'package:project/models/product_model.dart';
+import 'package:provider/provider.dart';
 
 class DesignProductsPage extends StatefulWidget {
-  const DesignProductsPage({super.key});
-
+  DesignProductsPage({super.key, required this.future});
+  Future<List<ProductModel>>? future;
   @override
   State<DesignProductsPage> createState() => _DesignProductsPageState();
 }
@@ -15,8 +15,12 @@ class DesignProductsPage extends StatefulWidget {
 class _DesignProductsPageState extends State<DesignProductsPage> {
   @override
   Widget build(BuildContext context) {
+    return newMethod();
+  }
+
+  FutureBuilder<List<ProductModel>> newMethod() {
     return FutureBuilder(
-      future: ProductController().getProducts(),
+      future: widget.future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -84,7 +88,7 @@ class _DesignProductsPageState extends State<DesignProductsPage> {
                         Container(
                           margin: const EdgeInsets.only(right: 10),
                           child: Text(
-                            "${product.price.toString()} دينار اردني",
+                            "${product.finalPrice.toStringAsFixed(2)} دينار اردني",
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 18),
                           ),
@@ -110,7 +114,11 @@ class _DesignProductsPageState extends State<DesignProductsPage> {
                                   height: 40,
                                   child: Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        setState(() {
+                                          product.selectedQty++;
+                                        });
+                                      },
                                       child: const Text(
                                         "+",
                                         style: TextStyle(
@@ -124,7 +132,8 @@ class _DesignProductsPageState extends State<DesignProductsPage> {
                               ),
                               Expanded(
                                 flex: 3,
-                                child: Text(""),
+                                child: Center(
+                                    child: Text("${product.selectedQty}")),
                               ),
                               Expanded(
                                 flex: 2,
@@ -136,7 +145,13 @@ class _DesignProductsPageState extends State<DesignProductsPage> {
                                   height: 40,
                                   child: Center(
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        setState(() {
+                                          if (product.selectedQty > 0) {
+                                            product.selectedQty--;
+                                          }
+                                        });
+                                      },
                                       child: const Text(
                                         "-",
                                         style: TextStyle(
@@ -170,7 +185,21 @@ class _DesignProductsPageState extends State<DesignProductsPage> {
                                   ),
                                   backgroundColor: Color(0xFF222766)),
                               onPressed: () {
-                                //  Navigator.pushNamed(context, '/profilePage');
+                                if (product.selectedQty > 0) {
+                                  var productProvider =
+                                      Provider.of<ProductProvider>(context,
+                                          listen: false);
+
+                                  productProvider.addToCart(product);
+                                  EasyLoading.dismiss();
+                                  EasyLoading.showSuccess(
+                                      "تم الاضافة الى السلة");
+                                  // Navigator.pop(context);
+                                } else {
+                                  EasyLoading.dismiss();
+                                  EasyLoading.showError(
+                                      "الرجاء اختيار الكمية التي تريدها");
+                                }
                               },
                               child: const Text(
                                 'أضف للسلة',

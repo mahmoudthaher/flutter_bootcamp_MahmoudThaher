@@ -108,6 +108,38 @@ class _ProfilePageState extends State<ProfilePage> {
     var userProvider = Provider.of<UserProvider>(context);
     List<CityModel> cities = provider.cities;
     return Scaffold(
+      appBar: AppBar(
+          actions: [
+            Row(
+              children: [
+                Text('لتسجيل خروج انقر هنا'),
+                IconButton(
+                  onPressed: () async {
+                    FlutterSecureStorage storage = const FlutterSecureStorage();
+                    await storage.deleteAll();
+
+                    Navigator.pushReplacementNamed(
+                      context,
+                      "/bottomnavigation",
+                    );
+                    EasyLoading.dismiss();
+                    EasyLoading.showSuccess("تم تسجيل الخروج بنجاح");
+                  },
+                  icon: Icon(Icons.logout),
+                ),
+              ],
+            )
+          ],
+          leading: IconButton(
+            onPressed: () {
+              if (_isLoggedIn == false) {
+                Navigator.pushNamed(context, "/loginPage");
+              } else {
+                Navigator.pushNamed(context, "/bottomnavigation");
+              }
+            },
+            icon: Icon(Icons.arrow_back),
+          )),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Form(
@@ -123,44 +155,44 @@ class _ProfilePageState extends State<ProfilePage> {
             // },
             child: Column(
               children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    Theme(
-                      data: ThemeData(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/loginPage');
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 30),
-                          child: InkWell(
-                            child: const Icon(
-                              Icons.arrow_back_ios,
-                              size: 33,
-                              color: Color(0xFF1b0f0b),
-                            ),
-                            onTap: () {
-                              if (_isLoggedIn == false) {
-                                Navigator.pushNamed(context, "/loginPage");
-                              } else {
-                                Navigator.pushNamed(
-                                    context, "/bottomnavigation");
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                    Text('data22'),
-                  ],
-                ),
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                // Row(
+                //   children: [
+                //     Theme(
+                //       data: ThemeData(
+                //         splashColor: Colors.transparent,
+                //         highlightColor: Colors.transparent,
+                //       ),
+                //       child: InkWell(
+                //         onTap: () {
+                //           Navigator.pushNamed(context, '/loginPage');
+                //         },
+                //         child: Padding(
+                //           padding: const EdgeInsets.symmetric(
+                //               vertical: 10, horizontal: 30),
+                //           child: InkWell(
+                //             child: const Icon(
+                //               Icons.arrow_back_ios,
+                //               size: 33,
+                //               color: Color(0xFF1b0f0b),
+                //             ),
+                //             onTap: () {
+                //               if (_isLoggedIn == false) {
+                //                 Navigator.pushNamed(context, "/loginPage");
+                //               } else {
+                //                 Navigator.pushNamed(
+                //                     context, "/bottomnavigation");
+                //               }
+                //             },
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //     Text('data22'),
+                //   ],
+                // ),
                 const SizedBox(
                   height: 30,
                 ),

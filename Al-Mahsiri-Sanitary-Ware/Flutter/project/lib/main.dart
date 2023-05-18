@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project/Providers/city_provider.dart';
 import 'package:project/Providers/product_provider.dart';
 import 'package:project/Providers/user_provider.dart';
+import 'package:project/cart_page.dart';
 import 'package:project/category_page.dart';
 import 'package:project/controllers/product_controller.dart';
 import 'package:project/design_product_page.dart';
@@ -55,7 +56,7 @@ class MyApp extends StatelessWidget {
               "/myhomepage": (context) => const MyHomePage(),
               "/bottomnavigation": (context) => const BottomNavigation(),
               "/categoryPage": (context) => const CategoriesPage(),
-              "/test": (context) => const MyWidget(),
+              "/cartPage": (context) => const CartPage(),
               // "/resetPassword": (context) => const resetPasswordPage(),
               // "/fordotPassword": (context) => const ForgotPaswwordPage(),
             };
@@ -77,8 +78,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
   List pages = [
     const MyHomePage(),
     const CategoriesPage(),
+    const CartPage(),
     const SplashScreen(),
-    const MyWidget(),
   ];
   int currentIndex = 0;
   void onTap(int index) {
@@ -99,7 +100,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
         showUnselectedLabels: true,
         unselectedItemColor: Colors.grey,
         selectedItemColor: const Color(0xFF222766),
-
+        type: BottomNavigationBarType.fixed,
         //type: BottomNavigationBarType.shifting,طريقة الكبسة
         onTap: onTap,
         currentIndex: currentIndex,
@@ -109,7 +110,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
             icon: Icon(
               Icons.home,
             ),
-            label: "home",
+            label: "الرئيسة",
           ),
           BottomNavigationBarItem(
             icon: Icon(
@@ -119,15 +120,15 @@ class _BottomNavigationState extends State<BottomNavigation> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.home,
+              Icons.card_travel,
             ),
-            label: "profile",
+            label: "السلة",
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.home,
+              Icons.person_rounded,
             ),
-            label: "logout",
+            label: "حسابي",
           ),
         ],
       ),
@@ -193,6 +194,8 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text("products"),
         ),
-        body: DesignProductsPage());
+        body: DesignProductsPage(
+          future: ProductController().getProducts(),
+        ));
   }
 }

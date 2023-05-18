@@ -18,7 +18,6 @@ class ProductController {
     try {
       dynamic jsonObject =
           await ApiHelper().getRequest2("api/Products/$categoryId");
-      print(categoryId);
       List<ProductModel> products = [];
       jsonObject.forEach((v) => {products.add(ProductModel.fromJson(v))});
       return products;

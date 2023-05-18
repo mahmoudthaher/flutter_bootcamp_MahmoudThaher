@@ -8,7 +8,8 @@ class ProductModel {
   String? description;
   int categoryId;
   int? discountId;
-
+  int selectedQty = 0;
+  double tax = 16;
   ProductModel(
       {required this.id,
       required this.name,
@@ -18,6 +19,24 @@ class ProductModel {
       this.description,
       required this.categoryId,
       this.discountId});
+
+  double get finalPrice {
+    return price * (1 + (tax / 100));
+  }
+
+  double get subTotal {
+    return price * selectedQty;
+  }
+
+  double get taxAmount {
+    return (price * (tax / 100)) * selectedQty;
+  }
+
+  double get total {
+    return (price * (1 + (tax / 100))) * selectedQty;
+  }
+
+  double get total2 => price * selectedQty;
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
@@ -31,4 +50,11 @@ class ProductModel {
       discountId: json["discount_id"],
     );
   }
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "product_id": id,
+        "qty": selectedQty,
+        "price": price,
+        "total": total,
+      };
 }
