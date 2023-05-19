@@ -2,7 +2,6 @@ class ProductModel {
   int id;
   String name;
   double price;
-
   int quantityInStock;
   String image;
   String? description;

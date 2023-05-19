@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:project/Providers/category_provider.dart';
 import 'package:project/Providers/city_provider.dart';
 import 'package:project/Providers/product_provider.dart';
 import 'package:project/Providers/user_provider.dart';
-import 'package:project/cart_page.dart';
-import 'package:project/category_page.dart';
-import 'package:project/controllers/product_controller.dart';
-import 'package:project/design_product_page.dart';
-import 'package:project/login_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:project/models/product_model.dart';
-import 'package:project/profile_page.dart';
-import 'package:project/testpage.dart';
+import 'package:project/views/cart_page.dart';
+import 'package:project/views/category_page.dart';
+import 'package:project/views/login_page.dart';
+import 'package:project/views/profile_page.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -33,6 +30,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => ProductProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => CategoryProvider(),
         )
       ],
       child: MaterialApp(
@@ -188,14 +188,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    // var productProvider = Provider.of<ProductProvider>(context, listen: false);
-    // List<ProductModel> products = productProvider.products;
     return Scaffold(
-        appBar: AppBar(
-          title: Text("products"),
-        ),
-        body: DesignProductsPage(
-          future: ProductController().getProducts(),
-        ));
+      appBar: AppBar(
+        title: Text("products"),
+      ),
+      // body: DesignProductsPage(
+      //   future: ProductController().getProducts(),
+      // ),
+    );
   }
 }

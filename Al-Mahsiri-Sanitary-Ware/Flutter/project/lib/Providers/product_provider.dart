@@ -6,6 +6,7 @@ import 'package:project/controllers/product_controller.dart';
 
 class ProductProvider with ChangeNotifier {
   List<ProductModel> products = [];
+  ProductModel? products2;
 
   //ProductModel? products2;
   int id = 1;
@@ -16,7 +17,7 @@ class ProductProvider with ChangeNotifier {
   double subTotal = 0;
   AddressModel? address;
   final keyForm = GlobalKey<FormState>();
-  int paymentMethod = 1;
+  int? paymentMethod;
 
   addToCart(ProductModel product) {
     selectedProducts.add(product);
@@ -69,7 +70,6 @@ class ProductProvider with ChangeNotifier {
   getAllProductsByCategoryID() async {
     ProductController().getProductByCategoryId(id).then((result) {
       products = result;
-      print(id);
       notifyListeners();
     }).catchError((ex) {
       print(ex);

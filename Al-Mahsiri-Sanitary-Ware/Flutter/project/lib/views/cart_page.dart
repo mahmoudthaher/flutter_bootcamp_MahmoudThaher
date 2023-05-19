@@ -3,12 +3,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:project/Providers/product_provider.dart';
-import 'package:project/add_to_cart_widget.dart';
 import 'package:project/controllers/location_controller.dart';
-import 'package:project/login_page.dart';
 import 'package:project/models/product_model.dart';
-import 'package:project/order_checkout_page.dart';
-import 'package:project/summery_widget.dart';
+import 'package:project/views/order_checkout_page.dart';
+import 'package:project/views/summery_widget.dart';
 import 'package:provider/provider.dart';
 
 class CartPage extends StatefulWidget {

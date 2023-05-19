@@ -8,7 +8,7 @@ import 'package:project/Providers/product_provider.dart';
 import 'package:project/controllers/order_controller.dart';
 import 'package:project/models/address_model.dart';
 import 'package:project/models/order.dart';
-import 'package:project/summery_widget.dart';
+import 'package:project/views/summery_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
@@ -26,6 +26,9 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
+    resizeToAvoidBottomPadding:
+    false;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Summery'),
@@ -102,7 +105,7 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
                 .create(Order(
                     products: productProvider.selectedProducts,
                     address: productProvider.address!,
-                    paymentMethodId: productProvider.paymentMethod,
+                    paymentMethodId: productProvider.paymentMethod!,
                     total: productProvider.total,
                     taxAmount: productProvider.taxAmount,
                     subTotal: productProvider.subTotal))
@@ -287,6 +290,9 @@ class AddressFormStep extends StatelessWidget {
             children: [
               TextFormField(
                 controller: _controllerCountry,
+                onChanged: (value) {
+                  productProvier.address!.country = value;
+                },
                 decoration: InputDecoration(hintText: "Country "),
                 validator: (text) {
                   if (text == null || text.isEmpty) {
@@ -297,6 +303,9 @@ class AddressFormStep extends StatelessWidget {
               ),
               TextFormField(
                 controller: _controllerCity,
+                onChanged: (value) {
+                  productProvier.address!.city = value;
+                },
                 decoration: InputDecoration(hintText: "City "),
                 validator: (text) {
                   if (text == null || text.isEmpty) {
@@ -320,6 +329,9 @@ class AddressFormStep extends StatelessWidget {
               ),
               TextFormField(
                 controller: _controllerStreet,
+                onChanged: (value) {
+                  productProvier.address!.street = value;
+                },
                 decoration: InputDecoration(hintText: "Street "),
                 validator: (text) {
                   if (text == null || text.isEmpty) {
@@ -404,16 +416,18 @@ class SummeryStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ProductProvider productProvier, child) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(
-          "Summery",
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 20),
-        _addressWidget(productProvier),
-        const SizedBox(height: 20),
-        SummeryWidget()
-      ]);
+      return SingleChildScrollView(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(
+            "Summery",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 20),
+          _addressWidget(productProvier),
+          const SizedBox(height: 20),
+          SummeryWidget()
+        ]),
+      );
     });
   }
 }

@@ -1,15 +1,8 @@
-import 'dart:io';
-
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project/Providers/user_provider.dart';
-import 'package:project/controllers/api_helper.dart';
 import 'package:project/controllers/user_controller.dart';
-import 'package:project/main.dart';
-import 'package:project/models/user_model.dart';
-import 'package:project/profile_page.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -329,18 +322,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-  // Future<void> informationUser(UserModel user) async {
-  //   try {
-  //     dynamic jsonObject = await ApiHelper()
-  //         .postRequest("api/Users/informationUser", user.toJsonLogin());
-  //     String password = jsonObject[0]["password"];
-  //     String email = jsonObject[0]["email"];
-
-  //     final userProvider = Provider.of<UserProvider>(context, listen: false);
-  //     userProvider.user = UserModel.fromJson(jsonObject[0]);
-  //   } catch (ex) {
-  //     rethrow;
-  //   }
-  // }
 }
