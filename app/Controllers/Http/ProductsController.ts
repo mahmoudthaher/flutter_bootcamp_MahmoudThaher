@@ -4,13 +4,13 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Product from 'App/Models/Product';
 export default class ProductsController {
     public async getAll(ctx: HttpContextContract) {
-        const token = await ctx.auth.authenticate();
+        
         var name = ctx.request.input("name");
         var categoryId = ctx.request.input("category_id");
         var discountId = ctx.request.input("discount_id");
         var query = Product.query().preload('category').preload('discount');
         const page = ctx.request.input('page', 1)
-        const limit = 10
+        const limit = 100
         if (name) {
             return query.where("name", name).paginate(page, limit);
         }
@@ -23,9 +23,9 @@ export default class ProductsController {
         else
             return await query.paginate(page, limit);
     }
-    public async getById(ctx: HttpContextContract) {
-        var id = ctx.params.id;
-        var result = await Product.query().preload('category').preload('discount').where('id', id);
+    public async getBycategoryId(ctx: HttpContextContract) {
+        var categoryId = ctx.params.categoryId;
+        var result = await Product.query().preload('category').preload('discount').where('category_id', categoryId);
         return result;
     }
     public async create(ctx: HttpContextContract) {
@@ -37,7 +37,7 @@ export default class ProductsController {
                     column: 'name',
                 })
             ]),
-            description: schema.string(),
+            //description: schema.string(),
             price: schema.number(),
             quantity_in_stock: schema.number(),
             image: schema.string(),
@@ -49,7 +49,7 @@ export default class ProductsController {
             messages: {
                 'name.required': I18n.locale('ar').formatMessage('products.nameIsRequired'),
                 'name.unique': I18n.locale('ar').formatMessage('products.name.unique'),
-                'description.required': I18n.locale('ar').formatMessage('products.descriptionIsRequired'),
+                //'description.required': I18n.locale('ar').formatMessage('products.descriptionIsRequired'),
                 'price.required': I18n.locale('ar').formatMessage('products.priceIsRequired'),
                 'price.number': I18n.locale('ar').formatMessage('products.price.number'),
                 'quantity_in_stock.required': I18n.locale('ar').formatMessage('products.quantityInStockIsRequired'),
@@ -61,7 +61,7 @@ export default class ProductsController {
         const fields2 = ctx.request.all();
         var product = new Product();
         product.name = fields.name;
-        product.description = fields.description;
+        //product.description = fields.description;
         product.price = fields.price;
         product.quantityInStock = fields.quantity_in_stock;
         product.image = fields.image;
@@ -75,7 +75,7 @@ export default class ProductsController {
         const newSchema = schema.create({
             id: schema.number(),
             name: schema.string(),
-            description: schema.string(),
+            //description: schema.string(),
             price: schema.number(),
             quantity_in_stock: schema.number(),
             image: schema.string(),
@@ -87,7 +87,7 @@ export default class ProductsController {
             schema: newSchema,
             messages: {
                 'name.required': I18n.locale('ar').formatMessage('products.nameIsRequired'),
-                'description.required': I18n.locale('ar').formatMessage('products.descriptionIsRequired'),
+                //'description.required': I18n.locale('ar').formatMessage('products.descriptionIsRequired'),
                 'price.required': I18n.locale('ar').formatMessage('products.priceIsRequired'),
                 'price.number': I18n.locale('ar').formatMessage('products.price.number'),
                 'quantity_in_stock.required': I18n.locale('ar').formatMessage('products.quantityInStockIsRequired'),
@@ -107,7 +107,7 @@ export default class ProductsController {
                 return { message: 'name is already in use. ' };
             } catch (error) { }
             product.name = fields.name;
-            product.description = fields.description;
+            //product.description = fields.description;
             product.price = fields.price;
             product.quantityInStock = fields.quantity_in_stock;
             product.image = fields.image;

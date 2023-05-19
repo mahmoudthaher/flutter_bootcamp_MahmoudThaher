@@ -10,8 +10,8 @@ export default class Product extends BaseModel {
   @column({ serializeAs: 'name' })
   public name: string
 
-  @column({ serializeAs: 'description' })
-  public description: string
+  // @column({ serializeAs: 'description' })
+  // public description: string
 
   @column({ serializeAs: 'price' })
   public price: number

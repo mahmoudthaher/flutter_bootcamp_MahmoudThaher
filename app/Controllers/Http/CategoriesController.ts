@@ -4,7 +4,6 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Category from 'App/Models/Category';
 export default class CategoriesController {
     public async getAll(ctx: HttpContextContract) {
-        const token = await ctx.auth.authenticate();
         var category = ctx.request.input("category");
         var query = Category.query();
         const page = ctx.request.input('page', 1)
@@ -13,7 +12,7 @@ export default class CategoriesController {
             return query.where("category", category).paginate(page, limit);
         }
         else
-            return query.paginate(page, limit);
+            return query.whereNot("id",8).paginate(page, limit);
     }
     public async getById(ctx: HttpContextContract) {
         var id = ctx.params.id;

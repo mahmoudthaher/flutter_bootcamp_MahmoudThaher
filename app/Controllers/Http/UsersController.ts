@@ -2,7 +2,6 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import User from 'App/Models/User';
 import I18n from '@ioc:Adonis/Addons/I18n'
-import Database from '@ioc:Adonis/Lucid/Database';
 export default class UsersController {
     public async getAll(ctx: HttpContextContract) {
         const token = await ctx.auth.authenticate();

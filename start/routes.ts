@@ -57,7 +57,7 @@ Route.group(() => {
     Route.delete("/:id", "PaymentsController.destory");
   }).prefix("/Payments");
   Route.group(() => {
-    Route.get("/:id", "ProductsController.getById");
+    Route.get("/:categoryId", "ProductsController.getBycategoryId");
     Route.get("/", "ProductsController.getAll");
     Route.post("/", "ProductsController.create");
     Route.put("/", "ProductsController.update");
