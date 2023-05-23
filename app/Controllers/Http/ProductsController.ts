@@ -4,7 +4,7 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Product from 'App/Models/Product';
 export default class ProductsController {
     public async getAll(ctx: HttpContextContract) {
-        
+
         var name = ctx.request.input("name");
         var categoryId = ctx.request.input("category_id");
         var discountId = ctx.request.input("discount_id");
@@ -28,6 +28,18 @@ export default class ProductsController {
         var result = await Product.query().preload('category').preload('discount').where('category_id', categoryId);
         return result;
     }
+    public async fliterProduct(ctx: HttpContextContract) {
+        try {
+            var name = decodeURIComponent(ctx.params.name);
+            var result = await Product.query().preload('category').preload('discount')
+                .where('name', 'LIKE', `%${name}%`);
+            return result;
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
     public async create(ctx: HttpContextContract) {
 
         const newSchema = schema.create({

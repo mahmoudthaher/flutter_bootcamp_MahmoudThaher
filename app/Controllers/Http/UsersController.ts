@@ -66,11 +66,19 @@ export default class UsersController {
     }
 
     public async informationUser(ctx: HttpContextContract) {
-        var object = ctx.request.all();
-        var email = object.email;
-        var password = object.password;
-        var result = await User.query().where('email',email).orWhere('password',password);
-        return result;
+        try {
+            var email = ctx.params.email;
+        var result = User.query().where("email",email);
+       return result;
+        } catch (error) {
+            console.log(error)
+        }
+        
+        // var object = ctx.request.all();
+        // var email = object.email;
+        // //var password = object.password;
+        // var result = await User.query().where('email',email)//.orWhere('password',password);
+        // return result;
     }
 
     public async logout(ctx: HttpContextContract) {

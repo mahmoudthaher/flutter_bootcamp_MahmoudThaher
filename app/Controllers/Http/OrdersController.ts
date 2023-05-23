@@ -26,10 +26,11 @@ export default class OrdersController {
             return await query.paginate(page, limit);
     }
     public async getById(ctx: HttpContextContract) {
-        var id = ctx.params.id;
-        var result = await Order.query().preload('product').preload('status').preload('user').where('id',id);
+        var userId = ctx.params.userId;
+        var result = await Order.query().preload('status').preload('user').where('user_id',userId).orderBy('id',"desc");
         return result;
     }
+    
     public async create({ request, response, auth }: HttpContextContract) {
 
         try {

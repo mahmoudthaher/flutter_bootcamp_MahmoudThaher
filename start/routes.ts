@@ -43,12 +43,15 @@ Route.group(() => {
     Route.delete("/:id", "GendersController.destory");
   }).prefix("/Genders");
   Route.group(() => {
-    Route.get("/:id", "OrdersController.getById");
+    Route.get("/:userId", "OrdersController.getById");
     Route.get("/", "OrdersController.getAll");
     Route.post("/", "OrdersController.create");
     Route.put("/", "OrdersController.update");
     Route.delete("/:id", "OrdersController.destory");
   }).prefix("/Orders");
+  Route.group(() => {
+    Route.get("/:orderId", "OrderProdutsController.getByOrderId");
+  }).prefix("/OrderProduts");
   Route.group(() => {
     Route.get("/:id", "PaymentsController.getById");
     Route.get("/", "PaymentsController.getAll");
@@ -57,6 +60,7 @@ Route.group(() => {
     Route.delete("/:id", "PaymentsController.destory");
   }).prefix("/Payments");
   Route.group(() => {
+    Route.get("/fliterProduct/:name", "ProductsController.fliterProduct");
     Route.get("/:categoryId", "ProductsController.getBycategoryId");
     Route.get("/", "ProductsController.getAll");
     Route.post("/", "ProductsController.create");
@@ -78,13 +82,13 @@ Route.group(() => {
     Route.delete("/:id", "TypesController.destory");
   }).prefix("/Types");
   Route.group(() => {
+    Route.get("/informationUser/:email", "UsersController.informationUser");
     Route.get("/username/:userName", "UsersController.checkUserName");
     Route.get("/phonenumber/:phoneNumber", "UsersController.checkPhoneNumber");
     Route.get("/email/:email", "UsersController.checkEmail");
     Route.get("/:id", "UsersController.getById");
     Route.get("/", "UsersController.getAll");
     Route.post("/login", "UsersController.login");
-    Route.post("/informationUser", "UsersController.informationUser");
     Route.post("/logout", "UsersController.logout");
     Route.post("/", "UsersController.create");
     Route.put("/", "UsersController.update");
