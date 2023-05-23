@@ -1,80 +1,98 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:project/Providers/category_provider.dart';
 import 'package:project/Providers/product_provider.dart';
-import 'package:project/models/category_model.dart';
 import 'package:project/models/product_model.dart';
 import 'package:provider/provider.dart';
 
-class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({super.key});
+class FliterPage extends StatefulWidget {
+  const FliterPage({super.key});
 
   @override
-  State<CategoriesPage> createState() => _CategoriesPageState();
+  State<FliterPage> createState() => _FliterPageState();
 }
 
-class _CategoriesPageState extends State<CategoriesPage> {
+class _FliterPageState extends State<FliterPage> {
   @override
   void initState() {
     super.initState();
-    final provider = Provider.of<CategoryProvider>(context, listen: false);
-    provider.getAllCategory();
     final productProvider =
         Provider.of<ProductProvider>(context, listen: false);
-    productProvider.getAllProductsByCategoryID();
+    productProvider.getAllProducts();
   }
 
+  final fliterController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final categoryProvider = Provider.of<CategoryProvider>(context);
-    final category = categoryProvider.categories;
     final productProvider = Provider.of<ProductProvider>(context);
     final products = productProvider.products;
-
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             SizedBox(
-                height: 60,
-                width: double.infinity,
-                child: SafeArea(
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: category.length,
-                    itemBuilder: (context, index) {
-                      CategoryModel categories = category[index];
-                      return Consumer(builder:
-                          (context, ProductProvider productProvider, child) {
-                        return Column(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  productProvider.id = categories.id;
-                                  productProvider.getAllProductsByCategoryID();
-                                });
-                              },
-                              child: SizedBox(
-                                height: 60,
-                                width: 100,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: productProvider.id == categories.id
-                                          ? Colors.green.shade800
-                                          : Colors.green),
-                                  child: Center(
-                                    child: Text(categories.category),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        );
-                      });
-                    },
+              //  width: double.infinity,
+              child: TextFormField(
+                onChanged: (txt) {
+                  if (txt.isNotEmpty) {
+                    setState(() {
+                      productProvider.name = txt;
+                      productProvider.filterProduct();
+                    });
+                  } else {
+                    setState(() {
+                      productProvider.getAllProducts();
+                    });
+                  }
+                },
+
+                keyboardType: TextInputType.name,
+                style: const TextStyle(fontSize: 20, height: 2),
+                //cursorColor: const Color(0xFF009688),
+                cursorHeight: 40,
+                cursorWidth: 2,
+                decoration: InputDecoration(
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.only(top: 13),
+                    child: Wrap(
+                      alignment: WrapAlignment.end,
+                      children: [
+                        const Icon(
+                          Icons.search,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        InkWell(
+                          child: const Icon(Icons.cancel_outlined,
+                              color: Colors.black),
+                          onTap: () {
+                            Navigator.pushNamed(context, "/bottomnavigation");
+                          },
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                      ],
+                    ),
                   ),
-                )),
+                  hintText: 'بحث',
+                  hintStyle: const TextStyle(
+                    fontSize: 20,
+                  ),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 1,
+              width: double.infinity,
+              child: Container(color: Colors.grey[300]),
+            ),
             Expanded(
               child: products.isEmpty
                   ? const Center(
@@ -92,7 +110,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       itemCount: products.length,
                       itemBuilder: (context, index) {
                         ProductModel product = products[index];
-
                         return Padding(
                           padding: const EdgeInsets.only(
                               left: 10, top: 10, right: 10),

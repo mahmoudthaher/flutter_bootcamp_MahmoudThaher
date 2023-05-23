@@ -26,4 +26,17 @@ class ProductController {
       rethrow;
     }
   }
+
+  Future<List<ProductModel>> fliterProduct(String name) async {
+    try {
+      dynamic jsonObject =
+          await ApiHelper().getRequest2("api/Products/fliterProduct/$name");
+      List<ProductModel> products = [];
+      jsonObject.forEach((v) => {products.add(ProductModel.fromJson(v))});
+      return products;
+    } catch (ex) {
+      print(ex);
+      rethrow;
+    }
+  }
 }

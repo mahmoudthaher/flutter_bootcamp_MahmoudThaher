@@ -222,9 +222,8 @@ class _LoginPageState extends State<LoginPage> {
                                   .then((value) {
                                 UserController()
                                     .informationUser(
-                                        userProvider.login(emailController.text,
-                                            passwordController.text),
-                                        context)
+                                  emailController.text,
+                                )
                                     .then((value) {
                                   Navigator.pushReplacementNamed(
                                     context,

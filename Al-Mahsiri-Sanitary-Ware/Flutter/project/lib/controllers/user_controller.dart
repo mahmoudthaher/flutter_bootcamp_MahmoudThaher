@@ -22,12 +22,10 @@ class UserController {
     }
   }
 
-  Future<UserModel> informationUser(
-      UserModel user, BuildContext context) async {
+  Future<UserModel> informationUser(String emailUser) async {
     try {
-      var userprovider = Provider.of<UserProvider>(context, listen: false);
-      dynamic jsonObject = await ApiHelper()
-          .postRequest("api/Users/informationUser", user.toJsonLogin());
+      dynamic jsonObject =
+          await ApiHelper().getRequest2("api/Users/informationUser/$emailUser");
       int id = jsonObject[0]["id"];
       String fistName = jsonObject[0]["fist_name"];
       String lastName = jsonObject[0]["last_name"];
@@ -51,6 +49,7 @@ class UserController {
       await storage.write(key: "genderId", value: "$genderId");
       await storage.write(key: "typeId", value: "$typeId");
       await storage.write(key: "cityId", value: "$cityId");
+
       return UserModel.fromJson(jsonObject[0]);
     } catch (ex) {
       rethrow;

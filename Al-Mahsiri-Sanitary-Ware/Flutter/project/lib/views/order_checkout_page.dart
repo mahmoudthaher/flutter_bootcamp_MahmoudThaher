@@ -290,6 +290,7 @@ class AddressFormStep extends StatelessWidget {
             children: [
               TextFormField(
                 controller: _controllerCountry,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 onChanged: (value) {
                   productProvier.address!.country = value;
                 },
@@ -303,6 +304,7 @@ class AddressFormStep extends StatelessWidget {
               ),
               TextFormField(
                 controller: _controllerCity,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 onChanged: (value) {
                   productProvier.address!.city = value;
                 },
@@ -316,6 +318,7 @@ class AddressFormStep extends StatelessWidget {
               ),
               TextFormField(
                 controller: _controllerArea,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 onChanged: (value) {
                   productProvier.address!.area = value;
                 },
@@ -329,6 +332,7 @@ class AddressFormStep extends StatelessWidget {
               ),
               TextFormField(
                 controller: _controllerStreet,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 onChanged: (value) {
                   productProvier.address!.street = value;
                 },
@@ -342,6 +346,7 @@ class AddressFormStep extends StatelessWidget {
               ),
               TextFormField(
                 controller: _controllerBuilding,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 onChanged: (value) {
                   productProvier.address!.buildingNo = value;
                 },

@@ -10,6 +10,7 @@ class ProductProvider with ChangeNotifier {
 
   //ProductModel? products2;
   int id = 1;
+  late String name;
   CategoryModel? categories;
   List<ProductModel> selectedProducts = [];
   double total = 0;
@@ -69,6 +70,15 @@ class ProductProvider with ChangeNotifier {
 
   getAllProductsByCategoryID() async {
     ProductController().getProductByCategoryId(id).then((result) {
+      products = result;
+      notifyListeners();
+    }).catchError((ex) {
+      print(ex);
+    });
+  }
+
+  filterProduct() async {
+    ProductController().fliterProduct(name).then((result) {
       products = result;
       notifyListeners();
     }).catchError((ex) {

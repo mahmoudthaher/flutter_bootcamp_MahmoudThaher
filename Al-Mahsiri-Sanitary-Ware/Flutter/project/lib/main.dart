@@ -3,12 +3,17 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project/Providers/category_provider.dart';
 import 'package:project/Providers/city_provider.dart';
+import 'package:project/Providers/order_product_provider.dart';
+import 'package:project/Providers/order_provider.dart';
 import 'package:project/Providers/product_provider.dart';
 import 'package:project/Providers/user_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:project/views/cart_page.dart';
 import 'package:project/views/category_page.dart';
+import 'package:project/views/fliter.dart';
 import 'package:project/views/login_page.dart';
+import 'package:project/views/my_order_page.dart';
+import 'package:project/views/order_detail.dart';
 import 'package:project/views/profile_page.dart';
 import 'package:provider/provider.dart';
 
@@ -33,6 +38,12 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => CategoryProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => OrderProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => OrderProductProvider(),
         )
       ],
       child: MaterialApp(
@@ -57,6 +68,9 @@ class MyApp extends StatelessWidget {
               "/bottomnavigation": (context) => const BottomNavigation(),
               "/categoryPage": (context) => const CategoriesPage(),
               "/cartPage": (context) => const CartPage(),
+              "/fliterPage": (context) => const FliterPage(),
+              "/myOrderPage": (context) => const MyOrederPage(),
+              "/orderdetail": (context) => const OrderDetailPage(),
               // "/resetPassword": (context) => const resetPasswordPage(),
               // "/fordotPassword": (context) => const ForgotPaswwordPage(),
             };
@@ -79,6 +93,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
     const MyHomePage(),
     const CategoriesPage(),
     const CartPage(),
+    const MyOrederPage(),
     const SplashScreen(),
   ];
   int currentIndex = 0;
@@ -126,6 +141,12 @@ class _BottomNavigationState extends State<BottomNavigation> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
+              Icons.shopping_bag_outlined,
+            ),
+            label: "طلباتي",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
               Icons.person_rounded,
             ),
             label: "حسابي",
@@ -152,16 +173,18 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _checkLogin() async {
-    Future.delayed(const Duration(milliseconds: 700), () async {
-      bool exists =
-          await const FlutterSecureStorage().containsKey(key: "token");
+    // Future.delayed(
+    //   const Duration(milliseconds: 700),
+    //   () async {
+    bool exists = await const FlutterSecureStorage().containsKey(key: "token");
 
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => exists ? ProfilePage() : LoginPage(),
-          ));
-    });
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => exists ? ProfilePage() : LoginPage(),
+        ));
+    //   },
+    // );
   }
 
   @override
@@ -190,8 +213,14 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("products"),
+        leading: InkWell(
+          child: Icon(Icons.search),
+          onTap: () {
+            Navigator.pushNamed(context, "/fliterPage");
+          },
+        ),
       ),
+
       // body: DesignProductsPage(
       //   future: ProductController().getProducts(),
       // ),

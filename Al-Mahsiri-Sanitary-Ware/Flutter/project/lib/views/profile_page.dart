@@ -70,6 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
       (isLoggedIn) {
         setState(
           () {
+            print(isLoggedIn);
             _isLoggedIn = isLoggedIn;
             if (_isLoggedIn) {
               EasyLoading.dismiss();
@@ -106,18 +107,22 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     var provider = Provider.of<CityProvider>(context);
     var userProvider = Provider.of<UserProvider>(context);
+
     List<CityModel> cities = provider.cities;
     return Scaffold(
       appBar: AppBar(
           actions: [
             Row(
               children: [
-                Text('لتسجيل خروج انقر هنا'),
+                //Text("$id"),
+                const Text('لتسجيل خروج انقر هنا'),
                 IconButton(
                   onPressed: () async {
                     FlutterSecureStorage storage = const FlutterSecureStorage();
                     await storage.deleteAll();
+                    userProvider.user = null;
 
+                    // ignore: use_build_context_synchronously
                     Navigator.pushReplacementNamed(
                       context,
                       "/bottomnavigation",
@@ -125,7 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     EasyLoading.dismiss();
                     EasyLoading.showSuccess("تم تسجيل الخروج بنجاح");
                   },
-                  icon: Icon(Icons.logout),
+                  icon: const Icon(Icons.logout),
                 ),
               ],
             )
@@ -391,7 +396,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       } else if (_isLoggedIn == false && checkuserName == 1) {
                         return "إسم المستخدم موجود مسبقا";
                       } else if (_isLoggedIn &&
-                          phoneNumberController.text != phoneNumber2) {
+                          userNameController.text != userName2) {
                         if (checkuserName == 1) {
                           return "إسم المستخدم موجود مسبقا";
                         } else if (value.length < 8) {
@@ -673,10 +678,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                       .then((value) {
                                     UserController()
                                         .informationUser(
-                                            userProvider.login(
-                                                emailController.text,
-                                                passwordController.text),
-                                            context)
+                                      emailController.text,
+                                    )
                                         .then((value) {
                                       Navigator.pushReplacementNamed(
                                         context,
@@ -697,7 +700,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 EasyLoading.dismiss();
                                 EasyLoading.showError(error.toString());
                               }
-                            } else if (_isLoggedIn &&
+                            } else if (_isLoggedIn == true &&
                                 _keyForm.currentState!.validate()) {
                               try {
                                 _keyForm.currentState!.save();
@@ -718,11 +721,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                     .then((value) {
                                   UserController()
                                       .informationUser(
-                                          userProvider.login(
-                                              emailController.text,
-                                              passwordController.text),
-                                          context)
+                                    emailController.text,
+                                  )
                                       .then((value) {
+                                    EasyLoading.dismiss();
+                                    EasyLoading.showSuccess(
+                                        "تم تحديث معلومات الحساب");
                                     Navigator.pushReplacementNamed(
                                       context,
                                       "/bottomnavigation",
@@ -733,9 +737,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 }).catchError((ex) {
                                   print("2$ex");
                                 });
-                                EasyLoading.dismiss();
-                                EasyLoading.showSuccess(
-                                    "تم تحديث معلومات الحساب");
                               } catch (error) {
                                 EasyLoading.dismiss();
                                 EasyLoading.showError(error.toString());
@@ -812,7 +813,6 @@ class _ProfilePageState extends State<ProfilePage> {
     String? genderId = await storage.read(key: 'genderId');
     //String? typeId = await storage.read(key: 'typeId');
     String? cityId = await storage.read(key: 'cityId');
-    print(cityId.toString());
     idUser = id;
     phoneNumber2 = phoneNumber;
     email2 = email;
@@ -834,8 +834,8 @@ class _ProfilePageState extends State<ProfilePage> {
     repasswordController.text = password;
   }
 
-  Future<bool> _checkLogin() async {
-    final hasToken = await storage.containsKey(key: "token");
+  _checkLogin() async {
+    bool hasToken = await storage.containsKey(key: "token");
     return hasToken;
   }
 
