@@ -8,13 +8,18 @@ import 'package:project/Providers/order_provider.dart';
 import 'package:project/Providers/product_provider.dart';
 import 'package:project/Providers/user_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:project/views/Login/forget_password.dart';
+import 'package:project/views/Login/verification_page.dart';
 import 'package:project/views/cart_page.dart';
 import 'package:project/views/category_page.dart';
 import 'package:project/views/fliter.dart';
-import 'package:project/views/login_page.dart';
+import 'package:project/views/Login/login_page.dart';
 import 'package:project/views/my_order_page.dart';
 import 'package:project/views/order_detail.dart';
 import 'package:project/views/profile_page.dart';
+import 'package:project/views/profile_page_basic.dart';
+import 'package:project/views/reset_password_page.dart';
+import 'package:project/views/shopping_cart_icon.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -63,16 +68,26 @@ class MyApp extends StatelessWidget {
             var routes = {
               "/": (context) => const BottomNavigation(),
               "/loginPage": (context) => const LoginPage(),
-              "/profilePage": (context) => const ProfilePage(),
+              "/profilePage": (context) => ProfilePage(
+                    onBack: () {},
+                  ),
               "/myhomepage": (context) => const MyHomePage(),
               "/bottomnavigation": (context) => const BottomNavigation(),
               "/categoryPage": (context) => const CategoriesPage(),
               "/cartPage": (context) => const CartPage(),
-              "/fliterPage": (context) => const FliterPage(),
+              "/fliterPage": (context) => FliterPage(
+                    onBack: () {},
+                  ),
               "/myOrderPage": (context) => const MyOrederPage(),
-              "/orderdetail": (context) => const OrderDetailPage(),
-              // "/resetPassword": (context) => const resetPasswordPage(),
-              // "/fordotPassword": (context) => const ForgotPaswwordPage(),
+              "/orderdetail": (context) => OrderDetailPage(
+                    onBack: () {},
+                  ),
+              "/profilepagebisic": (context) => const ProfilePageBasic(),
+              "/forgetPassword": (context) => const ForgetPasswordPage(),
+              "/verificationPage": (context) => const VerificationPage(),
+              "/resetPasswordPage": (context) => RestPasswordPage(
+                    onBack: () {},
+                  ),
             };
             WidgetBuilder builder = routes[settings.name]!;
             return MaterialPageRoute(builder: (ctx) => builder(ctx));
@@ -134,9 +149,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
             label: "الاقسام",
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.card_travel,
-            ),
+            icon: ShoppingCartIcon(),
             label: "السلة",
           ),
           BottomNavigationBarItem(
@@ -165,6 +178,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  Widget _currentPage = Container();
+  bool exists = false;
   @override
   void initState() {
     super.initState();
@@ -173,31 +188,22 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _checkLogin() async {
-    // Future.delayed(
-    //   const Duration(milliseconds: 700),
-    //   () async {
-    bool exists = await const FlutterSecureStorage().containsKey(key: "token");
+    exists = await const FlutterSecureStorage().containsKey(key: "token");
+    setState(() {
+      if (exists) {
+        _currentPage = const ProfilePageBasic();
+      } else {
+        _currentPage = const LoginPage();
 
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => exists ? ProfilePage() : LoginPage(),
-        ));
-    //   },
-    // );
+        EasyLoading.dismiss();
+        EasyLoading.showError("انت غير مسجل الرجاء قم بتسجيل الدخول");
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: SizedBox(
-          width: 80,
-          height: 80,
-          child: CircularProgressIndicator(),
-        ),
-      ),
-    );
+    return Scaffold(body: _currentPage);
   }
 }
 
@@ -209,21 +215,53 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Widget _currentPage = const MyHomePage();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: InkWell(
-          child: Icon(Icons.search),
-          onTap: () {
-            Navigator.pushNamed(context, "/fliterPage");
-          },
-        ),
-      ),
-
-      // body: DesignProductsPage(
-      //   future: ProductController().getProducts(),
-      // ),
+      body: _currentPage is MyHomePage
+          ? SafeArea(
+              child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  color: Colors.black,
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: InkWell(
+                          child: const Icon(
+                            Icons.search,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                          onTap: () {
+                            setState(() {
+                              _currentPage = FliterPage(
+                                onBack: () {
+                                  setState(() {
+                                    _currentPage = const MyHomePage();
+                                  });
+                                },
+                              );
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ))
+          : FliterPage(
+              onBack: () {
+                setState(() {
+                  _currentPage = const MyHomePage();
+                });
+              },
+            ),
     );
   }
 }

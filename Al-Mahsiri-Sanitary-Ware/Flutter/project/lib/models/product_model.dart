@@ -7,7 +7,7 @@ class ProductModel {
   String? description;
   int categoryId;
   int? discountId;
-  int selectedQty = 0;
+  int selectedQty = 1;
   double tax = 16;
   ProductModel(
       {required this.id,

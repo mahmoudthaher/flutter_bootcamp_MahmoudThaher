@@ -3,6 +3,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project/Providers/order_product_provider.dart';
 import 'package:project/Providers/order_provider.dart';
 import 'package:project/models/order_mpdel.dart';
+import 'package:project/views/cart_page.dart';
+import 'package:project/views/order_detail.dart';
 import 'package:provider/provider.dart';
 
 class MyOrederPage extends StatefulWidget {
@@ -13,6 +15,7 @@ class MyOrederPage extends StatefulWidget {
 }
 
 class _MyOrederPageState extends State<MyOrederPage> {
+  Widget _currentPage = MyOrederPage();
   final storage = FlutterSecureStorage();
   String? idUser;
   @override
@@ -24,67 +27,79 @@ class _MyOrederPageState extends State<MyOrederPage> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<OrderProvider>(context);
+    final orders = provider.orders;
     final orderProvider = Provider.of<OrderProductProvider>(context);
 
-    final orders = provider.orders;
-
     return Scaffold(
-      body: Container(
-          child: ListView.builder(
-        itemCount: orders.length,
-        itemBuilder: (context, index) {
-          OrderModel order = orders[index];
-
-          return Dismissible(
-            key: Key(index.toString()),
-            background: Container(
-              color: Colors.red,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: const [
-                    Icon(
-                      Icons.delete,
-                      color: Colors.white,
-                    )
-                  ]),
-            ),
-            child: SizedBox(
-              height: 80,
-              child: InkWell(
-                child: Card(
-                  child: ListTile(
-                    leading: Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Column(
-                        children: [
-                          Text(order.createdAt!.substring(0, 10)),
-                          Text(order.createdAt!.substring(11, 19)),
-                        ],
-                      ),
+      body: _currentPage is MyOrederPage
+          ? SafeArea(
+              child: Column(
+                children: [
+                  Center(
+                      child: Text(
+                    "طلباتي",
+                    style: TextStyle(fontSize: 30),
+                  )),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) {
+                        OrderModel order = orders[index];
+                        return SizedBox(
+                          height: 80,
+                          child: InkWell(
+                            child: Card(
+                              child: ListTile(
+                                leading: Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: Column(
+                                    children: [
+                                      Text(order.createdAt!.substring(0, 10)),
+                                      Text(order.createdAt!.substring(11, 19)),
+                                    ],
+                                  ),
+                                ),
+                                title: Text(
+                                  "المجموع : ${order.total.toStringAsFixed(2)}",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                subtitle: Text(
+                                  "المجموع بدون الضريبة : ${order.subTotal.toStringAsFixed(2)}",
+                                  style: TextStyle(fontSize: 13),
+                                ),
+                                trailing:
+                                    Text("الحالة : ${order.status.status}"),
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                orderProvider.orderId = order.id;
+                                _currentPage = OrderDetailPage(
+                                  onBack: () {
+                                    setState(() {
+                                      _currentPage = MyOrederPage();
+                                    });
+                                  },
+                                );
+                              });
+                            },
+                          ),
+                        );
+                      },
                     ),
-                    title: Text(
-                      "المجموع : ${order.total.toStringAsFixed(2)}",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    subtitle: Text(
-                      "المجموع بدون الضريبة : ${order.subTotal.toStringAsFixed(2)}",
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    trailing: Text("الحالة : ${order.status.status}"),
                   ),
-                ),
-                onTap: () {
-                  setState(() {
-                    orderProvider.orderId = order.id;
-                  });
-                  Navigator.pushNamed(context, "/orderdetail");
-                },
+                ],
               ),
+            )
+          : OrderDetailPage(
+              onBack: () {
+                setState(() {
+                  _currentPage = MyOrederPage();
+                });
+              },
             ),
-          );
-        },
-      )),
     );
   }
 

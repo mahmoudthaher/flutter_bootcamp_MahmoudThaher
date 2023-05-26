@@ -77,6 +77,16 @@ class UserController {
     }
   }
 
+  Future<UserModel> resetPassword(UserModel user) async {
+    try {
+      dynamic jsonObject = await ApiHelper()
+          .putRequest("api/Users/updatePassword/", user.toJsonResetPsddword());
+      return UserModel.fromJson(jsonObject);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
   Future<UserModel> getUser() async {
     dynamic jsonObject = await ApiHelper().getRequest("api/users");
     return UserModel.fromJson(jsonObject);

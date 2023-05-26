@@ -22,6 +22,13 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Your Cart"),
+        // leading: InkWell(
+        //     child: Icon(
+        //       Icons.arrow_back_outlined,
+        //     ),
+        //     onTap: () {
+        //       Navigator.pushReplacementNamed(context, "/bottomnavigation");
+        //     }),
       ),
       body: Consumer(
         builder: (context, ProductProvider productProvider, child) {

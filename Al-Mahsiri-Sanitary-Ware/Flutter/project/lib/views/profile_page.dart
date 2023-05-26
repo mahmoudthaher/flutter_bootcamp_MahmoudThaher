@@ -10,7 +10,8 @@ import 'package:project/models/city_model.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final VoidCallback onBack;
+  const ProfilePage({required this.onBack, super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -78,24 +79,6 @@ class _ProfilePageState extends State<ProfilePage> {
               _showUserInfo();
               EasyLoading.dismiss();
               EasyLoading.showSuccess("تسطيع هنا تحديث معلوماتك");
-
-              // FutureBuilder(
-              //   future: _showUserInfo(),
-              //   builder: (context, snapshot) {
-              //     if (snapshot.connectionState == ConnectionState.waiting) {
-              //       return const Center(
-              //           child: SizedBox(
-              //               width: 80,
-              //               height: 80,
-              //               child: CircularProgressIndicator()));
-              //     }
-              //     if (snapshot.connectionState == ConnectionState.done) {
-              //       EasyLoading.dismiss();
-              //       EasyLoading.showSuccess("تسطيع هنا تحديث معلوماتك");
-              //     }
-              //     return Container();
-              //   },
-              // );
             }
           },
         );
@@ -110,97 +93,82 @@ class _ProfilePageState extends State<ProfilePage> {
 
     List<CityModel> cities = provider.cities;
     return Scaffold(
-      appBar: AppBar(
-          actions: [
-            Row(
-              children: [
-                //Text("$id"),
-                const Text('لتسجيل خروج انقر هنا'),
-                IconButton(
-                  onPressed: () async {
-                    FlutterSecureStorage storage = const FlutterSecureStorage();
-                    await storage.deleteAll();
-                    userProvider.user = null;
-
-                    // ignore: use_build_context_synchronously
-                    Navigator.pushReplacementNamed(
-                      context,
-                      "/bottomnavigation",
-                    );
-                    EasyLoading.dismiss();
-                    EasyLoading.showSuccess("تم تسجيل الخروج بنجاح");
-                  },
-                  icon: const Icon(Icons.logout),
-                ),
-              ],
-            )
-          ],
-          leading: IconButton(
-            onPressed: () {
-              if (_isLoggedIn == false) {
-                Navigator.pushNamed(context, "/loginPage");
-              } else {
-                Navigator.pushNamed(context, "/bottomnavigation");
-              }
-            },
-            icon: Icon(Icons.arrow_back),
-          )),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Form(
             key: _keyForm,
-            // onChanged: () {
-            //   setState(() {
-            //     if (_keyForm.currentState!.validate()) {
-            //       visible = true;
-            //     } else {
-            //       visible = false;
-            //     }
-            //   });
-            // },
             child: Column(
               children: [
-                // const SizedBox(
-                //   height: 20,
-                // ),
-                // Row(
-                //   children: [
-                //     Theme(
-                //       data: ThemeData(
-                //         splashColor: Colors.transparent,
-                //         highlightColor: Colors.transparent,
-                //       ),
-                //       child: InkWell(
-                //         onTap: () {
-                //           Navigator.pushNamed(context, '/loginPage');
-                //         },
-                //         child: Padding(
-                //           padding: const EdgeInsets.symmetric(
-                //               vertical: 10, horizontal: 30),
-                //           child: InkWell(
-                //             child: const Icon(
-                //               Icons.arrow_back_ios,
-                //               size: 33,
-                //               color: Color(0xFF1b0f0b),
-                //             ),
-                //             onTap: () {
-                //               if (_isLoggedIn == false) {
-                //                 Navigator.pushNamed(context, "/loginPage");
-                //               } else {
-                //                 Navigator.pushNamed(
-                //                     context, "/bottomnavigation");
-                //               }
-                //             },
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: InkWell(
+                        child: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                          size: 30,
+                        ),
+                        onTap: () {
+                          widget.onBack();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                // Container(
+                //   width: double.infinity,
+                //   height: 50,
+                //   color: Colors.black,
+                //   child: Row(
+                //     children: [
+                //       Padding(
+                //         padding: const EdgeInsets.all(10.0),
+                //         child: InkWell(
+                //           child: const Icon(
+                //             Icons.arrow_back,
+                //             color: Colors.white,
+                //             size: 30,
                 //           ),
+                //           onTap: () {
+                //             widget.onBack();
+                //           },
                 //         ),
                 //       ),
-                //     ),
-                //     Text('data22'),
-                //   ],
+                //       SizedBox(
+                //         width: 191,
+                //       ),
+                //       const Text(
+                //         'لتسجيل خروج انقر هنا',
+                //         style: TextStyle(color: Colors.white),
+                //       ),
+                //       IconButton(
+                //         onPressed: () async {
+                //           FlutterSecureStorage storage =
+                //               const FlutterSecureStorage();
+                //           await storage.deleteAll();
+                //           userProvider.user = null;
+
+                //           // ignore: use_build_context_synchronously
+                //           Navigator.pushReplacementNamed(
+                //             context,
+                //             "/bottomnavigation",
+                //           );
+                //           EasyLoading.dismiss();
+                //           EasyLoading.showSuccess("تم تسجيل الخروج بنجاح");
+                //         },
+                //         icon: const Icon(
+                //           Icons.logout,
+                //           color: Colors.white,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
                 // ),
-                const SizedBox(
-                  height: 30,
-                ),
+
+                // const SizedBox(
+                //   height: 30,
+                // ),
                 SizedBox(
                   width: double.infinity,
                   height: 100,
@@ -227,6 +195,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       errorStyle: TextStyle(
                         fontSize: 15.0,
                       ),
+                      counterText: '',
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -262,6 +231,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       errorStyle: TextStyle(
                         fontSize: 15.0,
                       ),
+                      counterText: '',
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -297,6 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       errorStyle: TextStyle(
                         fontSize: 15.0,
                       ),
+                      counterText: '',
                     ),
                     validator: (value) {
                       checkPhoneNumber();
@@ -343,6 +314,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       errorStyle: TextStyle(
                         fontSize: 15.0,
                       ),
+                      counterText: '',
                     ),
                     validator: (value) {
                       checkEmail();
@@ -367,7 +339,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   height: 100,
                   child: TextFormField(
                     controller: userNameController,
-                    maxLength: 10,
+                    maxLength: 15,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     style: const TextStyle(fontSize: 20, height: 2),
                     keyboardType: TextInputType.name,
@@ -388,6 +360,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       errorStyle: TextStyle(
                         fontSize: 15.0,
                       ),
+                      counterText: '',
                     ),
                     validator: (value) {
                       checkUserName();
@@ -543,101 +516,105 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(
                   height: 45,
                 ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 100,
-                  child: TextFormField(
-                    controller: passwordController,
-                    //maxLength: 20,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    style: const TextStyle(fontSize: 20, height: 2),
-                    keyboardType: TextInputType.name,
-                    obscureText: !obscureText,
-                    cursorHeight: 50,
-                    cursorWidth: 2,
-                    decoration: InputDecoration(
-                      hintText: 'كلمة المرور',
-                      hintStyle: const TextStyle(
-                        fontSize: 20,
-                      ),
-                      contentPadding: const EdgeInsets.only(
-                          top: 5, bottom: 5, right: 30, left: 15),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(40),
+                _isLoggedIn == false
+                    ? SizedBox(
+                        width: double.infinity,
+                        height: 100,
+                        child: TextFormField(
+                          controller: passwordController,
+                          //maxLength: 20,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          style: const TextStyle(fontSize: 20, height: 2),
+                          keyboardType: TextInputType.name,
+                          obscureText: !obscureText,
+                          cursorHeight: 50,
+                          cursorWidth: 2,
+                          decoration: InputDecoration(
+                            hintText: 'كلمة المرور',
+                            hintStyle: const TextStyle(
+                              fontSize: 20,
+                            ),
+                            contentPadding: const EdgeInsets.only(
+                                top: 5, bottom: 5, right: 30, left: 15),
+                            border: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(40),
+                              ),
+                            ),
+                            errorStyle: const TextStyle(
+                              fontSize: 15.0,
+                            ),
+                            suffix: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  obscureText = !obscureText;
+                                });
+                              },
+                              child: obscureText
+                                  ? Icon(Icons.visibility)
+                                  : Icon(Icons.visibility_off),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "الرجاء إدخال كلمة المرور";
+                            } else if (value.length < 8) {
+                              return "كلمة المرور يجب ان تكون مكونة من 8 خانات على الأقل";
+                            }
+                            return null;
+                          },
                         ),
-                      ),
-                      errorStyle: const TextStyle(
-                        fontSize: 15.0,
-                      ),
-                      suffix: InkWell(
-                        onTap: () {
-                          setState(() {
-                            obscureText = !obscureText;
-                          });
-                        },
-                        child: obscureText
-                            ? Icon(Icons.visibility)
-                            : Icon(Icons.visibility_off),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "الرجاء إدخال كلمة المرور";
-                      } else if (value.length < 8) {
-                        return "كلمة المرور يجب ان تكون مكونة من 8 خانات على الأقل";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 100,
-                  child: TextFormField(
-                    controller: repasswordController,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    style: const TextStyle(fontSize: 20, height: 2),
-                    keyboardType: TextInputType.name,
-                    obscureText: !obscureText2,
-                    cursorHeight: 50,
-                    cursorWidth: 2,
-                    decoration: InputDecoration(
-                      hintText: 'إعادة كلمة المرور',
-                      hintStyle: const TextStyle(
-                        fontSize: 20,
-                      ),
-                      contentPadding: const EdgeInsets.only(
-                          top: 5, bottom: 5, right: 30, left: 15),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(40),
+                      )
+                    : Container(),
+                _isLoggedIn == false
+                    ? SizedBox(
+                        width: double.infinity,
+                        height: 100,
+                        child: TextFormField(
+                          controller: repasswordController,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          style: const TextStyle(fontSize: 20, height: 2),
+                          keyboardType: TextInputType.name,
+                          obscureText: !obscureText2,
+                          cursorHeight: 50,
+                          cursorWidth: 2,
+                          decoration: InputDecoration(
+                            hintText: 'إعادة كلمة المرور',
+                            hintStyle: const TextStyle(
+                              fontSize: 20,
+                            ),
+                            contentPadding: const EdgeInsets.only(
+                                top: 5, bottom: 5, right: 30, left: 15),
+                            border: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(40),
+                              ),
+                            ),
+                            errorStyle: const TextStyle(
+                              fontSize: 15.0,
+                            ),
+                            suffix: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  obscureText2 = !obscureText2;
+                                });
+                              },
+                              child: obscureText2
+                                  ? Icon(Icons.visibility)
+                                  : Icon(Icons.visibility_off),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "الرجاء إعادة إدخال كلمة المرور";
+                            } else if (value != passwordController.text) {
+                              return "كلمة المرور غير متطابقة";
+                            }
+                            return null;
+                          },
                         ),
-                      ),
-                      errorStyle: const TextStyle(
-                        fontSize: 15.0,
-                      ),
-                      suffix: InkWell(
-                        onTap: () {
-                          setState(() {
-                            obscureText2 = !obscureText2;
-                          });
-                        },
-                        child: obscureText2
-                            ? Icon(Icons.visibility)
-                            : Icon(Icons.visibility_off),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "الرجاء إعادة إدخال كلمة المرور";
-                      } else if (value != passwordController.text) {
-                        return "كلمة المرور غير متطابقة";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
+                      )
+                    : Container(),
                 Visibility(
                   // visible: visible,
                   child: SizedBox(
@@ -727,10 +704,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     EasyLoading.dismiss();
                                     EasyLoading.showSuccess(
                                         "تم تحديث معلومات الحساب");
-                                    Navigator.pushReplacementNamed(
-                                      context,
-                                      "/bottomnavigation",
-                                    );
+                                    widget.onBack();
                                   }).catchError((ex) {
                                     print("1$ex");
                                   });
@@ -808,7 +782,7 @@ class _ProfilePageState extends State<ProfilePage> {
     String? phoneNumber = await storage.read(key: 'phoneNumber');
     String? email = await storage.read(key: 'email');
     String? userName = await storage.read(key: 'userName');
-    String? password = await storage.read(key: 'password');
+    //String? password = await storage.read(key: 'password');
     String? address = await storage.read(key: 'address');
     String? genderId = await storage.read(key: 'genderId');
     //String? typeId = await storage.read(key: 'typeId');
@@ -830,8 +804,8 @@ class _ProfilePageState extends State<ProfilePage> {
     } else {
       _character = SingingCharacter.Female;
     }
-    passwordController.text = password!;
-    repasswordController.text = password;
+    // passwordController.text = password!;
+    // repasswordController.text = password;
   }
 
   _checkLogin() async {

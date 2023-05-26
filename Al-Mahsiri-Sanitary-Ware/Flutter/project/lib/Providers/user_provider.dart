@@ -3,6 +3,7 @@ import 'package:project/models/user_model.dart';
 
 class UserProvider with ChangeNotifier {
   //List<UserModel> user = [];
+
   UserModel? user;
   profileUser(
       String id,

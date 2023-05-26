@@ -35,46 +35,68 @@ class _CategoriesPageState extends State<CategoriesPage> {
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(
-                height: 60,
-                width: double.infinity,
-                child: SafeArea(
+            Padding(
+              padding: const EdgeInsets.only(top: 15),
+              child: SafeArea(
+                child: SizedBox(
+                  height: 60,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: category.length,
                     itemBuilder: (context, index) {
                       CategoryModel categories = category[index];
-                      return Consumer(builder:
-                          (context, ProductProvider productProvider, child) {
-                        return Column(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  productProvider.id = categories.id;
-                                  productProvider.getAllProductsByCategoryID();
-                                });
-                              },
-                              child: SizedBox(
-                                height: 60,
-                                width: 100,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: productProvider.id == categories.id
-                                          ? Colors.green.shade800
-                                          : Colors.green),
-                                  child: Center(
-                                    child: Text(categories.category),
+                      return Consumer(
+                        builder:
+                            (context, ProductProvider productProvider, child) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                productProvider.id = categories.id;
+                                productProvider.getAllProductsByCategoryID();
+                              });
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: productProvider.id ==
+                                                    categories.id
+                                                ? Colors.black
+                                                : Colors.transparent,
+                                            width: 2.0,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        categories.category,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: productProvider.id ==
+                                                  categories.id
+                                              ? Colors.black
+                                              : Colors.grey,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            )
-                          ],
-                        );
-                      });
+                            ),
+                          );
+                        },
+                      );
                     },
                   ),
-                )),
+                ),
+              ),
+            ),
             Expanded(
               child: products.isEmpty
                   ? const Center(
@@ -87,198 +109,100 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: 0.6,
+                        childAspectRatio: 0.65,
                       ),
                       itemCount: products.length,
                       itemBuilder: (context, index) {
                         ProductModel product = products[index];
 
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              left: 10, top: 10, right: 10),
-                          child: SizedBox(
-                            width: 150,
-                            height: 300,
-                            child: Card(
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  side: BorderSide(color: Colors.black26)),
-                              child: Wrap(
-                                children: [
-                                  Row(
-                                    children: const [
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                    ],
-                                  ),
-                                  Image.network(
-                                    product.image,
-                                    width: 200,
-                                    height: 100,
-                                  ),
-                                  Row(
-                                    children: const [
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                    ],
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    height: 55,
-                                    child: Text(
-                                      product.name,
-                                      maxLines: 2,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 18),
+                        return Column(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5),
+                              child: Card(
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
                                     ),
-                                  ),
-                                  Row(
-                                    children: const [
-                                      SizedBox(
-                                        height: 10,
+                                    side: BorderSide(color: Colors.black26)),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, top: 10, right: 10),
+                                  child: Wrap(
+                                    children: [
+                                      Image.network(
+                                        product.image,
+                                        width: 200,
+                                        height: 100,
                                       ),
-                                    ],
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(right: 10),
-                                    child: Text(
-                                      "${product.finalPrice.toStringAsFixed(2)} دينار اردني",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18),
-                                    ),
-                                  ),
-                                  Row(
-                                    children: const [
-                                      SizedBox(
-                                        height: 10,
+                                      Row(
+                                        children: const [
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.green,
-                                                borderRadius:
-                                                    BorderRadius.circular(12)),
-                                            width: 40,
-                                            height: 40,
-                                            child: Center(
-                                              child: InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    product.selectedQty++;
-                                                  });
-                                                },
-                                                child: const Text(
-                                                  "+",
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
+                                      Container(
+                                        height: 55,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: Text(
+                                          product.name,
+                                          maxLines: 2,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 18),
+                                        ),
+                                      ),
+                                      Row(
+                                        children: const [
+                                          SizedBox(
+                                            height: 50,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                                right: 10),
+                                            child: Text(
+                                              "${product.finalPrice.toStringAsFixed(2)} د.أ",
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18),
+                                            ),
+                                          ),
+                                          IconButton(
+                                              style: ElevatedButton.styleFrom(
+                                                shape: RoundedRectangleBorder(
+                                                    // borderRadius:
+                                                    //     BorderRadius.circular(40),
+                                                    ),
+                                                backgroundColor: Colors.white,
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 3,
-                                          child: Center(
-                                              child: Text(
-                                                  "${product.selectedQty}")),
-                                        ),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.green,
-                                                borderRadius:
-                                                    BorderRadius.circular(12)),
-                                            width: 40,
-                                            height: 40,
-                                            child: Center(
-                                              child: InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    if (product.selectedQty >
-                                                        0) {
-                                                      product.selectedQty--;
-                                                    }
-                                                  });
-                                                },
-                                                child: const Text(
-                                                  "-",
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Row(
-                                    children: const [
-                                      SizedBox(
-                                        height: 10,
+                                              onPressed: () {
+                                                productProvider
+                                                    .addToCart(product);
+                                                EasyLoading.dismiss();
+                                                EasyLoading.showSuccess(
+                                                    "تم الاضافة الى السلة");
+                                              },
+                                              icon: Icon(
+                                                Icons.add_shopping_cart,
+                                                size: 30,
+                                              )),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5),
-                                    child: SizedBox(
-                                      height: 30,
-                                      width: double.infinity,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(40),
-                                            ),
-                                            backgroundColor: Color(0xFF222766)),
-                                        onPressed: () {
-                                          if (product.selectedQty > 0) {
-                                            productProvider.addToCart(product);
-                                            EasyLoading.dismiss();
-                                            EasyLoading.showSuccess(
-                                                "تم الاضافة الى السلة");
-                                          } else {
-                                            EasyLoading.dismiss();
-                                            EasyLoading.showError(
-                                                "الرجاء اختيار الكمية التي تريدها");
-                                          }
-                                        },
-                                        child: const Text(
-                                          'أضف للسلة',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         );
                       },
                     ),

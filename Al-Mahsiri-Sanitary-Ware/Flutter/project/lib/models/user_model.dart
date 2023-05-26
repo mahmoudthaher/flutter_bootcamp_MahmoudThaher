@@ -46,6 +46,10 @@ class UserModel {
         "email": email,
         "password": password,
       };
+  Map<String, dynamic> toJsonResetPsddword() => {
+        "id": id,
+        "password": password,
+      };
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
