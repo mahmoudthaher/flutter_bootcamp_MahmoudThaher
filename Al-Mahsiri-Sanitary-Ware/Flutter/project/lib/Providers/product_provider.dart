@@ -5,6 +5,8 @@ import 'package:project/models/product_model.dart';
 import 'package:project/controllers/product_controller.dart';
 
 class ProductProvider with ChangeNotifier {
+  bool hideAppBar = false;
+
   List<ProductModel> products = [];
   ProductModel? products2;
 
@@ -43,7 +45,6 @@ class ProductProvider with ChangeNotifier {
 
   updateQty(ProductModel product, int newQty) {
     product.selectedQty = newQty;
-    print("newQty" + newQty.toString());
     generateTotal();
     notifyListeners();
   }

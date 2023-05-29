@@ -20,16 +20,6 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Your Cart"),
-        // leading: InkWell(
-        //     child: Icon(
-        //       Icons.arrow_back_outlined,
-        //     ),
-        //     onTap: () {
-        //       Navigator.pushReplacementNamed(context, "/bottomnavigation");
-        //     }),
-      ),
       body: Consumer(
         builder: (context, ProductProvider productProvider, child) {
           if (productProvider.selectedProducts.isEmpty) {
@@ -63,65 +53,107 @@ class _CartPageState extends State<CartPage> {
         ));
   }
 
-  ListView _productsListWidget(ProductProvider productProvier) {
+  ListView _productsListWidget(ProductProvider productProvider) {
     return ListView.builder(
-      itemCount: productProvier.selectedProducts.length,
+      itemCount: productProvider.selectedProducts.length,
       itemBuilder: (context, index) {
-        ProductModel product = productProvier.selectedProducts[index];
-        return Dismissible(
-          key: Key(index.toString()),
-          background: Container(
-            color: Colors.red,
-            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              Icon(
-                Icons.delete,
-                color: Colors.white,
-              )
-            ]),
+        ProductModel product = productProvider.selectedProducts[index];
+        return Card(
+          elevation: 2,
+          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
           ),
-          onDismissed: (direction) {
-            productProvier.removeProduct(index);
-          },
-          child: SizedBox(
-            height: 150,
-            child: ListTile(
-              leading: Image.network(
-                product.image,
-                width: 90,
-              ),
-              title: Text(product.name),
-              subtitle: Text("المجموع : ${product.total.toStringAsFixed(2)}"),
-              trailing: Container(
-                width: 155,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                        onPressed: () {
-                          try {
-                            productProvier.updateQty(
-                                product, product.selectedQty + 1);
-                          } catch (ex) {
-                            print(ex);
-                          }
-                        },
-                        child: Text("+")),
-                    Text("${product.selectedQty}"),
-                    TextButton(
-                      onPressed: () {
-                        if (product.selectedQty == 1) {
-                          productProvier.removeProduct(index);
-                          return;
-                        }
-                        productProvier.updateQty(
-                            product, product.selectedQty - 1);
-                      },
-                      child: product.selectedQty == 1
-                          ? Icon(Icons.delete)
-                          : Text("-"),
-                    ),
-                  ],
+          child: ListTile(
+            contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            leading: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                image: DecorationImage(
+                  image: NetworkImage(product.image),
+                  fit: BoxFit.cover,
                 ),
+              ),
+            ),
+            title: Text(
+              product.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            subtitle: Text(
+              "المجموع : ${product.total.toStringAsFixed(2)}",
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.grey,
+              ),
+            ),
+            trailing: Container(
+              margin: EdgeInsets.only(top: 12),
+              width: 100,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      try {
+                        productProvider.updateQty(
+                            product, product.selectedQty + 1);
+                      } catch (ex) {
+                        print(ex);
+                      }
+                    },
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "${product.selectedQty}",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      if (product.selectedQty == 1) {
+                        productProvider.removeProduct(index);
+                        return;
+                      }
+                      productProvider.updateQty(
+                          product, product.selectedQty - 1);
+                    },
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color:
+                            product.selectedQty == 1 ? Colors.red : Colors.blue,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Icon(
+                        product.selectedQty == 1 ? Icons.delete : Icons.remove,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

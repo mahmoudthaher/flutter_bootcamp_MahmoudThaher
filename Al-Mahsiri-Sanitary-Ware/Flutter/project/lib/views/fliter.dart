@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:project/Providers/product_provider.dart';
 import 'package:project/models/product_model.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,7 @@ class _FliterPageState extends State<FliterPage> {
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
-    final products = productProvider.products;
+    var products = productProvider.products;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -66,6 +67,10 @@ class _FliterPageState extends State<FliterPage> {
                         child: const Icon(Icons.cancel_outlined,
                             color: Colors.black),
                         onTap: () {
+                          products.clear();
+                          // productProvider.id = 1;
+                          productProvider.getAllProductsByCategoryID();
+                          productProvider.hideAppBar = false;
                           widget.onBack();
                         },
                       ),

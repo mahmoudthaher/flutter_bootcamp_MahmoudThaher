@@ -4,7 +4,7 @@ import 'package:project/models/category_model.dart';
 
 class CategoryProvider with ChangeNotifier {
   List<CategoryModel> categories = [];
-
+  String name = "";
   getAllCategory() async {
     CategoryController().getAllCategories().then((result) {
       categories = result;

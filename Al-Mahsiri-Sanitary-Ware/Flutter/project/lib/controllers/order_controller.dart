@@ -6,7 +6,6 @@ class OrderController {
   Future<dynamic> create(Order order) async {
     try {
       var result = await ApiHelper().postDio("/api/Orders", order.toJson());
-      print(result);
       return result;
     } catch (e) {
       rethrow;

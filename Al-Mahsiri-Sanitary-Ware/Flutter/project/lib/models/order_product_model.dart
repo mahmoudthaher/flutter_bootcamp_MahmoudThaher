@@ -23,7 +23,7 @@ class OrderProductModel {
         orderId: json["order_id"],
         productId: json["product_id"],
         qty: json["qty"],
-        price: json["price"],
+        price: double.parse(json["price"]),
         products: ProductModel.fromJson(json['product']));
   }
 

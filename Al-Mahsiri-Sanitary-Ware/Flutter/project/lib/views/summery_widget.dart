@@ -9,78 +9,77 @@ class SummeryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, ProductProvider productProvier, child) {
+    return Consumer(builder: (context, ProductProvider productProvider, child) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "ملخص الفاتورة",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 3),
-            const Divider(),
-            const SizedBox(height: 3),
+            SizedBox(height: 10),
+            Divider(),
+            SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "عدد المنتجات",
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 Text(
-                  productProvier.selectedProducts.length.toString(),
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  productProvider.selectedProducts.length.toString(),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 )
               ],
             ),
-            const SizedBox(height: 3),
-            const Divider(),
-            const SizedBox(height: 3),
+            SizedBox(height: 5),
+            Divider(),
+            SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "المجموع قبل الضريبة",
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 Text(
-                  productProvier.subTotal.toStringAsFixed(2),
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  productProvider.subTotal.toStringAsFixed(2),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 )
               ],
             ),
-            const SizedBox(height: 3),
-            const Divider(),
-            const SizedBox(height: 3),
+            SizedBox(height: 5),
+            Divider(),
+            SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "الضريبة 16%",
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 Text(
-                  productProvier.taxAmount.toStringAsFixed(2),
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  productProvider.taxAmount.toStringAsFixed(2),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 )
               ],
             ),
-            const SizedBox(height: 3),
-            const Divider(),
-            const SizedBox(height: 3),
+            SizedBox(height: 5),
+            Divider(),
+            SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "المجموع الكامل",
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  "المجموع",
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 Text(
-                  productProvier.total.toStringAsFixed(2),
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  productProvider.total.toStringAsFixed(2),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 )
               ],
             )

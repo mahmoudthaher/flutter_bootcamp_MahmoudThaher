@@ -2,6 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:project/Providers/category_provider.dart';
 import 'package:project/Providers/city_provider.dart';
 import 'package:project/Providers/user_provider.dart';
 import 'package:project/controllers/api_helper.dart';
@@ -97,560 +98,558 @@ class _ProfilePageState extends State<ProfilePage> {
         child: SingleChildScrollView(
           child: Form(
             key: _keyForm,
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: InkWell(
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.black,
-                          size: 30,
-                        ),
-                        onTap: () {
-                          widget.onBack();
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                // Container(
-                //   width: double.infinity,
-                //   height: 50,
-                //   color: Colors.black,
-                //   child: Row(
-                //     children: [
-                //       Padding(
-                //         padding: const EdgeInsets.all(10.0),
-                //         child: InkWell(
-                //           child: const Icon(
-                //             Icons.arrow_back,
-                //             color: Colors.white,
-                //             size: 30,
-                //           ),
-                //           onTap: () {
-                //             widget.onBack();
-                //           },
-                //         ),
-                //       ),
-                //       SizedBox(
-                //         width: 191,
-                //       ),
-                //       const Text(
-                //         'لتسجيل خروج انقر هنا',
-                //         style: TextStyle(color: Colors.white),
-                //       ),
-                //       IconButton(
-                //         onPressed: () async {
-                //           FlutterSecureStorage storage =
-                //               const FlutterSecureStorage();
-                //           await storage.deleteAll();
-                //           userProvider.user = null;
-
-                //           // ignore: use_build_context_synchronously
-                //           Navigator.pushReplacementNamed(
-                //             context,
-                //             "/bottomnavigation",
-                //           );
-                //           EasyLoading.dismiss();
-                //           EasyLoading.showSuccess("تم تسجيل الخروج بنجاح");
-                //         },
-                //         icon: const Icon(
-                //           Icons.logout,
-                //           color: Colors.white,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-
-                // const SizedBox(
-                //   height: 30,
-                // ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 100,
-                  child: TextFormField(
-                    controller: firstnameController,
-                    maxLength: 20,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    style: const TextStyle(fontSize: 20, height: 2),
-                    keyboardType: TextInputType.name,
-                    cursorHeight: 50,
-                    cursorWidth: 2,
-                    decoration: const InputDecoration(
-                      hintText: 'الإسم الأول',
-                      hintStyle: TextStyle(
-                        fontSize: 20,
-                      ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(40),
-                        ),
-                      ),
-                      errorStyle: TextStyle(
-                        fontSize: 15.0,
-                      ),
-                      counterText: '',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "الرجاء إدخال الإسم الأول";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 100,
-                  child: TextFormField(
-                    controller: lastnameController,
-                    maxLength: 20,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    style: const TextStyle(fontSize: 20, height: 2),
-                    keyboardType: TextInputType.name,
-                    cursorHeight: 50,
-                    cursorWidth: 2,
-                    decoration: const InputDecoration(
-                      hintText: 'الإسم الأخير',
-                      hintStyle: TextStyle(
-                        fontSize: 20,
-                      ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(40),
-                        ),
-                      ),
-                      errorStyle: TextStyle(
-                        fontSize: 15.0,
-                      ),
-                      counterText: '',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "الرجاء إدخال الإسم الأخير";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 100,
-                  child: TextFormField(
-                    controller: phoneNumberController,
-                    maxLength: 10,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    style: const TextStyle(fontSize: 20, height: 2),
-                    keyboardType: TextInputType.phone,
-                    cursorHeight: 50,
-                    cursorWidth: 2,
-                    decoration: const InputDecoration(
-                      hintText: 'رقم الهاتف',
-                      hintStyle: TextStyle(
-                        fontSize: 20,
-                      ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(40),
-                        ),
-                      ),
-                      errorStyle: TextStyle(
-                        fontSize: 15.0,
-                      ),
-                      counterText: '',
-                    ),
-                    validator: (value) {
-                      checkPhoneNumber();
-                      if (value == null || value.isEmpty) {
-                        return "الرجاء إدخال رقم الهاتف";
-                      } else if (!validateJordanianPhoneNumber(value)) {
-                        return " الرجاء إدخال رقم الهاتف بطريقة صحيحة 07xxxxxxxx";
-                      } else if (_isLoggedIn == false &&
-                          checkphoneNumber == 1) {
-                        return "رقم الهاتف موجود مسبقا";
-                      } else if (_isLoggedIn &&
-                          phoneNumberController.text != phoneNumber2) {
-                        if (checkphoneNumber == 1) {
-                          return "رقم الهاتف موجود مسبقا";
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 100,
-                  child: TextFormField(
-                    controller: emailController,
-                    maxLength: 30,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    style: const TextStyle(fontSize: 20, height: 2),
-                    keyboardType: TextInputType.emailAddress,
-                    cursorHeight: 50,
-                    cursorWidth: 2,
-                    decoration: const InputDecoration(
-                      hintText: 'البريد الإلكتروني',
-                      hintStyle: TextStyle(
-                        fontSize: 20,
-                      ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(40),
-                        ),
-                      ),
-                      errorStyle: TextStyle(
-                        fontSize: 15.0,
-                      ),
-                      counterText: '',
-                    ),
-                    validator: (value) {
-                      checkEmail();
-                      if (value == null || value.isEmpty) {
-                        return "الرجاء إدخال البريد الإلكتروني";
-                      } else if (!EmailValidator.validate(value)) {
-                        return "الرجاء إدخال البريد الإلكتروني بطريقة صحيحة";
-                      } else if (_isLoggedIn == false && checkemail == 1) {
-                        return "الايميل موجود مسبقا";
-                      } else if (_isLoggedIn &&
-                          emailController.text != email2) {
-                        if (checkemail == 1) {
-                          return "الايميل موجود مسبقا";
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 100,
-                  child: TextFormField(
-                    controller: userNameController,
-                    maxLength: 15,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    style: const TextStyle(fontSize: 20, height: 2),
-                    keyboardType: TextInputType.name,
-                    cursorHeight: 50,
-                    cursorWidth: 2,
-                    decoration: const InputDecoration(
-                      hintText: 'إسم المستخدم',
-                      hintStyle: TextStyle(
-                        fontSize: 20,
-                      ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(40),
-                        ),
-                      ),
-                      errorStyle: TextStyle(
-                        fontSize: 15.0,
-                      ),
-                      counterText: '',
-                    ),
-                    validator: (value) {
-                      checkUserName();
-                      if (value == null || value.isEmpty) {
-                        return "الرجاء إدخال إسم المستخدم";
-                      } else if (_isLoggedIn == false && checkuserName == 1) {
-                        return "إسم المستخدم موجود مسبقا";
-                      } else if (_isLoggedIn &&
-                          userNameController.text != userName2) {
-                        if (checkuserName == 1) {
-                          return "إسم المستخدم موجود مسبقا";
-                        } else if (value.length < 8) {
-                          return "إسم المستخدم يجب ان يكون مكون من 8 خانات على الأقل";
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 100,
-                  child: TextFormField(
-                    controller: addressController,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    style: const TextStyle(fontSize: 20, height: 2),
-                    keyboardType: TextInputType.name,
-                    cursorHeight: 50,
-                    cursorWidth: 2,
-                    decoration: const InputDecoration(
-                      hintText: 'الموقع',
-                      hintStyle: TextStyle(
-                        fontSize: 20,
-                      ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(40),
-                        ),
-                      ),
-                      errorStyle: TextStyle(
-                        fontSize: 15.0,
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "الرجاء إدخال الموقع";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(40),
-                    border: Border.all(
-                        style: BorderStyle.solid,
-                        width: 0.7,
-                        color: const Color(0xFF686868)),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 25),
-                    child: DropdownButtonFormField(
-                      decoration: InputDecoration(border: InputBorder.none),
-                      value: selectedName,
-                      hint: const Text(
-                        'اختار المنطقة',
-                        style: TextStyle(
-                            fontSize: 20, height: 1, color: Color(0xFF686868)),
-                      ),
-                      items: cities.map((e) {
-                        return DropdownMenuItem(
-                          value: e.id,
-                          child: Text(e.city),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        if (mounted) {
-                          setState(() {
-                            selectedName = value;
-                          });
-                        }
-                      },
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (value) {
-                        // validate the selected option4
-                        if (value == null) {
-                          return 'الرجاء ادخال المدينة';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        cityname = value.toString();
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 45,
-                ),
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(40),
-                    border: Border.all(
-                        style: BorderStyle.solid,
-                        width: 0.7,
-                        color: const Color(0xFF686868)),
-                  ),
-                  child: Row(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
+                children: [
+                  Row(
                     children: [
-                      SizedBox.fromSize(
-                        size: const Size.fromRadius(20),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: ListTile(
-                          title: const Text('ذكر'),
-                          leading: Radio<SingingCharacter>(
-                            value: SingingCharacter.Male,
-                            groupValue: _character,
-                            onChanged: (SingingCharacter? value) {
-                              if (mounted) {
-                                setState(() {
-                                  _character = value;
-                                });
-                              }
-                            },
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          child: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.black,
+                            size: 30,
                           ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: ListTile(
-                          title: const Text('انثى'),
-                          leading: Radio<SingingCharacter>(
-                            value: SingingCharacter.Female,
-                            groupValue: _character,
-                            onChanged: (SingingCharacter? value) {
-                              if (mounted) {
-                                setState(() {
-                                  _character = value;
-                                });
-                              }
-                            },
-                          ),
+                          onTap: () {
+                            widget.onBack();
+                          },
                         ),
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(
-                  height: 45,
-                ),
-                _isLoggedIn == false
-                    ? SizedBox(
-                        width: double.infinity,
-                        height: 100,
-                        child: TextFormField(
-                          controller: passwordController,
-                          //maxLength: 20,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          style: const TextStyle(fontSize: 20, height: 2),
-                          keyboardType: TextInputType.name,
-                          obscureText: !obscureText,
-                          cursorHeight: 50,
-                          cursorWidth: 2,
-                          decoration: InputDecoration(
-                            hintText: 'كلمة المرور',
-                            hintStyle: const TextStyle(
+                  SizedBox(
+                    width: double.infinity,
+                    height: 100,
+                    child: TextFormField(
+                      controller: firstnameController,
+                      maxLength: 15,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      style: const TextStyle(fontSize: 20, height: 2),
+                      keyboardType: TextInputType.name,
+                      cursorHeight: 50,
+                      cursorWidth: 2,
+                      decoration: const InputDecoration(
+                        hintText: 'الإسم الأول',
+                        hintStyle: TextStyle(
+                          fontSize: 20,
+                        ),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(40),
+                          ),
+                        ),
+                        errorStyle: TextStyle(
+                          fontSize: 15.0,
+                        ),
+                        counterText: '',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "الرجاء إدخال الإسم الأول";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 100,
+                    child: TextFormField(
+                      controller: lastnameController,
+                      maxLength: 15,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      style: const TextStyle(fontSize: 20, height: 2),
+                      keyboardType: TextInputType.name,
+                      cursorHeight: 50,
+                      cursorWidth: 2,
+                      decoration: const InputDecoration(
+                        hintText: 'الإسم الأخير',
+                        hintStyle: TextStyle(
+                          fontSize: 20,
+                        ),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(40),
+                          ),
+                        ),
+                        errorStyle: TextStyle(
+                          fontSize: 15.0,
+                        ),
+                        counterText: '',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "الرجاء إدخال الإسم الأخير";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 100,
+                    child: TextFormField(
+                      controller: phoneNumberController,
+                      maxLength: 10,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      style: const TextStyle(fontSize: 20, height: 2),
+                      keyboardType: TextInputType.phone,
+                      cursorHeight: 50,
+                      cursorWidth: 2,
+                      decoration: const InputDecoration(
+                        hintText: 'رقم الهاتف',
+                        hintStyle: TextStyle(
+                          fontSize: 20,
+                        ),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(40),
+                          ),
+                        ),
+                        errorStyle: TextStyle(
+                          fontSize: 15.0,
+                        ),
+                        counterText: '',
+                      ),
+                      validator: (value) {
+                        checkPhoneNumber();
+                        if (value == null || value.isEmpty) {
+                          return "الرجاء إدخال رقم الهاتف";
+                        } else if (!validateJordanianPhoneNumber(value)) {
+                          return " الرجاء إدخال رقم الهاتف بطريقة صحيحة 07xxxxxxxx";
+                        } else if (_isLoggedIn == false &&
+                            checkphoneNumber == 1) {
+                          return "رقم الهاتف موجود مسبقا";
+                        } else if (_isLoggedIn &&
+                            phoneNumberController.text != phoneNumber2) {
+                          if (checkphoneNumber == 1) {
+                            return "رقم الهاتف موجود مسبقا";
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 100,
+                    child: TextFormField(
+                      controller: emailController,
+                      maxLength: 30,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      style: const TextStyle(fontSize: 20, height: 2),
+                      keyboardType: TextInputType.emailAddress,
+                      cursorHeight: 50,
+                      cursorWidth: 2,
+                      decoration: const InputDecoration(
+                        hintText: 'البريد الإلكتروني',
+                        hintStyle: TextStyle(
+                          fontSize: 20,
+                        ),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(40),
+                          ),
+                        ),
+                        errorStyle: TextStyle(
+                          fontSize: 15.0,
+                        ),
+                        counterText: '',
+                      ),
+                      validator: (value) {
+                        checkEmail();
+                        if (value == null || value.isEmpty) {
+                          return "الرجاء إدخال البريد الإلكتروني";
+                        } else if (!EmailValidator.validate(value)) {
+                          return "الرجاء إدخال البريد الإلكتروني بطريقة صحيحة";
+                        } else if (_isLoggedIn == false && checkemail == 1) {
+                          return "الايميل موجود مسبقا";
+                        } else if (_isLoggedIn &&
+                            emailController.text != email2) {
+                          if (checkemail == 1) {
+                            return "الايميل موجود مسبقا";
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 100,
+                    child: TextFormField(
+                      controller: userNameController,
+                      maxLength: 15,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      style: const TextStyle(fontSize: 20, height: 2),
+                      keyboardType: TextInputType.name,
+                      cursorHeight: 50,
+                      cursorWidth: 2,
+                      decoration: const InputDecoration(
+                        hintText: 'إسم المستخدم',
+                        hintStyle: TextStyle(
+                          fontSize: 20,
+                        ),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(40),
+                          ),
+                        ),
+                        errorStyle: TextStyle(
+                          fontSize: 15.0,
+                        ),
+                        counterText: '',
+                      ),
+                      validator: (value) {
+                        checkUserName();
+                        if (value == null || value.isEmpty) {
+                          return "الرجاء إدخال إسم المستخدم";
+                        } else if (_isLoggedIn == false && checkuserName == 1) {
+                          return "إسم المستخدم موجود مسبقا";
+                        } else if (_isLoggedIn &&
+                            userNameController.text != userName2) {
+                          if (checkuserName == 1) {
+                            return "إسم المستخدم موجود مسبقا";
+                          } else if (value.length < 8) {
+                            return "إسم المستخدم يجب ان يكون مكون من 8 خانات على الأقل";
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 100,
+                    child: TextFormField(
+                      controller: addressController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      style: const TextStyle(fontSize: 20, height: 2),
+                      keyboardType: TextInputType.name,
+                      cursorHeight: 50,
+                      cursorWidth: 2,
+                      decoration: const InputDecoration(
+                        hintText: 'الموقع',
+                        hintStyle: TextStyle(
+                          fontSize: 20,
+                        ),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(40),
+                          ),
+                        ),
+                        errorStyle: TextStyle(
+                          fontSize: 15.0,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "الرجاء إدخال الموقع";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      border: Border.all(
+                          style: BorderStyle.solid,
+                          width: 0.7,
+                          color: const Color(0xFF686868)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 25),
+                      child: DropdownButtonFormField(
+                        decoration: InputDecoration(border: InputBorder.none),
+                        value: selectedName,
+                        hint: const Text(
+                          'اختار المنطقة',
+                          style: TextStyle(
                               fontSize: 20,
+                              height: 1,
+                              color: Color(0xFF686868)),
+                        ),
+                        items: cities.map((e) {
+                          return DropdownMenuItem(
+                            value: e.id,
+                            child: Text(e.city),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          if (mounted) {
+                            setState(() {
+                              selectedName = value;
+                            });
+                          }
+                        },
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          // validate the selected option4
+                          if (value == null) {
+                            return 'الرجاء ادخال المدينة';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          cityname = value.toString();
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 45,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      border: Border.all(
+                          style: BorderStyle.solid,
+                          width: 0.7,
+                          color: const Color(0xFF686868)),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox.fromSize(
+                          size: const Size.fromRadius(20),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: ListTile(
+                            title: const Text('ذكر'),
+                            leading: Radio<SingingCharacter>(
+                              value: SingingCharacter.Male,
+                              groupValue: _character,
+                              onChanged: (SingingCharacter? value) {
+                                if (mounted) {
+                                  setState(() {
+                                    _character = value;
+                                  });
+                                }
+                              },
                             ),
-                            contentPadding: const EdgeInsets.only(
-                                top: 5, bottom: 5, right: 30, left: 15),
-                            border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(40),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: ListTile(
+                            title: const Text('انثى'),
+                            leading: Radio<SingingCharacter>(
+                              value: SingingCharacter.Female,
+                              groupValue: _character,
+                              onChanged: (SingingCharacter? value) {
+                                if (mounted) {
+                                  setState(() {
+                                    _character = value;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 45,
+                  ),
+                  _isLoggedIn == false
+                      ? SizedBox(
+                          width: double.infinity,
+                          height: 100,
+                          child: TextFormField(
+                            controller: passwordController,
+                            //maxLength: 20,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            style: const TextStyle(fontSize: 20, height: 2),
+                            keyboardType: TextInputType.name,
+                            obscureText: !obscureText,
+                            cursorHeight: 50,
+                            cursorWidth: 2,
+                            decoration: InputDecoration(
+                              hintText: 'كلمة المرور',
+                              hintStyle: const TextStyle(
+                                fontSize: 20,
+                              ),
+                              contentPadding: const EdgeInsets.only(
+                                  top: 5, bottom: 5, right: 30, left: 15),
+                              border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(40),
+                                ),
+                              ),
+                              errorStyle: const TextStyle(
+                                fontSize: 15.0,
+                              ),
+                              suffix: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    obscureText = !obscureText;
+                                  });
+                                },
+                                child: obscureText
+                                    ? Icon(Icons.visibility)
+                                    : Icon(Icons.visibility_off),
                               ),
                             ),
-                            errorStyle: const TextStyle(
-                              fontSize: 15.0,
-                            ),
-                            suffix: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  obscureText = !obscureText;
-                                });
-                              },
-                              child: obscureText
-                                  ? Icon(Icons.visibility)
-                                  : Icon(Icons.visibility_off),
-                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "الرجاء إدخال كلمة المرور";
+                              } else if (value.length < 8) {
+                                return "كلمة المرور يجب ان تكون مكونة من 8 خانات على الأقل";
+                              }
+                              return null;
+                            },
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "الرجاء إدخال كلمة المرور";
-                            } else if (value.length < 8) {
-                              return "كلمة المرور يجب ان تكون مكونة من 8 خانات على الأقل";
-                            }
-                            return null;
-                          },
-                        ),
-                      )
-                    : Container(),
-                _isLoggedIn == false
-                    ? SizedBox(
-                        width: double.infinity,
-                        height: 100,
-                        child: TextFormField(
-                          controller: repasswordController,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          style: const TextStyle(fontSize: 20, height: 2),
-                          keyboardType: TextInputType.name,
-                          obscureText: !obscureText2,
-                          cursorHeight: 50,
-                          cursorWidth: 2,
-                          decoration: InputDecoration(
-                            hintText: 'إعادة كلمة المرور',
-                            hintStyle: const TextStyle(
-                              fontSize: 20,
-                            ),
-                            contentPadding: const EdgeInsets.only(
-                                top: 5, bottom: 5, right: 30, left: 15),
-                            border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(40),
+                        )
+                      : Container(),
+                  _isLoggedIn == false
+                      ? SizedBox(
+                          width: double.infinity,
+                          height: 100,
+                          child: TextFormField(
+                            controller: repasswordController,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            style: const TextStyle(fontSize: 20, height: 2),
+                            keyboardType: TextInputType.name,
+                            obscureText: !obscureText2,
+                            cursorHeight: 50,
+                            cursorWidth: 2,
+                            decoration: InputDecoration(
+                              hintText: 'إعادة كلمة المرور',
+                              hintStyle: const TextStyle(
+                                fontSize: 20,
+                              ),
+                              contentPadding: const EdgeInsets.only(
+                                  top: 5, bottom: 5, right: 30, left: 15),
+                              border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(40),
+                                ),
+                              ),
+                              errorStyle: const TextStyle(
+                                fontSize: 15.0,
+                              ),
+                              suffix: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    obscureText2 = !obscureText2;
+                                  });
+                                },
+                                child: obscureText2
+                                    ? Icon(Icons.visibility)
+                                    : Icon(Icons.visibility_off),
                               ),
                             ),
-                            errorStyle: const TextStyle(
-                              fontSize: 15.0,
-                            ),
-                            suffix: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  obscureText2 = !obscureText2;
-                                });
-                              },
-                              child: obscureText2
-                                  ? Icon(Icons.visibility)
-                                  : Icon(Icons.visibility_off),
-                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "الرجاء إعادة إدخال كلمة المرور";
+                              } else if (value != passwordController.text) {
+                                return "كلمة المرور غير متطابقة";
+                              }
+                              return null;
+                            },
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "الرجاء إعادة إدخال كلمة المرور";
-                            } else if (value != passwordController.text) {
-                              return "كلمة المرور غير متطابقة";
-                            }
-                            return null;
-                          },
-                        ),
-                      )
-                    : Container(),
-                Visibility(
-                  // visible: visible,
-                  child: SizedBox(
-                    width: 220,
-                    height: 60,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(40),
-                          ),
-                          backgroundColor: Color(0xFF1b69a0)),
-                      onPressed: () {
-                        if (mounted) {
-                          setState(() {
-                            if (_isLoggedIn == false &&
-                                _keyForm.currentState!.validate()) {
-                              try {
-                                _keyForm.currentState!.save();
-                                EasyLoading.show(status: "Loading");
-                                UserController()
-                                    .create(userProvider.profileUser(
-                                        "",
-                                        firstnameController.text,
-                                        lastnameController.text,
-                                        phoneNumberController.text,
-                                        emailController.text,
-                                        userNameController.text,
-                                        addressController.text,
-                                        selectedName!.toString(),
-                                        (_character!.index + 1).toString(),
-                                        1.toString(),
-                                        passwordController.text))
-                                    .then((value) {
+                        )
+                      : Container(),
+                  Visibility(
+                    // visible: visible,
+                    child: SizedBox(
+                      width: 220,
+                      height: 60,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                            backgroundColor: Color(0xFF1b69a0)),
+                        onPressed: () {
+                          if (mounted) {
+                            setState(() {
+                              if (_isLoggedIn == false &&
+                                  _keyForm.currentState!.validate()) {
+                                try {
+                                  _keyForm.currentState!.save();
+                                  EasyLoading.show(status: "Loading");
                                   UserController()
-                                      .login(userProvider.login(
+                                      .create(userProvider.profileUser(
+                                          "",
+                                          firstnameController.text,
+                                          lastnameController.text,
+                                          phoneNumberController.text,
                                           emailController.text,
+                                          userNameController.text,
+                                          addressController.text,
+                                          selectedName!.toString(),
+                                          (_character!.index + 1).toString(),
+                                          1.toString(),
+                                          passwordController.text))
+                                      .then((value) {
+                                    UserController()
+                                        .login(userProvider.login(
+                                            emailController.text,
+                                            passwordController.text))
+                                        .then((value) {
+                                      UserController()
+                                          .informationUser(
+                                        emailController.text,
+                                      )
+                                          .then((value) {
+                                        Navigator.pushReplacementNamed(
+                                          context,
+                                          "/bottomnavigation",
+                                        );
+                                      }).catchError((ex) {
+                                        print("1$ex");
+                                      });
+                                    }).catchError((ex) {
+                                      print("2$ex");
+                                    });
+                                  }).catchError((ex) {
+                                    print("3$ex");
+                                  });
+                                  EasyLoading.dismiss();
+                                  EasyLoading.showSuccess("تم تسجيل الحساب");
+                                } catch (error) {
+                                  EasyLoading.dismiss();
+                                  EasyLoading.showError(error.toString());
+                                }
+                              } else if (_isLoggedIn == true &&
+                                  _keyForm.currentState!.validate()) {
+                                try {
+                                  _keyForm.currentState!.save();
+                                  EasyLoading.show(status: "Loading");
+                                  UserController()
+                                      .update(userProvider.profileUser(
+                                          idUser!,
+                                          firstnameController.text,
+                                          lastnameController.text,
+                                          phoneNumberController.text,
+                                          emailController.text,
+                                          userNameController.text,
+                                          addressController.text,
+                                          selectedName!.toString(),
+                                          (_character!.index + 1).toString(),
+                                          1.toString(),
                                           passwordController.text))
                                       .then((value) {
                                     UserController()
@@ -658,78 +657,36 @@ class _ProfilePageState extends State<ProfilePage> {
                                       emailController.text,
                                     )
                                         .then((value) {
-                                      Navigator.pushReplacementNamed(
-                                        context,
-                                        "/bottomnavigation",
-                                      );
+                                      EasyLoading.dismiss();
+                                      EasyLoading.showSuccess(
+                                          "تم تحديث معلومات الحساب");
+                                      widget.onBack();
                                     }).catchError((ex) {
                                       print("1$ex");
                                     });
                                   }).catchError((ex) {
                                     print("2$ex");
                                   });
-                                }).catchError((ex) {
-                                  print("3$ex");
-                                });
-                                EasyLoading.dismiss();
-                                EasyLoading.showSuccess("تم تسجيل الحساب");
-                              } catch (error) {
-                                EasyLoading.dismiss();
-                                EasyLoading.showError(error.toString());
+                                } catch (error) {
+                                  EasyLoading.dismiss();
+                                  EasyLoading.showError(error.toString());
+                                }
                               }
-                            } else if (_isLoggedIn == true &&
-                                _keyForm.currentState!.validate()) {
-                              try {
-                                _keyForm.currentState!.save();
-                                EasyLoading.show(status: "Loading");
-                                UserController()
-                                    .update(userProvider.profileUser(
-                                        idUser!,
-                                        firstnameController.text,
-                                        lastnameController.text,
-                                        phoneNumberController.text,
-                                        emailController.text,
-                                        userNameController.text,
-                                        addressController.text,
-                                        selectedName!.toString(),
-                                        (_character!.index + 1).toString(),
-                                        1.toString(),
-                                        passwordController.text))
-                                    .then((value) {
-                                  UserController()
-                                      .informationUser(
-                                    emailController.text,
-                                  )
-                                      .then((value) {
-                                    EasyLoading.dismiss();
-                                    EasyLoading.showSuccess(
-                                        "تم تحديث معلومات الحساب");
-                                    widget.onBack();
-                                  }).catchError((ex) {
-                                    print("1$ex");
-                                  });
-                                }).catchError((ex) {
-                                  print("2$ex");
-                                });
-                              } catch (error) {
-                                EasyLoading.dismiss();
-                                EasyLoading.showError(error.toString());
-                              }
-                            }
-                          });
-                        }
-                      },
-                      child: const Text(
-                        'أرسل',
-                        style: TextStyle(fontSize: 20),
+                            });
+                          }
+                        },
+                        child: const Text(
+                          'أرسل',
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 30,
-                )
-              ],
+                  const SizedBox(
+                    height: 30,
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -737,9 +694,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // _handleCreateAction() async {
-
-  // }
   Future<void> checkEmail() async {
     final email = emailController.text;
     dynamic json = await ApiHelper().getRequest2("api/Users/email/$email");
@@ -782,10 +736,8 @@ class _ProfilePageState extends State<ProfilePage> {
     String? phoneNumber = await storage.read(key: 'phoneNumber');
     String? email = await storage.read(key: 'email');
     String? userName = await storage.read(key: 'userName');
-    //String? password = await storage.read(key: 'password');
     String? address = await storage.read(key: 'address');
     String? genderId = await storage.read(key: 'genderId');
-    //String? typeId = await storage.read(key: 'typeId');
     String? cityId = await storage.read(key: 'cityId');
     idUser = id;
     phoneNumber2 = phoneNumber;
@@ -804,23 +756,10 @@ class _ProfilePageState extends State<ProfilePage> {
     } else {
       _character = SingingCharacter.Female;
     }
-    // passwordController.text = password!;
-    // repasswordController.text = password;
   }
 
   _checkLogin() async {
     bool hasToken = await storage.containsKey(key: "token");
     return hasToken;
   }
-
-  // Future<void> informationUser(UserModel user) async {
-  //   try {
-  //     dynamic jsonObject = await ApiHelper()
-  //         .postRequest("api/Users/informationUser", user.toJsonLogin());
-  //     final userProvider = Provider.of<UserProvider>(context, listen: false);
-  //     userProvider.user = UserModel.fromJson(jsonObject[0]);
-  //   } catch (ex) {
-  //     rethrow;
-  //   }
-  // }
 }
