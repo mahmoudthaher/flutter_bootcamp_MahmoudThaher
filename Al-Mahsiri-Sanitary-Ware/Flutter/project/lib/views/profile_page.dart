@@ -1,4 +1,5 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -614,6 +615,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         emailController.text,
                                       )
                                           .then((value) {
+                                        signup().then((value) => signin());
                                         Navigator.pushReplacementNamed(
                                           context,
                                           "/bottomnavigation",
@@ -761,5 +763,15 @@ class _ProfilePageState extends State<ProfilePage> {
   _checkLogin() async {
     bool hasToken = await storage.containsKey(key: "token");
     return hasToken;
+  }
+
+  Future signup() async {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text, password: passwordController.text);
+  }
+
+  Future signin() async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text, password: passwordController.text);
   }
 }

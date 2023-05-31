@@ -18,9 +18,10 @@ class ProductProvider with ChangeNotifier {
   double total = 0;
   double taxAmount = 0;
   double subTotal = 0;
-  AddressModel? address;
+  AddressModel address = AddressModel();
+
   final keyForm = GlobalKey<FormState>();
-  int? paymentMethod;
+  int paymentMethod = 1;
 
   addToCart(ProductModel product) {
     selectedProducts.add(product);

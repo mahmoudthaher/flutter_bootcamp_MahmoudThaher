@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -9,6 +10,7 @@ import 'package:project/Providers/order_provider.dart';
 import 'package:project/Providers/product_provider.dart';
 import 'package:project/Providers/user_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:project/firebase_options.dart';
 import 'package:project/models/category_model.dart';
 import 'package:project/models/product_model.dart';
 import 'package:project/views/Login/forget_password.dart';
@@ -23,12 +25,15 @@ import 'package:project/views/profile_page.dart';
 import 'package:project/views/profile_page_basic.dart';
 import 'package:project/views/reset_password_page.dart';
 import 'package:project/views/shopping_cart_icon.dart';
-import 'package:project/views/test.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -88,7 +93,6 @@ class MyApp extends StatelessWidget {
               "/orderdetail": (context) => OrderDetailPage(
                     onBack: () {},
                   ),
-              "/test": (context) => MainPage(),
               "/profilepagebisic": (context) => const ProfilePageBasic(),
               "/forgetPassword": (context) => const ForgetPasswordPage(),
               "/verificationPage": (context) => const VerificationPage(),
@@ -289,18 +293,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Widget _currentPage = const MyHomePage();
   final List<String> imageUrls = [
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/picture/18.png',
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/picture/20.png',
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/picture/32.png',
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/picture/39.png',
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/picture/60.png',
+    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/home23.png',
+    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/home21.png',
+    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/home3.png',
   ];
   final List<String> imageUrls2 = [
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/picture/18.png',
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/picture/20.png',
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/picture/32.png',
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/picture/39.png',
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/picture/60.png',
+    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/home22.png',
+    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/home123.png',
+    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/home2.png',
   ];
   PageController _pageController = PageController();
   PageController _pageController2 = PageController();
@@ -339,11 +339,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _pageController = PageController(
       initialPage: imageUrls.length * 1000,
-      viewportFraction: 0.85,
     )..addListener(_pageListener);
     _pageController2 = PageController(
       initialPage: imageUrls2.length * 1000,
-      viewportFraction: 0.85,
     )..addListener(_pageListener2);
 
     showName();
@@ -374,94 +372,11 @@ class _MyHomePageState extends State<MyHomePage> {
     final productProvider = Provider.of<ProductProvider>(context);
     var products = productProvider.products;
     return Scaffold(
-      // appBar: productProvider.hideAppBar
-      //     ? null
-      //     : AppBar(
-      //         toolbarHeight: 47,
-      //         actions: [
-      //           Container(
-      //             margin: EdgeInsets.only(left: 15),
-      //             child: InkWell(
-      //               child: const Icon(
-      //                 Icons.search,
-      //                 color: Colors.white,
-      //                 size: 30,
-      //               ),
-      //               onTap: () {
-      //                 setState(() {
-      //                   products.clear();
-      //                   productProvider.hideAppBar = true;
-      //                   _currentPage = FliterPage(
-      //                     onBack: () {
-      //                       // products = [];
-      //                       setState(() {
-      //                         _currentPage = const MyHomePage();
-      //                       });
-      //                     },
-      //                   );
-      //                 });
-      //               },
-      //             ),
-      //           ),
-      //         ],
-      //         title: Row(
-      //           children: [
-      //             SizedBox(
-      //               width: 180,
-      //               child: Provider.of<CategoryProvider>(context, listen: false)
-      //                       .name
-      //                       .isNotEmpty
-      //                   ? Text(
-      //                       Provider.of<CategoryProvider>(context,
-      //                               listen: false)
-      //                           .name,
-      //                       style: TextStyle(fontSize: 17),
-      //                     )
-      //                   : Container(),
-      //             ),
-      //             Icon(Icons.access_alarms_outlined),
-      //           ],
-      //         ),
-      //       ),
       body: SafeArea(
         child: _currentPage is MyHomePage
             ? SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Container(
-                    //   width: double.infinity,
-                    //   height: 50,
-                    //   color: Colors.black,
-                    //   child: Row(
-                    //     children: [
-                    //       Padding(
-                    //         padding: const EdgeInsets.all(10.0),
-                    //         child: InkWell(
-                    //           child: const Icon(
-                    //             Icons.search,
-                    //             color: Colors.white,
-                    //             size: 30,
-                    //           ),
-                    //           onTap: () {
-                    //             productProvider.hideAppBar = true;
-                    //             setState(() {
-                    //               products.clear();
-
-                    //               _currentPage = FliterPage(
-                    //                 onBack: () {
-                    //                   // products = [];
-                    //                   setState(() {
-                    //                     _currentPage = const MyHomePage();
-                    //                   });
-                    //                 },
-                    //               );
-                    //             });
-                    //           },
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
                     Padding(
                       padding: const EdgeInsets.only(right: 20, top: 10),
                       child: Row(
@@ -478,8 +393,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 10,
                     ),
                     SizedBox(
-                      width: double.infinity,
-                      height: 120,
+                      height: 200,
                       child: PageView.builder(
                         controller: _pageController,
                         itemCount: imageUrls.length * 10000,
@@ -489,13 +403,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             minScale: 0.1,
                             maxScale: 5.0,
                             child: Center(
-                              child: SizedBox(
-                                width: 200,
-                                height: 400,
-                                child: Image.network(
-                                  imageUrls[imageIndex],
-                                  fit: BoxFit.contain,
-                                ),
+                              child: Image.network(
+                                imageUrls[imageIndex],
+                                fit: BoxFit.fill,
+                                width: double.infinity,
+                                height: 200,
                               ),
                             ),
                           );
@@ -535,8 +447,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     SizedBox(
-                      width: double.infinity,
-                      height: 120,
+                      height: 200,
                       child: PageView.builder(
                         controller: _pageController2,
                         itemCount: imageUrls2.length * 10000,
@@ -546,13 +457,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             minScale: 0.1,
                             maxScale: 5.0,
                             child: Center(
-                              child: SizedBox(
-                                width: 200,
-                                height: 400,
-                                child: Image.network(
-                                  imageUrls2[imageIndex],
-                                  fit: BoxFit.contain,
-                                ),
+                              child: Image.network(
+                                imageUrls2[imageIndex],
+                                fit: BoxFit.fill,
+                                width: double.infinity,
+                                height: 200,
                               ),
                             ),
                           );
@@ -593,68 +502,64 @@ class _MyHomePageState extends State<MyHomePage> {
                       // height: 120,
                       child: Padding(
                         padding: const EdgeInsets.only(top: 5),
-                        child: SafeArea(
-                          child: SizedBox(
-                            height: 60,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: category.length,
-                              itemBuilder: (context, index) {
-                                CategoryModel categories = category[index];
-                                return Consumer(
-                                  builder: (context,
-                                      ProductProvider productProvider, child) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          productProvider.id = categories.id;
-                                          productProvider
-                                              .getAllProductsByCategoryID();
-                                        });
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  border: Border(
-                                                    bottom: BorderSide(
-                                                      color: productProvider
-                                                                  .id ==
-                                                              categories.id
-                                                          ? Colors.black
-                                                          : Colors.transparent,
-                                                      width: 2.0,
-                                                    ),
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  categories.category,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w900,
+                        child: SizedBox(
+                          height: 60,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: category.length,
+                            itemBuilder: (context, index) {
+                              CategoryModel categories = category[index];
+                              return Consumer(
+                                builder: (context,
+                                    ProductProvider productProvider, child) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        productProvider.id = categories.id;
+                                        productProvider
+                                            .getAllProductsByCategoryID();
+                                      });
+                                    },
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 12),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border(
+                                                  bottom: BorderSide(
                                                     color: productProvider.id ==
                                                             categories.id
                                                         ? Colors.black
-                                                        : Colors.grey,
+                                                        : Colors.transparent,
+                                                    width: 2.0,
                                                   ),
                                                 ),
                                               ),
+                                              child: Text(
+                                                categories.category,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w900,
+                                                  color: productProvider.id ==
+                                                          categories.id
+                                                      ? Colors.black
+                                                      : Colors.grey,
+                                                ),
+                                              ),
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
                           ),
                         ),
                       ),

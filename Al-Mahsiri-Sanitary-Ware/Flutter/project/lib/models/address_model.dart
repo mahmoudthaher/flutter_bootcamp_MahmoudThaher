@@ -1,11 +1,11 @@
 class AddressModel {
-  late double latitude;
-  late double longitude;
-  late String country;
-  late String city;
-  late String area;
-  late String street;
-  late String buildingNo = "";
+  double latitude = 0;
+  double longitude = 0;
+  String country = "Jordan";
+  String city = "";
+  String area = "";
+  String street = "";
+  String buildingNo = "";
 
   Map<String, dynamic> toJson() => {
         "latitude": latitude,

@@ -4,6 +4,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:im_stepper/stepper.dart';
+import 'package:project/Providers/order_provider.dart';
 import 'package:project/Providers/product_provider.dart';
 import 'package:project/controllers/order_controller.dart';
 import 'package:project/models/address_model.dart';
@@ -21,14 +22,20 @@ class OrderCheckoutPage extends StatefulWidget {
 }
 
 class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
-  int activeStep = 0;
   int upperBound = 4;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      Provider.of<OrderProvider>(context, listen: false).activeStep;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    resizeToAvoidBottomPadding:
-    false;
-
+    var activeStep =
+        Provider.of<OrderProvider>(context, listen: false).activeStep;
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Summery'),
@@ -59,7 +66,7 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
               children: [
                 GoogleMapStep(widget.location),
                 AddressFormStep(),
-                PaymentMethodStep(),
+                const PaymentMethodStep(),
                 SummeryStep(),
               ],
             )),
@@ -78,6 +85,7 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
 
   /// Returns the next button.
   Widget nextButton() {
+    int activeStep = Provider.of<OrderProvider>(context).activeStep;
     return ElevatedButton(
       onPressed: () {
         var productProvider =
@@ -85,33 +93,57 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
         switch (activeStep) {
           case 0:
             setState(() {
-              activeStep++;
+              Provider.of<OrderProvider>(context, listen: false)
+                  .updateActiveStep(++activeStep);
             });
             break;
           case 1:
             if (productProvider.keyForm.currentState!.validate()) {
               setState(() {
-                activeStep++;
+                Provider.of<OrderProvider>(context, listen: false)
+                    .updateActiveStep(++activeStep);
               });
             }
             break;
           case 2:
             setState(() {
-              activeStep++;
+              Provider.of<OrderProvider>(context, listen: false)
+                  .updateActiveStep(++activeStep);
             });
             break;
           case 3:
             OrderController()
                 .create(Order(
                     products: productProvider.selectedProducts,
-                    address: productProvider.address!,
-                    paymentMethodId: productProvider.paymentMethod!,
+                    address: productProvider.address,
+                    paymentMethodId: productProvider.paymentMethod,
                     total: productProvider.total,
                     taxAmount: productProvider.taxAmount,
                     subTotal: productProvider.subTotal))
                 .then((value) {
               EasyLoading.dismiss();
-              EasyLoading.showSuccess("Done");
+              EasyLoading.showSuccess("تم انشاء الطلب يمكنك رؤيته في طلباتي");
+              Provider.of<ProductProvider>(context, listen: false)
+                  .address
+                  .country = "Jordan";
+              Provider.of<ProductProvider>(context, listen: false)
+                  .address
+                  .city = "";
+              Provider.of<ProductProvider>(context, listen: false)
+                  .address
+                  .area = "";
+              Provider.of<ProductProvider>(context, listen: false)
+                  .address
+                  .street = "";
+              Provider.of<ProductProvider>(context, listen: false)
+                  .address
+                  .buildingNo = "";
+              Provider.of<ProductProvider>(context, listen: false)
+                  .selectedProducts
+                  .clear();
+              Provider.of<OrderProvider>(context, listen: false).activeStep = 0;
+              Navigator.pushNamedAndRemoveUntil(
+                  context, "/bottomnavigation", (route) => false);
             }).catchError((ex) {
               EasyLoading.dismiss();
               EasyLoading.showError(ex.toString());
@@ -127,10 +159,13 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
   Widget previousButton() {
     return ElevatedButton(
       onPressed: () {
-        // Decrement activeStep, when the previous button is tapped. However, check for lower bound i.e., must be greater than 0.
+        var activeStep =
+            Provider.of<OrderProvider>(context, listen: false).activeStep;
+
         if (activeStep > 0) {
           setState(() {
-            activeStep--;
+            Provider.of<OrderProvider>(context, listen: false)
+                .updateActiveStep(--activeStep);
           });
         }
       },
@@ -151,7 +186,7 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               headerText(),
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 20,
               ),
@@ -164,6 +199,8 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
 
   // Returns the header text based on the activeStep.
   String headerText() {
+    var activeStep =
+        Provider.of<OrderProvider>(context, listen: false).activeStep;
     switch (activeStep) {
       case 1:
         return 'Preface';
@@ -211,35 +248,59 @@ class _GoogleMapStepState extends State<GoogleMapStep> {
 
   Widget mapWidget() {
     double mapWidth = MediaQuery.of(context).size.width;
-    double mapHeight = MediaQuery.of(context).size.height - 215;
-    return Stack(alignment: Alignment(0.0, 0.0), children: <Widget>[
-      Container(
-          width: mapWidth,
-          height: mapHeight,
-          child: GoogleMap(
-            mapType: MapType.hybrid,
-            myLocationEnabled: true,
-            initialCameraPosition: _initalPostion,
-            onMapCreated: (GoogleMapController controller) {
-              _controller.complete(controller);
+    double mapHeight = MediaQuery.of(context).size.height - 300;
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: InkWell(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            child: const Text(
+              "اذا كنت تريد تعبئة المعلومات الموقع بشكل يدوي انقر هنا",
+              style: TextStyle(
+                  fontSize: 17, color: Colors.red, fontWeight: FontWeight.w600),
+            ),
+            onTap: () {
+              var activeStep =
+                  Provider.of<OrderProvider>(context, listen: false).activeStep;
+              setState(() {
+                Provider.of<OrderProvider>(context, listen: false)
+                    .updateActiveStep(++activeStep);
+              });
             },
-            onCameraMove: (CameraPosition position) {
-              _requiredLocation = position.target;
-            },
-            onCameraIdle: () {
-              _getAddressFromLatLng();
-            },
-          )),
-      Positioned(
-        top: (mapHeight - 50) / 2,
-        right: (mapWidth - 50) / 2,
-        child: const Icon(
-          Icons.location_on,
-          size: 50,
-          color: Colors.red,
+          ),
         ),
-      ),
-    ]);
+        Stack(alignment: Alignment(0.0, 0.0), children: <Widget>[
+          Container(
+              width: mapWidth,
+              height: mapHeight,
+              child: GoogleMap(
+                mapType: MapType.hybrid,
+                myLocationEnabled: true,
+                initialCameraPosition: _initalPostion,
+                onMapCreated: (GoogleMapController controller) {
+                  _controller.complete(controller);
+                },
+                onCameraMove: (CameraPosition position) {
+                  _requiredLocation = position.target;
+                },
+                onCameraIdle: () {
+                  _getAddressFromLatLng();
+                },
+              )),
+          Positioned(
+            top: (mapHeight - 50) / 2,
+            right: (mapWidth - 50) / 2,
+            child: const Icon(
+              Icons.location_on,
+              size: 50,
+              color: Colors.red,
+            ),
+          ),
+        ]),
+      ],
+    );
   }
 
   Future<void> _getAddressFromLatLng() async {
@@ -271,17 +332,20 @@ class AddressFormStep extends StatelessWidget {
   final _controllerBuilding = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, ProductProvider productProvider, child) {
-      return formWidget(productProvider);
-    });
+    return SingleChildScrollView(
+      child:
+          Consumer(builder: (context, ProductProvider productProvider, child) {
+        return formWidget(productProvider);
+      }),
+    );
   }
 
   Widget formWidget(ProductProvider productProvier) {
-    _controllerCountry.text = productProvier.address!.country;
-    _controllerCity.text = productProvier.address!.city;
-    _controllerArea.text = productProvier.address!.area;
-    _controllerStreet.text = productProvier.address!.street;
-    _controllerBuilding.text = productProvier.address!.buildingNo;
+    _controllerCountry.text = productProvier.address.country;
+    _controllerCity.text = productProvier.address.city;
+    _controllerArea.text = productProvier.address.area;
+    _controllerStreet.text = productProvier.address.street;
+    _controllerBuilding.text = productProvier.address.buildingNo;
 
     return Container(
       child: Form(
@@ -292,9 +356,9 @@ class AddressFormStep extends StatelessWidget {
                 controller: _controllerCountry,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 onChanged: (value) {
-                  productProvier.address!.country = value;
+                  productProvier.address.country = value;
                 },
-                decoration: InputDecoration(hintText: "Country "),
+                decoration: const InputDecoration(hintText: "Country "),
                 validator: (text) {
                   if (text == null || text.isEmpty) {
                     return "This field is required";
@@ -306,9 +370,9 @@ class AddressFormStep extends StatelessWidget {
                 controller: _controllerCity,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 onChanged: (value) {
-                  productProvier.address!.city = value;
+                  productProvier.address.city = value;
                 },
-                decoration: InputDecoration(hintText: "City "),
+                decoration: const InputDecoration(hintText: "City "),
                 validator: (text) {
                   if (text == null || text.isEmpty) {
                     return "This field is required";
@@ -320,9 +384,9 @@ class AddressFormStep extends StatelessWidget {
                 controller: _controllerArea,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 onChanged: (value) {
-                  productProvier.address!.area = value;
+                  productProvier.address.area = value;
                 },
-                decoration: InputDecoration(hintText: "Area "),
+                decoration: const InputDecoration(hintText: "Area "),
                 validator: (text) {
                   if (text == null || text.isEmpty) {
                     return "This field is required";
@@ -334,9 +398,9 @@ class AddressFormStep extends StatelessWidget {
                 controller: _controllerStreet,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 onChanged: (value) {
-                  productProvier.address!.street = value;
+                  productProvier.address.street = value;
                 },
-                decoration: InputDecoration(hintText: "Street "),
+                decoration: const InputDecoration(hintText: "Street "),
                 validator: (text) {
                   if (text == null || text.isEmpty) {
                     return "This field is required";
@@ -348,14 +412,13 @@ class AddressFormStep extends StatelessWidget {
                 controller: _controllerBuilding,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 onChanged: (value) {
-                  productProvier.address!.buildingNo = value;
+                  productProvier.address.buildingNo = value;
                 },
                 decoration: InputDecoration(hintText: "Building No. "),
                 validator: (text) {
                   if (text == null || text.isEmpty) {
                     return "This field is required";
                   }
-                  _controllerBuilding.text = productProvier.address!.buildingNo;
                   return null;
                 },
               ),
@@ -382,7 +445,7 @@ class PaymentMethodStep extends StatelessWidget {
                   Icons.attach_money_outlined,
                   color: Colors.green,
                 ),
-                title: Text("Cash On Delivery"),
+                title: Text("الدفع عند الاستلام"),
                 trailing: Radio<int>(
                   value: 1,
                   groupValue: productProvier.paymentMethod,
@@ -391,24 +454,25 @@ class PaymentMethodStep extends StatelessWidget {
                   },
                 )),
           ),
-          Card(
-            child: ListTile(
-                onTap: () {
-                  productProvier.updatePaymentMethod(2);
-                },
-                leading: Icon(
-                  Icons.payment,
-                  color: Colors.green,
-                ),
-                title: Text("Debit Cart"),
-                trailing: Radio<int>(
-                  value: 2,
-                  groupValue: productProvier.paymentMethod,
-                  onChanged: (value) {
-                    productProvier.updatePaymentMethod(value!);
-                  },
-                )),
-          )
+          // Card(
+          //   child: ListTile(
+          //     onTap: () {
+          //       productProvier.updatePaymentMethod(2);
+          //     },
+          //     leading: Icon(
+          //       Icons.payment,
+          //       color: Colors.green,
+          //     ),
+          //     title: Text("بطاقة ائتمان"),
+          //     trailing: Radio<int>(
+          //       value: 2,
+          //       groupValue: productProvier.paymentMethod,
+          //       onChanged: (value) {
+          //         productProvier.updatePaymentMethod(value!);
+          //       },
+          //     ),
+          //   ),
+          // )
         ]),
       );
     });
@@ -451,13 +515,13 @@ Widget _addressWidget(ProductProvider productProvier) {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
+          const Text(
             "Country",
             style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
           Text(
-            productProvier.address!.country,
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            productProvier.address.country,
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
           )
         ],
       ),
@@ -467,13 +531,13 @@ Widget _addressWidget(ProductProvider productProvier) {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
+          const Text(
             "City",
             style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
           Text(
-            productProvier.address!.city,
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            productProvier.address.city,
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
           )
         ],
       ),
@@ -483,13 +547,13 @@ Widget _addressWidget(ProductProvider productProvier) {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
+          const Text(
             "Area",
             style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
           Text(
-            productProvier.address!.area,
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            productProvier.address.area,
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
           )
         ],
       ),
@@ -499,13 +563,13 @@ Widget _addressWidget(ProductProvider productProvier) {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
+          const Text(
             "Street",
             style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
           Text(
-            productProvier.address!.street,
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            productProvier.address.street,
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
           )
         ],
       ),
@@ -515,13 +579,13 @@ Widget _addressWidget(ProductProvider productProvier) {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
+          const Text(
             "Building No.",
             style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
           Text(
-            productProvier.address!.buildingNo,
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            productProvier.address.buildingNo,
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
           )
         ],
       )

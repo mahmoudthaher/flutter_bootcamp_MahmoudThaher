@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -15,25 +17,25 @@ class ProfilePageBasic extends StatefulWidget {
 }
 
 class _ProfilePageBasicState extends State<ProfilePageBasic> {
-  final storage = FlutterSecureStorage();
-  String? fistName;
-  String? lastName;
-  Future<void> showUserInfo() async {
-    String? fistname = await storage.read(key: 'fistName');
-    String? lastlame = await storage.read(key: 'lastName');
+  // final storage = FlutterSecureStorage();
+  // String? fistName;
+  // String? lastName;
+  // Future<void> showUserInfo() async {
+  //   String? fistname = await storage.read(key: 'fistName');
+  //   String? lastlame = await storage.read(key: 'lastName');
 
-    setState(() {
-      fistName = fistname;
-      lastName = lastlame;
-    });
-  }
+  //   setState(() {
+  //     fistName = fistname;
+  //     lastName = lastlame;
+  //   });
+  // }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    showUserInfo();
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   showUserInfo();
+  // }
 
   Widget _currentPage = const ProfilePageBasic();
   @override
@@ -59,7 +61,7 @@ class _ProfilePageBasicState extends State<ProfilePageBasic> {
                             // SizedBox(
                             //   width: 191,
                             // ),
-                            Text("اهلا سيد   $fistName $lastName"),
+                            // Text("اهلا سيد   $fistName $lastName"),
                             SizedBox(
                               width: 40,
                             ),
@@ -73,7 +75,6 @@ class _ProfilePageBasicState extends State<ProfilePageBasic> {
                                       .name = "";
                                   userProvider.user = null;
 
-                                  // ignore: use_build_context_synchronously
                                   Navigator.pushReplacementNamed(
                                     context,
                                     "/bottomnavigation",
@@ -97,26 +98,6 @@ class _ProfilePageBasicState extends State<ProfilePageBasic> {
                                     ),
                                   ],
                                 )),
-                            // IconButton(
-                            //   onPressed: () async {
-                            //     FlutterSecureStorage storage =
-                            //         const FlutterSecureStorage();
-                            //     await storage.deleteAll();
-                            //     userProvider.user = null;
-
-                            //     // ignore: use_build_context_synchronously
-                            //     Navigator.pushReplacementNamed(
-                            //       context,
-                            //       "/bottomnavigation",
-                            //     );
-                            //     EasyLoading.dismiss();
-                            //     EasyLoading.showSuccess("تم تسجيل الخروج بنجاح");
-                            //   },
-                            //   icon: const Icon(
-                            //     Icons.logout,
-                            //     color: Colors.white,
-                            //   ),
-                            // ),
                           ],
                         ),
                       ),

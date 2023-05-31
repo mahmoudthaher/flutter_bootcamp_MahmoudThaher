@@ -23,7 +23,11 @@ class _CartPageState extends State<CartPage> {
       body: Consumer(
         builder: (context, ProductProvider productProvider, child) {
           if (productProvider.selectedProducts.isEmpty) {
-            return Center(child: Text("Your cart is empty"));
+            return const Center(
+                child: Text(
+              "لا يوجد منتجات في السلة",
+              style: TextStyle(fontSize: 25),
+            ));
           }
           return Column(
             children: [
@@ -67,13 +71,13 @@ class _CartPageState extends State<CartPage> {
           child: ListTile(
             contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             leading: Container(
-              width: 80,
+              width: 60,
               height: 80,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 image: DecorationImage(
                   image: NetworkImage(product.image),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                 ),
               ),
             ),
