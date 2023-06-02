@@ -63,6 +63,7 @@ class MyApp extends StatelessWidget {
         )
       ],
       child: MaterialApp(
+          debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
@@ -94,7 +95,9 @@ class MyApp extends StatelessWidget {
                     onBack: () {},
                   ),
               "/profilepagebisic": (context) => const ProfilePageBasic(),
-              "/forgetPassword": (context) => const ForgetPasswordPage(),
+              "/forgetPassword": (context) => ForgetPasswordPage(
+                    onBack: () {},
+                  ),
               "/verificationPage": (context) => const VerificationPage(),
               "/resetPasswordPage": (context) => RestPasswordPage(
                     onBack: () {},
@@ -146,6 +149,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
       appBar: productProvider.hideAppBar
           ? null
           : AppBar(
+              backgroundColor: Colors.blue[700],
               toolbarHeight: 47,
               actions: [
                 Container(
@@ -201,11 +205,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
       bottomNavigationBar: BottomNavigationBar(
         unselectedLabelStyle:
             const TextStyle(fontSize: 15, color: Colors.black),
-        selectedLabelStyle:
-            const TextStyle(fontSize: 15, color: Color(0xFF222766)),
+        selectedLabelStyle: TextStyle(fontSize: 15, color: Colors.blue[700]),
         showUnselectedLabels: true,
         unselectedItemColor: Colors.grey,
-        selectedItemColor: const Color(0xFF222766),
+        selectedItemColor: Colors.blue[700],
         type: BottomNavigationBarType.fixed,
         //type: BottomNavigationBarType.shifting,طريقة الكبسة
         onTap: onTap,
@@ -565,7 +568,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     SizedBox(
-                      height: 620,
+                      height: 600,
                       child: products.isEmpty
                           ? const Center(
                               child: SizedBox(
@@ -613,7 +616,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 ],
                                               ),
                                               Container(
-                                                height: 55,
+                                                height: 70,
                                                 padding:
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 10),
@@ -629,7 +632,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                               Row(
                                                 children: const [
                                                   SizedBox(
-                                                    height: 50,
+                                                    height: 35,
                                                   ),
                                                 ],
                                               ),

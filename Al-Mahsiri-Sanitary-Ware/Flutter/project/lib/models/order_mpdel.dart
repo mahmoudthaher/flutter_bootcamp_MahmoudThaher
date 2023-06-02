@@ -25,9 +25,9 @@ class OrderModel {
       id: json["id"],
       userId: json["user_id"],
       paymentMethodId: json["payment_method_id"],
-      total: double.parse(json["total"]),
-      taxAmount: double.parse(json["tax_amount"]),
-      subTotal: double.parse(json["sub_total"]),
+      total: double.parse(json["total"].toString()),
+      taxAmount: double.parse(json["tax_amount"].toString()),
+      subTotal: double.parse(json["sub_total"].toString()),
       status: StatusModel.fromJson(json['status']),
       createdAt: json["created_at"],
     );

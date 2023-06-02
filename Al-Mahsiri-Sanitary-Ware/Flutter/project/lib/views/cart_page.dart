@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -46,15 +48,32 @@ class _CartPageState extends State<CartPage> {
 
   SizedBox _buttonCheckoutWidget(BuildContext context) {
     return SizedBox(
-        width: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
+      width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+        child: SizedBox(
+          width: double.infinity,
+          height: 50,
           child: ElevatedButton(
-              onPressed: () {
-                _handleBeginCheckoutAction(context);
-              },
-              child: Text("Begin Checkout")),
-        ));
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40),
+                ),
+                backgroundColor: Colors.blue[700]),
+            onPressed: () {
+              _handleBeginCheckoutAction(context);
+            },
+            child: const Text(
+              'أرسل',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   ListView _productsListWidget(ProductProvider productProvider) {
@@ -116,7 +135,7 @@ class _CartPageState extends State<CartPage> {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: Colors.blue[700],
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.circular(4),
                       ),
@@ -183,12 +202,16 @@ class _CartPageState extends State<CartPage> {
 
   _handleGoToOrderCheckout(BuildContext context) async {
     try {
-      EasyLoading.show(status: "Fetching location");
+      EasyLoading.show(status: "جاري تحديد الموقع");
       Position location = await LocationController().determinePosition();
 
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => OrderCheckoutPage(
+                    location,
+                  )));
       EasyLoading.dismiss();
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => OrderCheckoutPage(location)));
     } catch (ex) {
       EasyLoading.dismiss();
       EasyLoading.showError(ex.toString());

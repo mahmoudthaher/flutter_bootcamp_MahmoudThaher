@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -25,7 +28,6 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
   int upperBound = 4;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     setState(() {
       Provider.of<OrderProvider>(context, listen: false).activeStep;
@@ -38,7 +40,20 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
         Provider.of<OrderProvider>(context, listen: false).activeStep;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Order Summery'),
+        leading: InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          child: const Icon(
+            Icons.cancel,
+            size: 30,
+          ),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Container(
+            margin: const EdgeInsets.only(left: 30),
+            child: const Center(child: Text('ملخص الطلب'))),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -49,8 +64,11 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
                 Icon(Icons.location_on_rounded),
                 Icon(Icons.location_on_rounded),
                 Icon(Icons.payment_rounded),
-                Icon(Icons.summarize),
+                Icon(Icons.summarize)
               ],
+              lineColor: Colors.blue[700],
+              // stepColor: Colors.blue[700],
+              activeStepColor: Colors.blue[700],
               enableNextPreviousButtons: false,
               lineLength: 35,
               activeStep: activeStep,
@@ -86,94 +104,131 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
   /// Returns the next button.
   Widget nextButton() {
     int activeStep = Provider.of<OrderProvider>(context).activeStep;
-    return ElevatedButton(
-      onPressed: () {
-        var productProvider =
-            Provider.of<ProductProvider>(context, listen: false);
-        switch (activeStep) {
-          case 0:
-            setState(() {
-              Provider.of<OrderProvider>(context, listen: false)
-                  .updateActiveStep(++activeStep);
-            });
-            break;
-          case 1:
-            if (productProvider.keyForm.currentState!.validate()) {
+    return SizedBox(
+      width: 100,
+      height: 50,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(40),
+            ),
+            backgroundColor: Colors.blue[700]),
+        onPressed:
+            // Provider.of<ProductProvider>(context, listen: false)
+            //             .address
+            //             .street ==
+            //         "Al Hamam Desert"
+            //     ? null
+            //     :
+            () {
+          var productProvider =
+              Provider.of<ProductProvider>(context, listen: false);
+          switch (activeStep) {
+            case 0:
               setState(() {
                 Provider.of<OrderProvider>(context, listen: false)
                     .updateActiveStep(++activeStep);
               });
-            }
-            break;
-          case 2:
-            setState(() {
-              Provider.of<OrderProvider>(context, listen: false)
-                  .updateActiveStep(++activeStep);
-            });
-            break;
-          case 3:
-            OrderController()
-                .create(Order(
-                    products: productProvider.selectedProducts,
-                    address: productProvider.address,
-                    paymentMethodId: productProvider.paymentMethod,
-                    total: productProvider.total,
-                    taxAmount: productProvider.taxAmount,
-                    subTotal: productProvider.subTotal))
-                .then((value) {
-              EasyLoading.dismiss();
-              EasyLoading.showSuccess("تم انشاء الطلب يمكنك رؤيته في طلباتي");
-              Provider.of<ProductProvider>(context, listen: false)
-                  .address
-                  .country = "Jordan";
-              Provider.of<ProductProvider>(context, listen: false)
-                  .address
-                  .city = "";
-              Provider.of<ProductProvider>(context, listen: false)
-                  .address
-                  .area = "";
-              Provider.of<ProductProvider>(context, listen: false)
-                  .address
-                  .street = "";
-              Provider.of<ProductProvider>(context, listen: false)
-                  .address
-                  .buildingNo = "";
-              Provider.of<ProductProvider>(context, listen: false)
-                  .selectedProducts
-                  .clear();
-              Provider.of<OrderProvider>(context, listen: false).activeStep = 0;
-              Navigator.pushNamedAndRemoveUntil(
-                  context, "/bottomnavigation", (route) => false);
-            }).catchError((ex) {
-              EasyLoading.dismiss();
-              EasyLoading.showError(ex.toString());
-            });
-            break;
-        }
-      },
-      child: Text('Next'),
+
+              break;
+            case 1:
+              if (productProvider.keyForm.currentState!.validate()) {
+                setState(() {
+                  Provider.of<OrderProvider>(context, listen: false)
+                      .updateActiveStep(++activeStep);
+                });
+              }
+              break;
+            case 2:
+              setState(() {
+                Provider.of<OrderProvider>(context, listen: false)
+                    .updateActiveStep(++activeStep);
+              });
+              break;
+            case 3:
+              OrderController()
+                  .create(Order(
+                      products: productProvider.selectedProducts,
+                      address: productProvider.address,
+                      paymentMethodId: productProvider.paymentMethod,
+                      total: productProvider.total,
+                      taxAmount: productProvider.taxAmount,
+                      subTotal: productProvider.subTotal))
+                  .then((value) {
+                EasyLoading.dismiss();
+                EasyLoading.showSuccess("تم انشاء الطلب يمكنك رؤيته في طلباتي");
+                Provider.of<ProductProvider>(context, listen: false)
+                    .address
+                    .country = "الاردن";
+                Provider.of<ProductProvider>(context, listen: false)
+                    .address
+                    .city = "";
+                Provider.of<ProductProvider>(context, listen: false)
+                    .address
+                    .area = "";
+                Provider.of<ProductProvider>(context, listen: false)
+                    .address
+                    .street = "";
+                Provider.of<ProductProvider>(context, listen: false)
+                    .address
+                    .buildingNo = "";
+                Provider.of<ProductProvider>(context, listen: false)
+                    .selectedProducts
+                    .clear();
+                Provider.of<OrderProvider>(context, listen: false).activeStep =
+                    0;
+                Navigator.pushNamedAndRemoveUntil(
+                    context, "/bottomnavigation", (route) => false);
+              }).catchError((ex) {
+                EasyLoading.dismiss();
+                EasyLoading.showError(ex.toString());
+              });
+              break;
+          }
+        },
+        child: const Text(
+          'التالي',
+          style: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
+        ),
+      ),
     );
   }
 
-  /// Returns the previous button.
   Widget previousButton() {
-    return ElevatedButton(
-      onPressed: () {
-        var activeStep =
-            Provider.of<OrderProvider>(context, listen: false).activeStep;
+    return SizedBox(
+      width: 100,
+      height: 50,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(40),
+            ),
+            backgroundColor: Colors.blue[700]),
+        onPressed:
+            Provider.of<OrderProvider>(context, listen: false).activeStep == 0
+                ? null
+                : () {
+                    var activeStep =
+                        Provider.of<OrderProvider>(context, listen: false)
+                            .activeStep;
 
-        if (activeStep > 0) {
-          setState(() {
-            Provider.of<OrderProvider>(context, listen: false)
-                .updateActiveStep(--activeStep);
-          });
-        }
-      },
-      child: Text('Prev'),
+                    if (activeStep > 0) {
+                      setState(() {
+                        Provider.of<OrderProvider>(context, listen: false)
+                            .updateActiveStep(--activeStep);
+                      });
+                    }
+                  },
+        child: const Text(
+          'السابق',
+          style: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
+        ),
+      ),
     );
   }
 
-  /// Returns the header wrapping the header text.
   Widget header() {
     return Container(
       decoration: BoxDecoration(
@@ -197,7 +252,6 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
     );
   }
 
-  // Returns the header text based on the activeStep.
   String headerText() {
     var activeStep =
         Provider.of<OrderProvider>(context, listen: false).activeStep;
@@ -235,10 +289,13 @@ class _GoogleMapStepState extends State<GoogleMapStep> {
   @override
   void initState() {
     super.initState();
+
     _initalPostion = CameraPosition(
       target: LatLng(widget.location.latitude, widget.location.longitude),
       zoom: 16,
     );
+    _requiredLocation =
+        LatLng(widget.location.latitude, widget.location.longitude);
   }
 
   @override
@@ -248,7 +305,7 @@ class _GoogleMapStepState extends State<GoogleMapStep> {
 
   Widget mapWidget() {
     double mapWidth = MediaQuery.of(context).size.width;
-    double mapHeight = MediaQuery.of(context).size.height - 300;
+    double mapHeight = MediaQuery.of(context).size.height - 280;
     return Column(
       children: [
         Padding(
@@ -258,10 +315,31 @@ class _GoogleMapStepState extends State<GoogleMapStep> {
             highlightColor: Colors.transparent,
             child: const Text(
               "اذا كنت تريد تعبئة المعلومات الموقع بشكل يدوي انقر هنا",
+              maxLines: 1,
               style: TextStyle(
-                  fontSize: 17, color: Colors.red, fontWeight: FontWeight.w600),
+                  fontSize: 16, color: Colors.red, fontWeight: FontWeight.w600),
             ),
             onTap: () {
+              setState(() {
+                Provider.of<ProductProvider>(context, listen: false)
+                    .address
+                    .country = "الاردن";
+                Provider.of<ProductProvider>(context, listen: false)
+                    .address
+                    .city = "";
+                Provider.of<ProductProvider>(context, listen: false)
+                    .address
+                    .area = "";
+                Provider.of<ProductProvider>(context, listen: false)
+                    .address
+                    .street = "";
+                Provider.of<ProductProvider>(context, listen: false)
+                    .address
+                    .buildingNo = "";
+              });
+
+              Provider.of<ProductProvider>(context, listen: false)
+                  .selectedProducts;
               var activeStep =
                   Provider.of<OrderProvider>(context, listen: false).activeStep;
               setState(() {
@@ -271,8 +349,8 @@ class _GoogleMapStepState extends State<GoogleMapStep> {
             },
           ),
         ),
-        Stack(alignment: Alignment(0.0, 0.0), children: <Widget>[
-          Container(
+        Stack(alignment: const Alignment(0.0, 0.0), children: <Widget>[
+          SizedBox(
               width: mapWidth,
               height: mapHeight,
               child: GoogleMap(
@@ -330,13 +408,16 @@ class AddressFormStep extends StatelessWidget {
   final _controllerArea = TextEditingController();
   final _controllerStreet = TextEditingController();
   final _controllerBuilding = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child:
-          Consumer(builder: (context, ProductProvider productProvider, child) {
-        return formWidget(productProvider);
-      }),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Consumer(
+            builder: (context, ProductProvider productProvider, child) {
+          return formWidget(productProvider);
+        }),
+      ),
     );
   }
 
@@ -347,83 +428,214 @@ class AddressFormStep extends StatelessWidget {
     _controllerStreet.text = productProvier.address.street;
     _controllerBuilding.text = productProvier.address.buildingNo;
 
-    return Container(
-      child: Form(
-          key: productProvier.keyForm,
-          child: Column(
-            children: [
-              TextFormField(
+    return Form(
+      key: productProvier.keyForm,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 25,
+            ),
+            SizedBox(
+              width: double.infinity,
+              height: 100,
+              child: TextFormField(
                 controller: _controllerCountry,
+                maxLength: 20,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
+                style: const TextStyle(fontSize: 20, height: 2),
+                keyboardType: TextInputType.name,
+                cursorHeight: 50,
+                cursorWidth: 2,
                 onChanged: (value) {
                   productProvier.address.country = value;
                 },
-                decoration: const InputDecoration(hintText: "Country "),
-                validator: (text) {
-                  if (text == null || text.isEmpty) {
-                    return "This field is required";
+                decoration: const InputDecoration(
+                  hintText: "البلد",
+                  hintStyle: TextStyle(
+                    fontSize: 20,
+                  ),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(40),
+                    ),
+                  ),
+                  errorStyle: TextStyle(
+                    fontSize: 15.0,
+                  ),
+                  counterText: '',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "رجاء ادخال البلد";
                   }
                   return null;
                 },
               ),
-              TextFormField(
+            ),
+            SizedBox(
+              width: double.infinity,
+              height: 100,
+              child: TextFormField(
                 controller: _controllerCity,
+                maxLength: 20,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
+                style: const TextStyle(fontSize: 20, height: 2),
+                keyboardType: TextInputType.name,
+                cursorHeight: 50,
+                cursorWidth: 2,
                 onChanged: (value) {
                   productProvier.address.city = value;
                 },
-                decoration: const InputDecoration(hintText: "City "),
-                validator: (text) {
-                  if (text == null || text.isEmpty) {
-                    return "This field is required";
+                decoration: const InputDecoration(
+                  hintText: "المدينة ",
+                  hintStyle: TextStyle(
+                    fontSize: 20,
+                  ),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(40),
+                    ),
+                  ),
+                  errorStyle: TextStyle(
+                    fontSize: 15.0,
+                  ),
+                  counterText: '',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "الرجاء ادخال المدينة";
                   }
                   return null;
                 },
               ),
-              TextFormField(
+            ),
+            SizedBox(
+              width: double.infinity,
+              height: 100,
+              child: TextFormField(
                 controller: _controllerArea,
+                maxLength: 20,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
+                style: const TextStyle(fontSize: 20, height: 2),
+                keyboardType: TextInputType.name,
+                cursorHeight: 50,
+                cursorWidth: 2,
                 onChanged: (value) {
                   productProvier.address.area = value;
                 },
-                decoration: const InputDecoration(hintText: "Area "),
-                validator: (text) {
-                  if (text == null || text.isEmpty) {
-                    return "This field is required";
+                decoration: const InputDecoration(
+                  hintText: "المنطقة ",
+                  hintStyle: TextStyle(
+                    fontSize: 20,
+                  ),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(40),
+                    ),
+                  ),
+                  errorStyle: TextStyle(
+                    fontSize: 15.0,
+                  ),
+                  counterText: '',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "الرجاء ادخال المنطقة";
                   }
                   return null;
                 },
               ),
-              TextFormField(
+            ),
+            SizedBox(
+              width: double.infinity,
+              height: 100,
+              child: TextFormField(
                 controller: _controllerStreet,
+                maxLength: 20,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
+                style: const TextStyle(fontSize: 20, height: 2),
+                keyboardType: TextInputType.name,
+                cursorHeight: 50,
+                cursorWidth: 2,
                 onChanged: (value) {
                   productProvier.address.street = value;
                 },
-                decoration: const InputDecoration(hintText: "Street "),
-                validator: (text) {
-                  if (text == null || text.isEmpty) {
-                    return "This field is required";
+                decoration: const InputDecoration(
+                  hintText: "الشارع",
+                  hintStyle: TextStyle(
+                    fontSize: 20,
+                  ),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(40),
+                    ),
+                  ),
+                  errorStyle: TextStyle(
+                    fontSize: 15.0,
+                  ),
+                  counterText: '',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "الرجاء ادخال الشارع ";
                   }
                   return null;
                 },
               ),
-              TextFormField(
+            ),
+            SizedBox(
+              width: double.infinity,
+              height: 100,
+              child: TextFormField(
                 controller: _controllerBuilding,
+                maxLength: 20,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
+                style: const TextStyle(fontSize: 20, height: 2),
+                keyboardType: TextInputType.name,
+                cursorHeight: 50,
+                cursorWidth: 2,
                 onChanged: (value) {
                   productProvier.address.buildingNo = value;
                 },
-                decoration: InputDecoration(hintText: "Building No. "),
-                validator: (text) {
-                  if (text == null || text.isEmpty) {
-                    return "This field is required";
+                decoration: const InputDecoration(
+                  hintText: "رقم البناية",
+                  hintStyle: TextStyle(
+                    fontSize: 20,
+                  ),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(40),
+                    ),
+                  ),
+                  errorStyle: TextStyle(
+                    fontSize: 15.0,
+                  ),
+                  counterText: '',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "الرجاء ادخال رقم البناية";
+                    ;
                   }
                   return null;
                 },
               ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -434,47 +646,45 @@ class PaymentMethodStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ProductProvider productProvier, child) {
-      return Container(
-        child: Column(children: [
-          Card(
-            child: ListTile(
-                onTap: () {
-                  productProvier.updatePaymentMethod(1);
+      return Column(children: [
+        Card(
+          child: ListTile(
+              onTap: () {
+                productProvier.updatePaymentMethod(1);
+              },
+              leading: const Icon(
+                Icons.attach_money_outlined,
+                color: Colors.green,
+              ),
+              title: const Text("الدفع عند الاستلام"),
+              trailing: Radio<int>(
+                value: 1,
+                groupValue: productProvier.paymentMethod,
+                onChanged: (value) {
+                  productProvier.updatePaymentMethod(value!);
                 },
-                leading: Icon(
-                  Icons.attach_money_outlined,
-                  color: Colors.green,
-                ),
-                title: Text("الدفع عند الاستلام"),
-                trailing: Radio<int>(
-                  value: 1,
-                  groupValue: productProvier.paymentMethod,
-                  onChanged: (value) {
-                    productProvier.updatePaymentMethod(value!);
-                  },
-                )),
-          ),
-          // Card(
-          //   child: ListTile(
-          //     onTap: () {
-          //       productProvier.updatePaymentMethod(2);
-          //     },
-          //     leading: Icon(
-          //       Icons.payment,
-          //       color: Colors.green,
-          //     ),
-          //     title: Text("بطاقة ائتمان"),
-          //     trailing: Radio<int>(
-          //       value: 2,
-          //       groupValue: productProvier.paymentMethod,
-          //       onChanged: (value) {
-          //         productProvier.updatePaymentMethod(value!);
-          //       },
-          //     ),
-          //   ),
-          // )
-        ]),
-      );
+              )),
+        ),
+        // Card(
+        //   child: ListTile(
+        //     onTap: () {
+        //       productProvier.updatePaymentMethod(2);
+        //     },
+        //     leading: Icon(
+        //       Icons.payment,
+        //       color: Colors.green,
+        //     ),
+        //     title: Text("بطاقة ائتمان"),
+        //     trailing: Radio<int>(
+        //       value: 2,
+        //       groupValue: productProvier.paymentMethod,
+        //       onChanged: (value) {
+        //         productProvier.updatePaymentMethod(value!);
+        //       },
+        //     ),
+        //   ),
+        // )
+      ]);
     });
   }
 }
@@ -484,20 +694,26 @@ class SummeryStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, ProductProvider productProvier, child) {
-      return SingleChildScrollView(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            "Summery",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 20),
-          _addressWidget(productProvier),
-          const SizedBox(height: 20),
-          SummeryWidget()
-        ]),
-      );
-    });
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: SingleChildScrollView(
+        child:
+            Consumer(builder: (context, ProductProvider productProvier, child) {
+          return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "الملخص",
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                _addressWidget(productProvier),
+                const SizedBox(height: 20),
+                SummeryWidget()
+              ]);
+        }),
+      ),
+    );
   }
 }
 
@@ -506,7 +722,7 @@ Widget _addressWidget(ProductProvider productProvier) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       const Text(
-        "Delivery Address",
+        "عنوان التسليم",
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 3),
@@ -516,7 +732,7 @@ Widget _addressWidget(ProductProvider productProvier) {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
-            "Country",
+            "البلد",
             style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
           Text(
@@ -532,7 +748,7 @@ Widget _addressWidget(ProductProvider productProvier) {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
-            "City",
+            "المدينة",
             style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
           Text(
@@ -548,7 +764,7 @@ Widget _addressWidget(ProductProvider productProvier) {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
-            "Area",
+            "المنطقة",
             style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
           Text(
@@ -564,7 +780,7 @@ Widget _addressWidget(ProductProvider productProvier) {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
-            "Street",
+            "الشارع",
             style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
           Text(
@@ -580,7 +796,7 @@ Widget _addressWidget(ProductProvider productProvier) {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
-            "Building No.",
+            "رقم البناية",
             style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
           Text(

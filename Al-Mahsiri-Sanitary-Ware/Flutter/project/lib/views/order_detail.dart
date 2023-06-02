@@ -87,9 +87,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                 width: 90,
                               ),
                               title: SizedBox(
-                                height: 50,
+                                height: 60,
                                 child: Text(
                                   orderProducts.products.name,
+                                  maxLines: 2,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,

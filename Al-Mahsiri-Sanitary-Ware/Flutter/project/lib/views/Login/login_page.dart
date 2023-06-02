@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:project/Providers/user_provider.dart';
 import 'package:project/controllers/user_controller.dart';
-import 'package:project/main.dart';
+import 'package:project/views/Login/forget_password.dart';
 import 'package:project/views/profile_page.dart';
 import 'package:provider/provider.dart';
 
@@ -41,30 +41,6 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ],
                       ),
-                      // Row(
-                      //   children: [
-                      //     Theme(
-                      //       data: ThemeData(
-                      //         splashColor: Colors.transparent,
-                      //         highlightColor: Colors.transparent,
-                      //       ),
-                      //       child: InkWell(
-                      //         onTap: () {
-                      //           Navigator.pushNamed(context, "/bottomnavigation");
-                      //         },
-                      //         child: const Padding(
-                      //           padding: EdgeInsets.symmetric(
-                      //               vertical: 10, horizontal: 30),
-                      //           child: Icon(
-                      //             Icons.arrow_back_ios,
-                      //             size: 33,
-                      //             color: Color(0xFF1b0f0b),
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
                       SizedBox(
                         width: 160,
                         height: 145,
@@ -185,13 +161,21 @@ class _LoginPageState extends State<LoginPage> {
                       Column(
                         children: [
                           InkWell(
-                            child: const Text(
+                            child: Text(
                               "إستعادة كلمة المرور",
                               style: TextStyle(
-                                  fontSize: 20, color: Color(0xFF272727)),
+                                  fontSize: 20, color: Colors.blue[700]),
                             ),
                             onTap: () {
-                              Navigator.pushNamed(context, "/forgetPassword");
+                              setState(() {
+                                _currentPage = ForgetPasswordPage(
+                                  onBack: () {
+                                    setState(() {
+                                      _currentPage = const LoginPage();
+                                    });
+                                  },
+                                );
+                              });
                             },
                           ),
                         ],
@@ -213,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(40),
                                 ),
-                                backgroundColor: Color(0xFF1b69a0)),
+                                backgroundColor: Colors.blue[700]),
                             onPressed: () {
                               setState(() {
                                 if (_keyForm.currentState!.validate()) {
@@ -259,7 +243,7 @@ class _LoginPageState extends State<LoginPage> {
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF272727)),
+                                  color: Colors.white),
                             ),
                           ),
                         ),
@@ -306,7 +290,7 @@ class _LoginPageState extends State<LoginPage> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(40),
                                 ),
-                                backgroundColor: Color(0xFF6fafc8)),
+                                backgroundColor: Colors.blue[700]),
                             onPressed: () {
                               setState(() {
                                 _currentPage = ProfilePage(
@@ -325,7 +309,7 @@ class _LoginPageState extends State<LoginPage> {
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF272727)),
+                                  color: Colors.white),
                             ),
                           ),
                         ),

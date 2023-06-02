@@ -20,10 +20,10 @@ class OrderProductModel {
   factory OrderProductModel.fromJson(Map<String, dynamic> json) {
     return OrderProductModel(
         id: json["id"],
-        orderId: json["order_id"],
-        productId: json["product_id"],
-        qty: json["qty"],
-        price: double.parse(json["price"]),
+        orderId: int.parse(json["order_id"].toString()),
+        productId: int.parse(json["product_id"].toString()),
+        qty: int.parse(json["qty"].toString()),
+        price: double.parse(json["price"].toString()),
         products: ProductModel.fromJson(json['product']));
   }
 

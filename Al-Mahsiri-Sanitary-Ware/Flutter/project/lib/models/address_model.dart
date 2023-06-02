@@ -1,7 +1,7 @@
 class AddressModel {
   double latitude = 0;
   double longitude = 0;
-  String country = "Jordan";
+  String country = "الاردن";
   String city = "";
   String area = "";
   String street = "";

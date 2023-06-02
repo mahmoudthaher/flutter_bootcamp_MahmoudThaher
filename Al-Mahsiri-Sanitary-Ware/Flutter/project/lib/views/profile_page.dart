@@ -576,13 +576,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     // visible: visible,
                     child: SizedBox(
                       width: 220,
-                      height: 60,
+                      height: 50,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(40),
                             ),
-                            backgroundColor: Color(0xFF1b69a0)),
+                            backgroundColor: Colors.blue[700]),
                         onPressed: () {
                           if (mounted) {
                             setState(() {
@@ -615,7 +615,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         emailController.text,
                                       )
                                           .then((value) {
-                                        signup().then((value) => signin());
+                                        // signup().then((value) => signin());
                                         Navigator.pushReplacementNamed(
                                           context,
                                           "/bottomnavigation",

@@ -2,30 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgetPasswordPage extends StatefulWidget {
-  const ForgetPasswordPage({super.key});
+  final VoidCallback onBack;
+  ForgetPasswordPage({required this.onBack, super.key});
 
   @override
   State<ForgetPasswordPage> createState() => _ForgetPasswordPageState();
 }
 
 class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
-  final emailtext = TextEditingController();
+  final emailController = TextEditingController();
   final _keyForm = GlobalKey<FormState>();
   @override
   void dispose() {
-    emailtext.dispose();
+    emailController.dispose();
     super.dispose();
   }
 
   Future passwordRest() async {
     try {
       await FirebaseAuth.instance
-          .sendPasswordResetEmail(email: emailtext.text.trim());
+          .sendPasswordResetEmail(email: emailController.text.trim());
       // ignore: use_build_context_synchronously
       showDialog(
           context: context,
           builder: (context) {
-            return const AlertDialog(content: Text("Password resent"));
+            return const AlertDialog(
+                content: Text(
+                    "تم ارسال رسالة بتفاصيل استعادة كلمة المرور عبر الايميل"));
           });
     } on FirebaseAuthException catch (e) {
       showDialog(
@@ -43,137 +46,120 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
         child: SingleChildScrollView(
             child: Form(
           key: _keyForm,
-          child: Container(
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ),
-                Row(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 30, top: 30, bottom: 30),
+                child: Row(
                   children: [
                     InkWell(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
                       onTap: () {
-                        Navigator.pushNamed(context, "/loginPage");
+                        widget.onBack();
                       },
-                      child: const Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Icon(
-                          Icons.arrow_back,
-                          size: 40,
-                          color: Colors.black,
+                      child: const Icon(
+                        Icons.arrow_back,
+                        size: 35,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(40.0),
+                child: Row(
+                  children: const [
+                    Text(
+                      'استعادة كلمة المرور',
+                      style:
+                          TextStyle(fontWeight: FontWeight.w700, fontSize: 25),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 120,
+                  child: TextFormField(
+                    controller: emailController,
+                    maxLength: 30,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    style: const TextStyle(fontSize: 20, height: 2),
+                    keyboardType: TextInputType.emailAddress,
+                    cursorHeight: 50,
+                    cursorWidth: 2,
+                    decoration: const InputDecoration(
+                      hintText: 'البريد الإلكتروني',
+                      hintStyle: TextStyle(
+                        fontSize: 20,
+                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(40),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const SizedBox(
-                      height: 30,
-                    ),
-                  ],
-                ),
-                Row(
-                  children: const [
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Text(
-                        'Reset Password',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w700, fontSize: 25),
+                      errorStyle: TextStyle(
+                        fontSize: 15.0,
                       ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        '    Masukan Email/ No. Hp akun untuk mereset kata\n    sandi Anda ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            color: Colors.grey),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: const [
-                    SizedBox(
-                      height: 30,
-                    ),
-                  ],
-                ),
-                Row(
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.all(25.0),
-                      child: Text(
-                        'Email/ Phone',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400, fontSize: 14),
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 22),
-                  child: TextFormField(
-                    controller: emailtext,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      hintText: '0787006524',
+                      counterText: '',
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Please enter an Phone";
+                        return "الرجاء إدخال البريد الإلكتروني";
                       }
+                      // }
+                      // else if (!EmailValidator.validate(value)) {
+                      //   return "الرجاء إدخال البريد الإلكتروني بطريقة صحيحة";
+                      // } else if (_isLoggedIn == false && checkemail == 1) {
+                      //   return "الايميل موجود مسبقا";
+                      // } else if (_isLoggedIn &&
+                      //     emailController.text != email2) {
+                      //   if (checkemail == 1) {
+                      //     return "الايميل موجود مسبقا";
+                      //   }
+                      // }
                       return null;
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 60,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 22),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          backgroundColor: const Color(0xFF3669C9)),
-                      onPressed: () {
-                        if (_keyForm.currentState!.validate()) {
-                          passwordRest();
-                          // Navigator.pushNamed(context, "/verificationPage");
-                        }
-                      },
-                      child: const Text(
-                        'Reset',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500),
-                      ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 100),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        backgroundColor: Colors.blue[700]),
+                    onPressed: () {
+                      if (_keyForm.currentState!.validate()) {
+                        passwordRest();
+                        // Navigator.pushNamed(context, "/verificationPage");
+                      }
+                    },
+                    child: const Text(
+                      'ارسل',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white),
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 70,
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(
+                height: 70,
+              ),
+            ],
           ),
         )),
       ),

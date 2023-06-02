@@ -42,7 +42,7 @@ class _MyOrederPageState extends State<MyOrederPage> {
                   itemBuilder: (context, index) {
                     OrderModel order = orders[index];
                     return SizedBox(
-                      height: 80,
+                      height: 95,
                       child: InkWell(
                         child: Card(
                           child: ListTile(

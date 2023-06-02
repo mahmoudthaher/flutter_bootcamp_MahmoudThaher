@@ -59,13 +59,19 @@ class _FliterPageState extends State<FliterPage> {
                       const Icon(
                         Icons.search,
                         color: Colors.grey,
+                        size: 30,
                       ),
                       const SizedBox(
                         width: 30,
                       ),
                       InkWell(
-                        child: const Icon(Icons.cancel_outlined,
-                            color: Colors.black),
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        child: const Icon(
+                          Icons.cancel_outlined,
+                          color: Colors.black,
+                          size: 30,
+                        ),
                         onTap: () {
                           products.clear();
                           // productProvider.id = 1;
@@ -146,7 +152,7 @@ class _FliterPageState extends State<FliterPage> {
                                         ],
                                       ),
                                       Container(
-                                        height: 55,
+                                        height: 70,
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 10),
                                         child: Text(
@@ -160,7 +166,7 @@ class _FliterPageState extends State<FliterPage> {
                                       Row(
                                         children: const [
                                           SizedBox(
-                                            height: 50,
+                                            height: 35,
                                           ),
                                         ],
                                       ),

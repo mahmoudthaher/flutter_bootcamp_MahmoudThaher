@@ -24,6 +24,7 @@ class _RestPasswordPageState extends State<RestPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Form(
         key: _keyForm,
         child: SafeArea(
@@ -46,173 +47,112 @@ class _RestPasswordPageState extends State<RestPasswordPage> {
                   ),
                 ],
               ),
-              // Container(
-              //   width: double.infinity,
-              //   height: 50,
-              //   color: Colors.black,
-              //   child: Row(
-              //     children: [
-              //       Padding(
-              //         padding: const EdgeInsets.all(10.0),
-              //         child: InkWell(
-              //           child: const Icon(
-              //             Icons.arrow_back,
-              //             color: Colors.white,
-              //             size: 30,
-              //           ),
-              //           onTap: () {
-              //             widget.onBack();
-              //           },
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
               SizedBox(
                 height: 100,
               ),
-              // SizedBox(
-              //   width: double.infinity,
-              //   height: 100,
-              //   child: TextFormField(
-              //     controller: currentpasswordController,
-              //     autovalidateMode: AutovalidateMode.onUserInteraction,
-              //     style: const TextStyle(fontSize: 20, height: 2),
-              //     keyboardType: TextInputType.name,
-              //     obscureText: !obscureText3,
-              //     cursorHeight: 50,
-              //     cursorWidth: 2,
-              //     decoration: InputDecoration(
-              //       hintText: 'كلمة المرور الحالية',
-              //       hintStyle: const TextStyle(
-              //         fontSize: 20,
-              //       ),
-              //       contentPadding: const EdgeInsets.only(
-              //           top: 5, bottom: 5, right: 30, left: 15),
-              //       border: const OutlineInputBorder(
-              //         borderRadius: BorderRadius.all(
-              //           Radius.circular(40),
-              //         ),
-              //       ),
-              //       errorStyle: const TextStyle(
-              //         fontSize: 15.0,
-              //       ),
-              //       suffix: InkWell(
-              //         onTap: () {
-              //           setState(() {
-              //             obscureText3 = !obscureText3;
-              //           });
-              //         },
-              //         child: obscureText3
-              //             ? Icon(Icons.visibility)
-              //             : Icon(Icons.visibility_off),
-              //       ),
-              //     ),
-              //     validator: (value) {
-              //       if (value == null || value.isEmpty) {
-              //         return "الرجاء إدخال كلمة المرور الحالية";
-              //       }
-              //       return null;
-              //     },
-              //   ),
-              // ),
-              SizedBox(
-                width: double.infinity,
-                height: 100,
-                child: TextFormField(
-                  controller: passwordController,
-                  //maxLength: 20,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  style: const TextStyle(fontSize: 20, height: 2),
-                  keyboardType: TextInputType.name,
-                  maxLength: 20,
-                  obscureText: !obscureText,
-                  cursorHeight: 50,
-                  cursorWidth: 2,
-                  decoration: InputDecoration(
-                    hintText: 'كلمة المرور',
-                    hintStyle: const TextStyle(
-                      fontSize: 20,
-                    ),
-                    contentPadding: const EdgeInsets.only(
-                        top: 5, bottom: 5, right: 30, left: 15),
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(40),
+              Padding(
+                padding: const EdgeInsets.only(right: 20, left: 20),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 100,
+                  child: TextFormField(
+                    controller: passwordController,
+                    //maxLength: 20,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    style: const TextStyle(fontSize: 20, height: 2),
+                    keyboardType: TextInputType.name,
+                    maxLength: 20,
+                    obscureText: !obscureText,
+                    cursorHeight: 50,
+                    cursorWidth: 2,
+                    decoration: InputDecoration(
+                      hintText: 'كلمة المرور',
+                      hintStyle: const TextStyle(
+                        fontSize: 20,
                       ),
+                      contentPadding: const EdgeInsets.only(
+                          top: 5, bottom: 5, right: 30, left: 15),
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(40),
+                        ),
+                      ),
+                      errorStyle: const TextStyle(
+                        fontSize: 15.0,
+                      ),
+                      suffix: InkWell(
+                        onTap: () {
+                          setState(() {
+                            obscureText = !obscureText;
+                          });
+                        },
+                        child: obscureText
+                            ? Icon(Icons.visibility)
+                            : Icon(Icons.visibility_off),
+                      ),
+                      counterText: '',
                     ),
-                    errorStyle: const TextStyle(
-                      fontSize: 15.0,
-                    ),
-                    suffix: InkWell(
-                      onTap: () {
-                        setState(() {
-                          obscureText = !obscureText;
-                        });
-                      },
-                      child: obscureText
-                          ? Icon(Icons.visibility)
-                          : Icon(Icons.visibility_off),
-                    ),
-                    counterText: '',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "الرجاء إدخال كلمة المرور";
+                      } else if (value.length < 8) {
+                        return "كلمة المرور يجب ان تكون مكونة من 8 خانات على الأقل";
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "الرجاء إدخال كلمة المرور";
-                    } else if (value.length < 8) {
-                      return "كلمة المرور يجب ان تكون مكونة من 8 خانات على الأقل";
-                    }
-                    return null;
-                  },
                 ),
               ),
-              SizedBox(
-                width: double.infinity,
-                height: 100,
-                child: TextFormField(
-                  controller: repasswordController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  style: const TextStyle(fontSize: 20, height: 2),
-                  keyboardType: TextInputType.name,
-                  maxLength: 20,
-                  obscureText: !obscureText2,
-                  cursorHeight: 50,
-                  cursorWidth: 2,
-                  decoration: InputDecoration(
-                    hintText: 'إعادة كلمة المرور',
-                    hintStyle: const TextStyle(
-                      fontSize: 20,
-                    ),
-                    contentPadding: const EdgeInsets.only(
-                        top: 5, bottom: 5, right: 30, left: 15),
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(40),
+              Padding(
+                padding: const EdgeInsets.only(right: 20, left: 20),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 100,
+                  child: TextFormField(
+                    controller: repasswordController,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    style: const TextStyle(fontSize: 20, height: 2),
+                    keyboardType: TextInputType.name,
+                    maxLength: 20,
+                    obscureText: !obscureText2,
+                    cursorHeight: 50,
+                    cursorWidth: 2,
+                    decoration: InputDecoration(
+                      hintText: 'إعادة كلمة المرور',
+                      hintStyle: const TextStyle(
+                        fontSize: 20,
                       ),
+                      contentPadding: const EdgeInsets.only(
+                          top: 5, bottom: 5, right: 30, left: 15),
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(40),
+                        ),
+                      ),
+                      errorStyle: const TextStyle(
+                        fontSize: 15.0,
+                      ),
+                      suffix: InkWell(
+                        onTap: () {
+                          setState(() {
+                            obscureText2 = !obscureText2;
+                          });
+                        },
+                        child: obscureText2
+                            ? Icon(Icons.visibility)
+                            : Icon(Icons.visibility_off),
+                      ),
+                      counterText: '',
                     ),
-                    errorStyle: const TextStyle(
-                      fontSize: 15.0,
-                    ),
-                    suffix: InkWell(
-                      onTap: () {
-                        setState(() {
-                          obscureText2 = !obscureText2;
-                        });
-                      },
-                      child: obscureText2
-                          ? Icon(Icons.visibility)
-                          : Icon(Icons.visibility_off),
-                    ),
-                    counterText: '',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "الرجاء إعادة إدخال كلمة المرور";
+                      } else if (value != passwordController.text) {
+                        return "كلمة المرور غير متطابقة";
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "الرجاء إعادة إدخال كلمة المرور";
-                    } else if (value != passwordController.text) {
-                      return "كلمة المرور غير متطابقة";
-                    }
-                    return null;
-                  },
                 ),
               ),
               Padding(
@@ -225,7 +165,7 @@ class _RestPasswordPageState extends State<RestPasswordPage> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        backgroundColor: Color(0xFF1b69a0)),
+                        backgroundColor: Colors.blue[700]),
                     onPressed: () {
                       setState(() {
                         if (_keyForm.currentState!.validate()) {
@@ -238,7 +178,7 @@ class _RestPasswordPageState extends State<RestPasswordPage> {
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF272727)),
+                          color: Colors.white),
                     ),
                   ),
                 ),

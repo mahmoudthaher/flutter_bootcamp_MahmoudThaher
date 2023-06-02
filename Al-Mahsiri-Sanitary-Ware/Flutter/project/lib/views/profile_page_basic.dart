@@ -17,26 +17,6 @@ class ProfilePageBasic extends StatefulWidget {
 }
 
 class _ProfilePageBasicState extends State<ProfilePageBasic> {
-  // final storage = FlutterSecureStorage();
-  // String? fistName;
-  // String? lastName;
-  // Future<void> showUserInfo() async {
-  //   String? fistname = await storage.read(key: 'fistName');
-  //   String? lastlame = await storage.read(key: 'lastName');
-
-  //   setState(() {
-  //     fistName = fistname;
-  //     lastName = lastlame;
-  //   });
-  // }
-
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   showUserInfo();
-  // }
-
   Widget _currentPage = const ProfilePageBasic();
   @override
   Widget build(BuildContext context) {
@@ -47,7 +27,6 @@ class _ProfilePageBasicState extends State<ProfilePageBasic> {
         child: _currentPage is ProfilePageBasic
             ? SingleChildScrollView(
                 child: Column(
-                  //mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
                       padding:
@@ -58,10 +37,6 @@ class _ProfilePageBasicState extends State<ProfilePageBasic> {
                         color: Colors.white,
                         child: Row(
                           children: [
-                            // SizedBox(
-                            //   width: 191,
-                            // ),
-                            // Text("اهلا سيد   $fistName $lastName"),
                             SizedBox(
                               width: 40,
                             ),
@@ -115,7 +90,7 @@ class _ProfilePageBasicState extends State<ProfilePageBasic> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(40),
                               ),
-                              backgroundColor: Color(0xFF1b69a0)),
+                              backgroundColor: Colors.blue[700]),
                           onPressed: () {
                             setState(() {
                               _currentPage = ProfilePage(onBack: () {
@@ -130,7 +105,7 @@ class _ProfilePageBasicState extends State<ProfilePageBasic> {
                             style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.black),
+                                color: Colors.white),
                           ),
                         ),
                       ),
@@ -148,7 +123,7 @@ class _ProfilePageBasicState extends State<ProfilePageBasic> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(40),
                               ),
-                              backgroundColor: Color(0xFF1b69a0)),
+                              backgroundColor: Colors.blue[700]),
                           onPressed: () {
                             setState(() {
                               _currentPage = RestPasswordPage(
@@ -165,7 +140,7 @@ class _ProfilePageBasicState extends State<ProfilePageBasic> {
                             style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.black),
+                                color: Colors.white),
                           ),
                         ),
                       ),
