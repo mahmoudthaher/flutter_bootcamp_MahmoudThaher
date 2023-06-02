@@ -1,6 +1,7 @@
 import Route from '@ioc:Adonis/Core/Route'
 Route.group(() => {
   Route.group(() => {
+    Route.get("findId/:email", "UsersController.findId");
     Route.get("", "UsersController.getByAuth");
     Route.post("/login", "UsersController.login");
     Route.post("/logout", "UsersController.logout");

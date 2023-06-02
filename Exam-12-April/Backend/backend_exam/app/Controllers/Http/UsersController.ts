@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import {schema,rules} from '@ioc:Adonis/Core/Validator'
+import Database from '@ioc:Adonis/Lucid/Database';
 import User from 'App/Models/User';
 export default class UsersController {
     public async getByAuth(ctx: HttpContextContract) {
@@ -13,6 +14,12 @@ export default class UsersController {
         var email = object.email;
         var password = object.password;
         var result = await ctx.auth.attempt(email, password);
+        return result;
+    }
+
+    public async findId(ctx: HttpContextContract) {
+        var email = ctx.params.email;
+        var result = User.query().select('*').where("email",email);
         return result;
     }
 
@@ -46,15 +53,16 @@ export default class UsersController {
     }
     public async update(ctx: HttpContextContract) {
         const newSchema = schema.create({
+            id:schema.number(),
             username: schema.string(),
             email: schema.string(),
             password: schema.string(),
         });
-        const token = await ctx.auth.authenticate();
+        
         const fields = await ctx.request.validate({ schema: newSchema });
         let errorMessage = ''
         try {
-            var id = token.id;
+            var id = fields.id;
             var user = await User.findOrFail(id);
             try {
                 await User.query()

@@ -1,19 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/intl.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:project/privacy_policy.dart';
-import 'package:project/send_feedback.dart';
-
-import 'package:project/settings.dart';
-
-import 'contacts.dart';
-import 'dashboard.dart';
-import 'events.dart';
 import 'my_drawer_header.dart';
-import 'notes.dart';
-import 'notifications.dart';
 
 class regiter_page extends StatefulWidget {
   const regiter_page({super.key});

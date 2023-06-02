@@ -2,7 +2,6 @@ import 'package:flutter_exam/controllers/api_helper.dart';
 import 'package:flutter_exam/main.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../idprofile.dart';
 import '../models/user_model.dart';
 
 class UserController {
@@ -19,6 +18,23 @@ class UserController {
       return true;
     } catch (ex) {
       print(ex);
+      rethrow;
+    }
+  }
+
+  Future<List<UserModel>> findId(String email) async {
+    try {
+      dynamic jsonObject =
+          await ApiHelper().getRequest2("api/Users/findId/$email");
+      List<UserModel> users = [];
+      jsonObject.forEach((json) {
+        users.add(UserModel.fromJson(json));
+      });
+      return users;
+      // UserModel a = UserModel.fromJson(jsonObject[0]);
+      // print(a.toString());
+      // return a;
+    } catch (ex) {
       rethrow;
     }
   }
@@ -46,7 +62,6 @@ class UserController {
           await ApiHelper().putRequest("api/Users", user.toJson());
       return UserModel.fromJson(jsonObject);
     } catch (ex) {
-      print(ex);
       rethrow;
     }
   }

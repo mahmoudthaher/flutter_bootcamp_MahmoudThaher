@@ -18,6 +18,10 @@ class UserModel {
         "password": password,
       };
 
+  Map<String, dynamic> toJsonFindId() => {
+        "email": email,
+      };
+
   Map<String, dynamic> toJsonC() => {
         "username": username,
         "email": email,
@@ -31,6 +35,7 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
+      id: json["id"],
       username: json["username"],
       email: json["email"],
       password: json["password"],

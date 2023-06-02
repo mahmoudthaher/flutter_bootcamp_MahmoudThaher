@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiHelper {
-  final String DOMAIN = "192.168.8.124:3333";
+  final String DOMAIN = "192.168.8.113:3333";
 
   Future<String> getToken() async {
     var storage = FlutterSecureStorage();
@@ -19,6 +19,12 @@ class ApiHelper {
     return resposneFunction(resposne);
   }
 
+  Future<dynamic> getRequest2(String path) async {
+    Uri uriFunction = Uri.http(DOMAIN, path);
+    http.Response resposne = await http.get(uriFunction);
+    return resposneFunction(resposne);
+  }
+
   Future<dynamic> postRequest(String path, Map body) async {
     Uri uriFunction = Uri.http(DOMAIN, path);
     http.Response resposne = await http.post(uriFunction, body: body);
@@ -27,10 +33,7 @@ class ApiHelper {
 
   Future<dynamic> putRequest(String path, Map body) async {
     Uri uriFunction = Uri.https(DOMAIN, path);
-    var token = await getToken();
-    var headers = {"Authorization": token};
-    http.Response resposne =
-        await http.put(uriFunction, headers: headers, body: body);
+    http.Response resposne = await http.put(uriFunction, body: body);
     return resposneFunction(resposne);
   }
 

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_exam/bloc/orders/orders_blocks.dart';
-import 'package:flutter_exam/idprofile.dart';
 import 'package:flutter_exam/login_page.dart';
+import 'package:flutter_exam/models/Find.dart';
 import 'package:flutter_exam/myorders.dart';
 import 'package:flutter_exam/product_page.dart';
 import 'package:flutter_exam/profile_page.dart';
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
           "/order": (context) => MyOrdersPage(),
           "/login": (context) => LoginPage(),
           "/create": (context) => CreatePage(),
-          "/edit": (context) => ProfilePage(),
+          "/edit": (context) => ProfilePage(settings.arguments as findid),
           "/product": (context) => ProductsPage(),
         };
         WidgetBuilder builder = routes[settings.name]!;
@@ -63,7 +63,7 @@ class _PreLoadPageState extends State<PreLoadPage> {
   }
 
   _checkLogin() async {
-    storage = FlutterSecureStorage();
+    var storage = FlutterSecureStorage();
     var checker = await storage.containsKey(key: "token");
     if (checker) {
       Navigator.pushReplacementNamed(context, "/myhomepage");
@@ -123,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             ProductsPage(),
             MyOrdersPage(),
-            ProfilePage(),
+            ProfilePage(findid(id: "")),
           ],
         ),
       ),

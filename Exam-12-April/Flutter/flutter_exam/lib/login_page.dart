@@ -2,6 +2,8 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_exam/main.dart';
+import 'package:flutter_exam/models/Find.dart';
 import 'package:flutter_exam/models/user_model.dart';
 import 'package:flutter_exam/myorders.dart';
 
@@ -15,6 +17,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  List<UserModel> users = [];
   bool obscureText = true;
   final _keyForm = GlobalKey<FormState>();
   final emailController = TextEditingController();
@@ -108,11 +111,16 @@ class _LoginPageState extends State<LoginPage> {
         email: email,
         password: password,
       );
+
       EasyLoading.show(status: "Loading");
       UserController().login(user).then((value) {
+        UserController().findId(email).then((value) {});
+        findid check = findid(id: users[0].id.toString());
         EasyLoading.dismiss();
         EasyLoading.showInfo("Done");
-        Navigator.pushReplacementNamed(context, "/myhomepage");
+
+        Navigator.pushReplacementNamed(context, "/myhomepage",
+            arguments: check);
       }).catchError((ex) {
         print(ex);
         EasyLoading.dismiss();

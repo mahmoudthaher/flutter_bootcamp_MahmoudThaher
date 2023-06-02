@@ -1,19 +1,19 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_exam/models/Find.dart';
 import 'package:flutter_exam/models/user_model.dart';
 import '../controllers/user_controller.dart';
-import 'idprofile.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  findid check;
+  ProfilePage(this.check, {super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  var storage = userdata();
   bool obscureText = true;
   final _keyForm = GlobalKey<FormState>();
   final emailController = TextEditingController();
@@ -92,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        _handleCreateAction();
+                        _handleUpdateAction();
                       },
                       child: const Text("Edit"),
                     ),
@@ -102,13 +102,13 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  _handleCreateAction() async {
+  _handleUpdateAction() async {
     if (_keyForm.currentState!.validate()) {
       String email = emailController.text;
       String password = passwordController.text;
       String username = usernameController.text;
       UserModel user = UserModel(
-        id: 3,
+        id: widget.check.id as int,
         username: username,
         email: email,
         password: password,
