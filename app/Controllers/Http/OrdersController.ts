@@ -44,6 +44,7 @@ export default class OrdersController {
             order.subTotal = data.sub_total;
             order.total = data.total;
             order.paymentMethodId = data.payment_method_id;
+            order.statusId=1;
             var newOrder = await order.save();
 
             var address = new OrderAddress();

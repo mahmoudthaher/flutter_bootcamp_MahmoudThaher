@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, beforeSave, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, beforeSave, beforeUpdate, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import Gender from './Gender'
 import Type from './Type'
 import City from './City'
@@ -77,4 +77,5 @@ export default class User extends BaseModel {
       user.password = await Hash.make(user.password)
     }
   }
+ 
 }

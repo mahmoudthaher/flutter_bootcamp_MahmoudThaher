@@ -2,6 +2,12 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import User from 'App/Models/User';
 import I18n from '@ioc:Adonis/Addons/I18n'
+import Hash from '@ioc:Adonis/Core/Hash'
+import Mail from '@ioc:Adonis/Addons/Mail';
+
+//const { firebaseAdmin } = require('firebase-admin');
+
+
 export default class UsersController {
     public async getAll(ctx: HttpContextContract) {
         const token = await ctx.auth.authenticate();
@@ -13,7 +19,7 @@ export default class UsersController {
         var address = ctx.request.input("address");
         var genderId = ctx.request.input("gender_id");
         var typeId = ctx.request.input("type_id");
-       // var countryId = ctx.request.input("country_id");
+        // var countryId = ctx.request.input("country_id");
         var cityId = ctx.request.input("city_id");
         var query = User.query().preload('city').preload('gender').preload('type');
         const page = ctx.request.input('page', 1);
@@ -57,23 +63,28 @@ export default class UsersController {
         return result;
     }
     public async login(ctx: HttpContextContract) {
-        var object = ctx.request.all();
-        var email = object.email;
-        var password = object.password;
-        var result = await ctx.auth.attempt(email, password);
-       // var resultUser = await User.query().where('email',email).orWhere('password',password);
-        return result;
+        try {
+            var object = ctx.request.all();
+            var email = object.email;
+            var password = object.password;
+            var result = await ctx.auth.attempt(email, password);
+            // var resultUser = await User.query().where('email',email).orWhere('password',password);
+            return result;
+        } catch (error) {
+            console.log(error)
+        }
+
     }
 
     public async informationUser(ctx: HttpContextContract) {
         try {
             var email = ctx.params.email;
-        var result = User.query().where("email",email);
-       return result;
+            var result = User.query().where("email", email);
+            return result;
         } catch (error) {
             console.log(error)
         }
-        
+
         // var object = ctx.request.all();
         // var email = object.email;
         // //var password = object.password;
@@ -115,7 +126,7 @@ export default class UsersController {
             address: schema.string(),
             gender_id: schema.number(),
             type_id: schema.number(),
-           // country_id: schema.number(),
+            // country_id: schema.number(),
             city_id: schema.number(),
         });
 
@@ -135,7 +146,7 @@ export default class UsersController {
                 'address.required': I18n.locale('ar').formatMessage('users.addressIsRequired'),
                 'gender_id.required': I18n.locale('ar').formatMessage('users.genderIdIsRequired'),
                 'type_id.required': I18n.locale('ar').formatMessage('users.typeIdIsRequired'),
-              //  'country_id.required': I18n.locale('ar').formatMessage('users.countryIdIsRequired'),
+                //  'country_id.required': I18n.locale('ar').formatMessage('users.countryIdIsRequired'),
                 'city_id.required': I18n.locale('ar').formatMessage('users.cityIdIsRequired'),
             }
         });
@@ -149,7 +160,7 @@ export default class UsersController {
         user.address = fields.address;
         user.genderId = fields.gender_id;
         user.typeId = fields.type_id;
-       // user.countryId = fields.country_id;
+        // user.countryId = fields.country_id;
         user.cityId = fields.city_id;
         await user.save();
         return { message: "The user has been created!" };
@@ -162,11 +173,11 @@ export default class UsersController {
             phone_number: schema.string(),
             email: schema.string(),
             user_name: schema.string(),
-            password: schema.string(),
+            // password: schema.string(),
             address: schema.string(),
             gender_id: schema.number(),
             type_id: schema.number(),
-           // country_id: schema.number(),
+            // country_id: schema.number(),
             city_id: schema.number(),
         });
         const fields = await ctx.request.validate({
@@ -180,11 +191,11 @@ export default class UsersController {
                 'email.email': I18n.locale('ar').formatMessage('users.email.email'),
                 'user_name.required': I18n.locale('ar').formatMessage('users.userNameIsRequired'),
                 'user_name.unique': I18n.locale('ar').formatMessage('users.userName.unique'),
-                'password.required': I18n.locale('ar').formatMessage('users.passwordIsRequired'),
+                //'password.required': I18n.locale('ar').formatMessage('users.passwordIsRequired'),
                 'address.required': I18n.locale('ar').formatMessage('users.addressIsRequired'),
                 'gender_id.required': I18n.locale('ar').formatMessage('users.genderIdIsRequired'),
                 'type_id.required': I18n.locale('ar').formatMessage('users.typeIdIsRequired'),
-             //   'country_id.required': I18n.locale('ar').formatMessage('users.countryIdIsRequired'),
+                //   'country_id.required': I18n.locale('ar').formatMessage('users.countryIdIsRequired'),
                 'city_id.required': I18n.locale('ar').formatMessage('users.cityIdIsRequired'),
             }
         })
@@ -221,11 +232,11 @@ export default class UsersController {
             user.phoneNumber = fields.phone_number;
             user.email = fields.email;
             user.userName = fields.user_name;
-            user.password = fields.password;
+            //user.password = fields.password;
             user.address = fields.address;
             user.genderId = fields.gender_id;
             user.typeId = fields.type_id;
-          //  user.countryId = fields.country_id;
+            //  user.countryId = fields.country_id;
             user.cityId = fields.city_id;
             await user.save();
             return { message: "The user has been updated!" };
@@ -233,6 +244,25 @@ export default class UsersController {
         catch (error) {
             return { error: 'User not found' }
         }
+    }
+    public async updatePassword(ctx: HttpContextContract) {
+
+        const newSchema = schema.create({
+            id: schema.number(),
+            password: schema.string()
+        });
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {
+                'email.required': I18n.locale('ar').formatMessage('users.emailIsRequired'),
+                'password.required': I18n.locale('ar').formatMessage('users.passwordIsRequired'),
+            }
+        })
+        var id = fields.id;
+        var user = await User.findOrFail(id);
+        user.password = fields.password;
+        await user.save();
+        return { message: "The password has been updated!" };
     }
     public async destory(ctx: HttpContextContract) {
         var id = ctx.params.id;
@@ -242,19 +272,77 @@ export default class UsersController {
     }
     public async checkEmail(ctx: HttpContextContract) {
         var email = ctx.params.email;
-         var result = User.query().select('email').where("email",email);
+        var result = User.query().select('email').where("email", email);
         return result;
     }
     public async checkPhoneNumber(ctx: HttpContextContract) {
         var phoneNumber = ctx.params.phoneNumber;
-        var result = User.query().select('phone_number').where("phone_number",phoneNumber);
+        var result = User.query().select('phone_number').where("phone_number", phoneNumber);
         return result;
     }
     public async checkUserName(ctx: HttpContextContract) {
         var userName = ctx.params.userName;
-        var result = User.query().select('user_name').where("user_name",userName);
+        var result = User.query().select('user_name').where("user_name", userName);
         return result;
     }
+    public async sendEmail(ctx: HttpContextContract) {
+        try {
+            const newSchema = schema.create({
+                email: schema.string(),
+                firstName: schema.string(),
+            });
+            const fields = await ctx.request.validate({
+                schema: newSchema
+            })
+            const randomatic = require('randomatic');
+            const randomFourDigitNumber = randomatic('0', 4).toString()
+
+
+            var email = fields.email;
+            Mail.send((message) => {
+                message
+                    .from('vreify@adonis.com')
+                    .to(email)
+                    .subject(randomFourDigitNumber)
+                    .htmlView('emails/verify', { email })
+            })
+        } catch (error) {
+            return error
+        }
+    }
+    // public async resetPassword({ request, response }) {
+    //     const { email, newPassword } = request.only(['email', 'newPassword']);
+
+    //     try {
+    //         // Get the user from your own database based on the email
+    //         const user = await User.findBy('email', email);
+
+    //         if (!user) {
+    //             return response.status(404).json({
+    //                 message: 'User not found'
+    //             });
+    //         }
+
+    //         // Update the user's password in your own database
+    //         user.password = await Hash.make(newPassword);
+    //         await user.save();
+
+    //         // Use the Firebase Admin SDK to update the user's password in Firebase Authentication
+    //         await firebaseAdmin.auth().updateUser(user.id, {
+    //             password: newPassword
+    //         });
+
+    //         return response.json({
+    //             message: 'Password updated successfully'
+    //         });
+    //     } catch (error) {
+    //         console.error(error);
+    //         return response.status(500).json({
+    //             message: 'Failed to update password'
+    //         });
+    //     }
+
+
+    //}
 }
-      
 

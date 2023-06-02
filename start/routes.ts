@@ -82,15 +82,19 @@ Route.group(() => {
     Route.delete("/:id", "TypesController.destory");
   }).prefix("/Types");
   Route.group(() => {
+    
     Route.get("/informationUser/:email", "UsersController.informationUser");
     Route.get("/username/:userName", "UsersController.checkUserName");
     Route.get("/phonenumber/:phoneNumber", "UsersController.checkPhoneNumber");
     Route.get("/email/:email", "UsersController.checkEmail");
     Route.get("/:id", "UsersController.getById");
     Route.get("/", "UsersController.getAll");
+   // Route.post('/reset-password', 'UsersController.resetPassword');
+    Route.post("/sendEmail", "UsersController.sendEmail");
     Route.post("/login", "UsersController.login");
     Route.post("/logout", "UsersController.logout");
     Route.post("/", "UsersController.create");
+    Route.put("/updatePassword", "UsersController.updatePassword");
     Route.put("/", "UsersController.update");
     Route.delete("/:id", "UsersController.destory");
   }).prefix("/Users");
