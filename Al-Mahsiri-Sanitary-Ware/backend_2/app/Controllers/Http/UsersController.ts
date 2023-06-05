@@ -285,6 +285,13 @@ export default class UsersController {
         var result = User.query().select('user_name').where("user_name", userName);
         return result;
     }
+    public async checkUserAndPhone(ctx: HttpContextContract) {
+        var email = ctx.params.email;
+        var phoneNumber = ctx.params.phoneNumber;
+        var result = User.query().where("email", email).where("phone_number", phoneNumber);
+        return result;
+    }
+
     public async sendEmail(ctx: HttpContextContract) {
         try {
             const newSchema = schema.create({
@@ -351,29 +358,29 @@ export default class UsersController {
     //const Hash = use('Hash')
 
 
-    public async resetPassword({ request, response }) {
-        const { password } = request.all()
+    // public async resetPassword({ request, response }) {
+    //     const { password } = request.all()
 
-        try {
-            // You may have your own logic to find the user, such as finding by email
-            const user = await User.findBy('email', "mthaher3@gmail.com")
+    //     try {
+    //         // You may have your own logic to find the user, such as finding by email
+    //         const user = await User.findBy('email', "mthaher3@gmail.com")
 
-            if (!user) {
-                return response.status(400).json({ message: 'User not found' })
-            }
+    //         if (!user) {
+    //             return response.status(400).json({ message: 'User not found' })
+    //         }
 
-            // Hash the new password
-            const hashedPassword = await Hash.make(password)
+    //         // Hash the new password
+    //         const hashedPassword = await Hash.make(password)
 
-            // Update the user's password
-            user.password = hashedPassword
-            await user.save()
+    //         // Update the user's password
+    //         user.password = hashedPassword
+    //         await user.save()
 
-            return response.status(200).json({ message: 'Password reset successful' })
-        } catch (error) {
-            return response.status(500).json({ message: 'Internal server error' })
-        }
-    }
+    //         return response.status(200).json({ message: 'Password reset successful' })
+    //     } catch (error) {
+    //         return response.status(500).json({ message: 'Internal server error' })
+    //     }
+    // }
 
 
 
