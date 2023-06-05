@@ -288,7 +288,7 @@ export default class UsersController {
     public async checkUserAndPhone(ctx: HttpContextContract) {
         var email = ctx.params.email;
         var phoneNumber = ctx.params.phoneNumber;
-        var result = User.query().where("email", email).andWhere("phone_number", phoneNumber);
+        var result = User.query().select("id").where("email", email).andWhere("phone_number", phoneNumber);
         return result;
     }
 
