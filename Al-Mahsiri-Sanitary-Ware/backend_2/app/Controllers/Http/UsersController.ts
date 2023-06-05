@@ -344,5 +344,40 @@ export default class UsersController {
 
 
     //}
+
+
+
+    //const User = use('App/Models/User')
+    //const Hash = use('Hash')
+
+
+   public async resetPassword({ request, response }) {
+        const { password } = request.all()
+
+        try {
+            // You may have your own logic to find the user, such as finding by email
+            const user = await User.findBy('email', request.input('email'))
+
+            if (!user) {
+                return response.status(400).json({ message: 'User not found' })
+            }
+
+            // Hash the new password
+            const hashedPassword = await Hash.make(password)
+
+            // Update the user's password
+            user.password = hashedPassword
+            await user.save()
+
+            return response.status(200).json({ message: 'Password reset successful' })
+        } catch (error) {
+            return response.status(500).json({ message: 'Internal server error' })
+        }
+    }
+
+
+
+
+
 }
 

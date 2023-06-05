@@ -89,7 +89,7 @@ Route.group(() => {
     Route.get("/email/:email", "UsersController.checkEmail");
     Route.get("/:id", "UsersController.getById");
     Route.get("/", "UsersController.getAll");
-   // Route.post('/reset-password', 'UsersController.resetPassword');
+   Route.post('/password/reset', 'UsersController.resetPassword');
     Route.post("/sendEmail", "UsersController.sendEmail");
     Route.post("/login", "UsersController.login");
     Route.post("/logout", "UsersController.logout");
