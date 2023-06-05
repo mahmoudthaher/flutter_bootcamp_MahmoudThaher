@@ -351,12 +351,12 @@ export default class UsersController {
     //const Hash = use('Hash')
 
 
-   public async resetPassword({ request, response }) {
+    public async resetPassword({ request, response }) {
         const { password } = request.all()
 
         try {
             // You may have your own logic to find the user, such as finding by email
-            const user = await User.findBy('email', request.input('email'))
+            const user = await User.findBy('email', "mthaher3@gmail.com")
 
             if (!user) {
                 return response.status(400).json({ message: 'User not found' })
