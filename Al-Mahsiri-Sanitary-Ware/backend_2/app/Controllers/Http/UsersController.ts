@@ -292,7 +292,7 @@ export default class UsersController {
         var result = User.query().select("id").where("email", email).andWhere("phone_number", phoneNumber);
         return result;
         } catch (error) {
-            return error
+            return "error"
         }
         
     }
