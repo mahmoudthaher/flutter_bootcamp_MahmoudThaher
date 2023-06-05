@@ -19,6 +19,8 @@ class _MyOrederPageState extends State<MyOrederPage> {
   Widget _currentPage = const MyOrederPage();
   final storage = const FlutterSecureStorage();
   String? idUser;
+  bool _isLoading = true;
+  bool _showEmptyMessage = false;
   @override
   void initState() {
     super.initState();
@@ -33,64 +35,77 @@ class _MyOrederPageState extends State<MyOrederPage> {
 
     return Scaffold(
       body: _currentPage is MyOrederPage
-          ? orders.isEmpty
+          ? _isLoading // Check the state variable before rendering the Text widget
               ? const Center(
-                  child: Text(" لم تقم باضافة اي طلب حتى الان ",
-                      style: TextStyle(fontSize: 25)))
-              : ListView.builder(
-                  itemCount: orders.length,
-                  itemBuilder: (context, index) {
-                    OrderModel order = orders[index];
-                    return SizedBox(
-                      height: 95,
-                      child: InkWell(
-                        child: Card(
-                          child: ListTile(
-                            leading: Padding(
-                              padding: const EdgeInsets.only(top: 10),
-                              child: Column(
-                                children: [
-                                  Text(order.createdAt!.substring(0, 10)),
-                                  // const SizedBox(
-                                  //   height: 10,
-                                  // ),
-                                  Text(order.createdAt!.substring(11, 19)),
-                                ],
+                  child: CircularProgressIndicator(),
+                )
+              : orders.isEmpty
+                  ? _showEmptyMessage
+                      ? const Center(
+                          child: Text(
+                            "لم تقم باضافة اي طلب حتى الان",
+                            style: TextStyle(fontSize: 25),
+                          ),
+                        )
+                      : Container() //
+                  : ListView.builder(
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) {
+                        OrderModel order = orders[index];
+                        return SizedBox(
+                          height: 95,
+                          child: InkWell(
+                            child: Card(
+                              child: ListTile(
+                                leading: Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: Column(
+                                    children: [
+                                      Text(order.createdAt!.substring(0, 10)),
+                                      // const SizedBox(
+                                      //   height: 10,
+                                      // ),
+                                      Text(order.createdAt!.substring(11, 19)),
+                                    ],
+                                  ),
+                                ),
+                                title: Text(
+                                  "المجموع : ${order.total.toStringAsFixed(2)}",
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                subtitle: Text(
+                                  "المجموع بدون الضريبة : ${order.subTotal.toStringAsFixed(2)}",
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                                trailing:
+                                    Text("الحالة : ${order.status.status}"),
                               ),
                             ),
-                            title: Text(
-                              "المجموع : ${order.total.toStringAsFixed(2)}",
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w500),
-                            ),
-                            subtitle: Text(
-                              "المجموع بدون الضريبة : ${order.subTotal.toStringAsFixed(2)}",
-                              style: const TextStyle(fontSize: 13),
-                            ),
-                            trailing: Text("الحالة : ${order.status.status}"),
+                            onTap: () {
+                              setState(() {
+                                orderProvider.orderId = order.id;
+                                _currentPage = OrderDetailPage(
+                                  onBack: () {
+                                    setState(() {
+                                      _currentPage = const MyOrederPage();
+                                    });
+                                  },
+                                );
+                              });
+                            },
                           ),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            orderProvider.orderId = order.id;
-                            _currentPage = OrderDetailPage(
-                              onBack: () {
-                                setState(() {
-                                  _currentPage = const MyOrederPage();
-                                });
-                              },
-                            );
-                          });
-                        },
-                      ),
-                    );
-                  },
-                )
+                        );
+                      },
+                    )
           : OrderDetailPage(
               onBack: () {
-                setState(() {
-                  _currentPage = const MyOrederPage();
-                });
+                setState(
+                  () {
+                    _currentPage = const MyOrederPage();
+                  },
+                );
               },
             ),
     );
@@ -99,7 +114,21 @@ class _MyOrederPageState extends State<MyOrederPage> {
   Future<void> _UserId() async {
     String? idUser = await storage.read(key: 'id');
     final provider = Provider.of<OrderProvider>(context, listen: false);
-    provider.userId = idUser;
-    provider.getAllOrders();
+
+    if (idUser != null) {
+      provider.userId = idUser;
+      provider.getAllOrders();
+      await Future.delayed(
+          Duration(seconds: 1)); // Adjust the delay duration as needed
+      setState(() {
+        _isLoading = false;
+        _showEmptyMessage = provider.orders.isEmpty;
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
+        _showEmptyMessage = true;
+      });
+    }
   }
 }

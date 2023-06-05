@@ -196,7 +196,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   SizedBox(
                     width: double.infinity,
-                    height: 100,
+                    height: 115,
                     child: TextFormField(
                       controller: phoneNumberController,
                       maxLength: 10,
@@ -220,6 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         errorStyle: TextStyle(
                           fontSize: 15.0,
                         ),
+                        errorMaxLines: 2,
                         counterText: '',
                       ),
                       validator: (value) {

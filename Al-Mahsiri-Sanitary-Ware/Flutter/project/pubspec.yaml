@@ -49,6 +49,7 @@ dependencies:
   dio: ^5.1.1
   firebase_core: ^2.13.0
   firebase_auth: ^4.6.1
+  fluttertoast: ^8.0.7
   
   
 
@@ -75,8 +76,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - assets/images/login_page/
+  assets:
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

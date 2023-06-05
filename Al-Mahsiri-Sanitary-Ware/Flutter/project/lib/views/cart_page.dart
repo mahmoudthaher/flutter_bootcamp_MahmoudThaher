@@ -192,11 +192,36 @@ class _CartPageState extends State<CartPage> {
       // ignore: use_build_context_synchronously
       _handleGoToOrderCheckout(context);
     } else {
-      var result = await Navigator.pushNamed(context, "/loginPage");
+      // var result = await Navigator.pushNamed(context, "/loginPage");
 
-      if (result != null) {
-        _handleGoToOrderCheckout(context);
-      }
+      // if (result != null) {
+      //   _handleGoToOrderCheckout(context);
+      // }
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('غير مسجل'),
+            content: const Text(
+                'انتا غير مسجل اضغط على الذهاب الى صفحة تسجيل الدخول لاتمام عملية الطلب'),
+            actions: [
+              TextButton(
+                child: const Text('الذهاب الى صفحة تسجيل الدخول'),
+                onPressed: () {
+                  Navigator.pushNamed(context, "/loginPage");
+                },
+              ),
+              TextButton(
+                child: const Text('رجوع'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 

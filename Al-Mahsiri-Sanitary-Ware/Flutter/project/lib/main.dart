@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project/Providers/category_provider.dart';
 import 'package:project/Providers/city_provider.dart';
 import 'package:project/Providers/order_product_provider.dart';
@@ -34,11 +37,12 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -63,49 +67,82 @@ class MyApp extends StatelessWidget {
         )
       ],
       child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('ar', 'AE'),
-          ],
-          title: 'Flutter Demo',
-          builder: EasyLoading.init(),
-          theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFffffff)),
-          initialRoute: "/",
-          onGenerateRoute: (settings) {
-            var routes = {
-              "/": (context) => const BottomNavigation(),
-              "/loginPage": (context) => const LoginPage(),
-              "/profilePage": (context) => ProfilePage(
-                    onBack: () {},
-                  ),
-              "/myhomepage": (context) => const MyHomePage(),
-              "/bottomnavigation": (context) => const BottomNavigation(),
-              "/categoryPage": (context) => const CategoriesPage(),
-              "/cartPage": (context) => const CartPage(),
-              "/fliterPage": (context) => FliterPage(
-                    onBack: () {},
-                  ),
-              "/myOrderPage": (context) => const MyOrederPage(),
-              "/orderdetail": (context) => OrderDetailPage(
-                    onBack: () {},
-                  ),
-              "/profilepagebisic": (context) => const ProfilePageBasic(),
-              "/forgetPassword": (context) => ForgetPasswordPage(
-                    onBack: () {},
-                  ),
-              "/verificationPage": (context) => const VerificationPage(),
-              "/resetPasswordPage": (context) => RestPasswordPage(
-                    onBack: () {},
-                  ),
-            };
-            WidgetBuilder builder = routes[settings.name]!;
-            return MaterialPageRoute(builder: (ctx) => builder(ctx));
-          }),
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('ar', 'AE'),
+        ],
+        title: 'Flutter Demo',
+        builder: EasyLoading.init(),
+        theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFffffff)),
+        initialRoute: "/logoPage",
+        onGenerateRoute: (settings) {
+          var routes = {
+            "/": (context) => const BottomNavigation(),
+            "/loginPage": (context) => const LoginPage(),
+            "/profilePage": (context) => ProfilePage(
+                  onBack: () {},
+                ),
+            "/myhomepage": (context) => const MyHomePage(),
+            "/bottomnavigation": (context) => const BottomNavigation(),
+            "/categoryPage": (context) => const CategoriesPage(),
+            "/cartPage": (context) => const CartPage(),
+            "/fliterPage": (context) => FliterPage(
+                  onBack: () {},
+                ),
+            "/myOrderPage": (context) => const MyOrederPage(),
+            "/orderdetail": (context) => OrderDetailPage(
+                  onBack: () {},
+                ),
+            "/profilepagebisic": (context) => const ProfilePageBasic(),
+            "/forgetPassword": (context) => ForgetPasswordPage(
+                  onBack: () {},
+                ),
+            "/verificationPage": (context) => const VerificationPage(),
+            "/resetPasswordPage": (context) => RestPasswordPage(
+                  onBack: () {},
+                ),
+            "/logoPage": (context) => const LogoPage(),
+          };
+          WidgetBuilder builder = routes[settings.name]!;
+          return MaterialPageRoute(builder: (ctx) => builder(ctx));
+        },
+      ),
+    );
+  }
+}
+
+class LogoPage extends StatefulWidget {
+  const LogoPage({super.key});
+
+  @override
+  _LogoPageState createState() => _LogoPageState();
+}
+
+class _LogoPageState extends State<LogoPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 3), () {
+      // Replace this with your navigation logic to the main content of your app
+      // For example, you can use Navigator to push a new route:
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const BottomNavigation()),
+          (Route<dynamic> route) => false);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // backgroundColor: const Color(0xFFffffff),
+      body: Center(
+        child: Image.asset('assets/images/logo.png'),
+      ),
     );
   }
 }
@@ -134,7 +171,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
   }
 
   Widget? _currentPage;
-
+  DateTime timeBackPressed = DateTime.now();
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
@@ -145,105 +182,128 @@ class _BottomNavigationState extends State<BottomNavigation> {
       }
     });
 
-    return Scaffold(
-      appBar: productProvider.hideAppBar
-          ? null
-          : AppBar(
-              backgroundColor: Colors.blue[700],
-              toolbarHeight: 47,
-              actions: [
-                Container(
-                  margin: EdgeInsets.only(left: 15),
-                  child: InkWell(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    child: const Icon(
-                      Icons.search,
-                      color: Colors.white,
-                      size: 30,
+    return WillPopScope(
+      onWillPop: () async {
+        final differnce = DateTime.now().difference(timeBackPressed);
+        final isExitWarning = differnce >= const Duration(seconds: 2);
+        timeBackPressed = DateTime.now();
+        if (isExitWarning) {
+          const message = "انقر مرتين للخروج";
+          // EasyLoading.showToast(message);
+          Fluttertoast.showToast(msg: message, fontSize: 18);
+          return false;
+        } else {
+          Fluttertoast.cancel();
+          return true;
+        }
+      },
+      child: Scaffold(
+        appBar: productProvider.hideAppBar
+            ? null
+            : AppBar(
+                backgroundColor: Colors.blue[700],
+                toolbarHeight: 47,
+                actions: [
+                  Container(
+                    margin: EdgeInsets.only(left: 15),
+                    child: InkWell(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      child: const Icon(
+                        Icons.search,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                      onTap: () {
+                        setState(() {
+                          products.clear();
+                          productProvider.hideAppBar = true;
+                          _currentPage = FliterPage(
+                            onBack: () {
+                              // products = [];
+                              setState(() {
+                                _currentPage = pages[currentIndex];
+                              });
+                            },
+                          );
+                        });
+                      },
                     ),
-                    onTap: () {
-                      setState(() {
-                        products.clear();
-                        productProvider.hideAppBar = true;
-                        _currentPage = FliterPage(
-                          onBack: () {
-                            // products = [];
-                            setState(() {
-                              _currentPage = pages[currentIndex];
-                            });
-                          },
-                        );
-                      });
-                    },
                   ),
-                ),
-              ],
-              title: Row(
-                children: [
-                  SizedBox(
-                    width: 180,
-                    child: Provider.of<CategoryProvider>(context, listen: false)
-                            .name
-                            .isNotEmpty
-                        ? Text(
-                            Provider.of<CategoryProvider>(context,
-                                    listen: false)
-                                .name,
-                            style: TextStyle(
-                              fontSize: 17,
-                            ),
-                            maxLines: 2,
-                          )
-                        : Container(),
-                  ),
-                  Icon(Icons.access_alarms_outlined),
                 ],
+                title: Row(
+                  children: [
+                    SizedBox(
+                      width: 140,
+                      child:
+                          Provider.of<CategoryProvider>(context, listen: false)
+                                  .name
+                                  .isNotEmpty
+                              ? Text(
+                                  Provider.of<CategoryProvider>(context,
+                                          listen: false)
+                                      .name,
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                  ),
+                                  maxLines: 2,
+                                )
+                              : Container(),
+                    ),
+                    SizedBox(
+                      width: 150,
+                      // height: 150,
+                      child: Image.asset(
+                        'assets/images/logoLogin.png',
+                      ),
+                    )
+                  ],
+                ),
               ),
+        body: _currentPage,
+        bottomNavigationBar: BottomNavigationBar(
+          unselectedLabelStyle:
+              const TextStyle(fontSize: 15, color: Colors.black),
+          selectedLabelStyle: TextStyle(fontSize: 15, color: Colors.blue[700]),
+          showUnselectedLabels: true,
+          unselectedItemColor: Colors.grey,
+          selectedItemColor: Colors.blue[700],
+          type: BottomNavigationBarType.fixed,
+          //type: BottomNavigationBarType.shifting,طريقة الكبسة
+          onTap: onTap,
+          currentIndex: currentIndex,
+          // elevation: 0,الخط الفوق
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
+              ),
+              label: "الرئيسة",
             ),
-      body: _currentPage,
-      bottomNavigationBar: BottomNavigationBar(
-        unselectedLabelStyle:
-            const TextStyle(fontSize: 15, color: Colors.black),
-        selectedLabelStyle: TextStyle(fontSize: 15, color: Colors.blue[700]),
-        showUnselectedLabels: true,
-        unselectedItemColor: Colors.grey,
-        selectedItemColor: Colors.blue[700],
-        type: BottomNavigationBarType.fixed,
-        //type: BottomNavigationBarType.shifting,طريقة الكبسة
-        onTap: onTap,
-        currentIndex: currentIndex,
-        // elevation: 0,الخط الفوق
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
+            // BottomNavigationBarItem(
+            //   icon: Icon(
+            //     Icons.category,
+            //   ),
+            //   label: "الاقسام",
+            // ),
+            BottomNavigationBarItem(
+              icon: ShoppingCartIcon(),
+              label: "السلة",
             ),
-            label: "الرئيسة",
-          ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(
-          //     Icons.category,
-          //   ),
-          //   label: "الاقسام",
-          // ),
-          BottomNavigationBarItem(
-            icon: ShoppingCartIcon(),
-            label: "السلة",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.shopping_bag_outlined,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.shopping_bag_outlined,
+              ),
+              label: "طلباتي",
             ),
-            label: "طلباتي",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person_rounded,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.person_rounded,
+              ),
+              label: "حسابي",
             ),
-            label: "حسابي",
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

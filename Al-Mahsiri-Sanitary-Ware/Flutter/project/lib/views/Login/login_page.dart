@@ -43,18 +43,15 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(
                         width: 160,
-                        height: 145,
+                        height: 160,
                         child: Column(
-                          children: [
-                            Image.network(
-                                "https://mahmoud.nyc3.cdn.digitaloceanspaces.com/picture/login.png")
-                          ],
+                          children: [Image.asset('assets/images/logo.png')],
                         ),
                       ),
                       Row(
                         children: const [
                           SizedBox(
-                            height: 40,
+                            height: 25,
                           ),
                         ],
                       ),

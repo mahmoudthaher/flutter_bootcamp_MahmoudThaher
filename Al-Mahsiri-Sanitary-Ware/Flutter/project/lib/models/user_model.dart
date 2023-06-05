@@ -50,6 +50,10 @@ class UserModel {
         "id": id,
         "password": password,
       };
+  Map<String, dynamic> toJsoncheckUserAndPhone() => {
+        "email": email,
+        "phone_number": phoneNumber,
+      };
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(

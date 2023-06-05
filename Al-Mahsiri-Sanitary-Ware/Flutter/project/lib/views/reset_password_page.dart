@@ -1,11 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:project/Providers/user_provider.dart';
 import 'package:project/controllers/user_controller.dart';
 import 'package:project/models/user_model.dart';
+import 'package:provider/provider.dart';
 
 class RestPasswordPage extends StatefulWidget {
   final VoidCallback onBack;
+
   const RestPasswordPage({required this.onBack, super.key});
 
   @override
@@ -13,12 +18,11 @@ class RestPasswordPage extends StatefulWidget {
 }
 
 class _RestPasswordPageState extends State<RestPasswordPage> {
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
   final _keyForm = GlobalKey<FormState>();
   bool obscureText = false;
   bool obscureText2 = false;
-  bool obscureText3 = false;
-  final currentpasswordController = TextEditingController();
+
   final passwordController = TextEditingController();
   final repasswordController = TextEditingController();
   @override
@@ -193,11 +197,28 @@ class _RestPasswordPageState extends State<RestPasswordPage> {
   Future<void> _resetPassword() async {
     try {
       String? id = await storage.read(key: 'id');
-      String password = passwordController.text;
-      UserController().resetPassword(UserModel(id: id, password: password));
-      EasyLoading.dismiss();
-      EasyLoading.showSuccess("تم نغير كلمة المرور بنجاح");
-      widget.onBack();
+      if (id != null) {
+        String password = passwordController.text;
+        UserController().resetPassword(UserModel(id: id, password: password));
+        EasyLoading.dismiss();
+        EasyLoading.showSuccess("تم نغير كلمة المرور بنجاح");
+
+        widget.onBack();
+      } else {
+        String password = passwordController.text;
+        final provider = Provider.of<UserProvider>(context, listen: false);
+        UserController().resetPassword(
+            UserModel(id: provider.forgetId.toString(), password: password));
+        EasyLoading.dismiss();
+        EasyLoading.showSuccess(
+            "تم نغير كلمة المرور بنجاح يمكن التوجه الى حسابي لتسجيل الدخول");
+        provider.forgetId = 0;
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          "/bottomnavigation",
+          (route) => false,
+        );
+      }
     } catch (e) {
       EasyLoading.dismiss();
       EasyLoading.showError(e.toString());

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project/Providers/category_provider.dart';
+import 'package:project/Providers/order_provider.dart';
 import 'package:project/Providers/user_provider.dart';
 import 'package:project/views/profile_page.dart';
 import 'package:project/views/reset_password_page.dart';
@@ -49,7 +50,10 @@ class _ProfilePageBasicState extends State<ProfilePageBasic> {
                                           listen: false)
                                       .name = "";
                                   userProvider.user = null;
-
+                                  Provider.of<OrderProvider>(context,
+                                          listen: false)
+                                      .orders
+                                      .clear();
                                   Navigator.pushReplacementNamed(
                                     context,
                                     "/bottomnavigation",
