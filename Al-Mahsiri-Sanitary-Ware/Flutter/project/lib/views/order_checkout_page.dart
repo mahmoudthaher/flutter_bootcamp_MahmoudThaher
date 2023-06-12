@@ -39,66 +39,85 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
     var activeStep =
         Provider.of<OrderProvider>(context, listen: false).activeStep;
     return Scaffold(
-      appBar: AppBar(
-        leading: InkWell(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          child: const Icon(
-            Icons.cancel,
-            size: 30,
+        appBar: AppBar(
+          leading: InkWell(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            child: const Icon(
+              Icons.cancel,
+              size: 30,
+            ),
+            onTap: () {
+              Navigator.pop(context);
+            },
           ),
-          onTap: () {
-            Navigator.pop(context);
-          },
+          title: Container(
+              margin: const EdgeInsets.only(left: 30),
+              child: const Center(child: Text('ملخص الطلب'))),
         ),
-        title: Container(
-            margin: const EdgeInsets.only(left: 30),
-            child: const Center(child: Text('ملخص الطلب'))),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            IconStepper(
-              icons: const [
-                Icon(Icons.location_on_rounded),
-                Icon(Icons.location_on_rounded),
-                Icon(Icons.payment_rounded),
-                Icon(Icons.summarize)
-              ],
-              lineColor: Colors.blue[700],
-              // stepColor: Colors.blue[700],
-              activeStepColor: Colors.blue[700],
-              enableNextPreviousButtons: false,
-              lineLength: 35,
-              activeStep: activeStep,
-              onStepReached: (index) {
-                setState(() {
-                  activeStep = index;
-                });
-              },
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/2.png'),
+              fit: BoxFit.cover,
             ),
-            Expanded(
-                child: IndexedStack(
-              index: activeStep,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
               children: [
-                GoogleMapStep(widget.location),
-                AddressFormStep(),
-                const PaymentMethodStep(),
-                SummeryStep(),
-              ],
-            )),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                previousButton(),
-                nextButton(),
+                IconStepper(
+                  icons: const [
+                    Icon(Icons.location_on_rounded),
+                    Icon(Icons.location_on_rounded),
+                    Icon(Icons.payment_rounded),
+                    Icon(Icons.summarize)
+                  ],
+                  //  lineColor: Colors.red,
+                  stepColor: Colors.transparent,
+
+                  activeStepColor: Colors.transparent,
+                  activeStepBorderColor: Colors.black,
+                  activeStepBorderWidth: 2.0,
+                  enableNextPreviousButtons: false,
+                  lineLength: 35,
+                  activeStep: activeStep,
+                  // activeStepBorderColor: Colors.transparent,
+                  //activeStepBorderColor: Colors.transparent,
+                  onStepReached: (index) {
+                    setState(() {
+                      activeStep = index;
+                    });
+                  },
+                ),
+                Expanded(
+                    child: IndexedStack(
+                  index: activeStep,
+                  children: [
+                    GoogleMapStep(widget.location),
+                    AddressFormStep(),
+                    const PaymentMethodStep(),
+                    SummeryStep(),
+                  ],
+                )),
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 15),
+                    child: Row(
+                      children: [
+                        previousButton(),
+                        SizedBox(
+                          width: 165,
+                        ),
+                        nextButton(),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   /// Returns the next button.
@@ -107,20 +126,8 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
     return SizedBox(
       width: 100,
       height: 50,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(40),
-            ),
-            backgroundColor: Colors.blue[700]),
-        onPressed:
-            // Provider.of<ProductProvider>(context, listen: false)
-            //             .address
-            //             .street ==
-            //         "Al Hamam Desert"
-            //     ? null
-            //     :
-            () {
+      child: InkWell(
+        onTap: () {
           var productProvider =
               Provider.of<ProductProvider>(context, listen: false);
           switch (activeStep) {
@@ -186,10 +193,23 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
               break;
           }
         },
-        child: const Text(
-          'التالي',
-          style: TextStyle(
-              fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black,
+              width: 3.0,
+            ),
+            borderRadius: BorderRadius.circular(40),
+          ),
+          child: const Center(
+            child: Text(
+              'التالي',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
+            ),
+          ),
         ),
       ),
     );
@@ -199,13 +219,8 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
     return SizedBox(
       width: 100,
       height: 50,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(40),
-            ),
-            backgroundColor: Colors.blue[700]),
-        onPressed:
+      child: InkWell(
+        onTap:
             Provider.of<OrderProvider>(context, listen: false).activeStep == 0
                 ? null
                 : () {
@@ -220,55 +235,68 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
                       });
                     }
                   },
-        child: const Text(
-          'السابق',
-          style: TextStyle(
-              fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black,
+              width: 3.0,
+            ),
+            borderRadius: BorderRadius.circular(40),
+          ),
+          child: const Center(
+            child: Text(
+              'السابق',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget header() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.orange,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              headerText(),
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 20,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget header() {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       color: Colors.orange,
+  //       borderRadius: BorderRadius.circular(5),
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Padding(
+  //           padding: const EdgeInsets.all(8.0),
+  //           child: Text(
+  //             headerText(),
+  //             style: const TextStyle(
+  //               color: Colors.black,
+  //               fontSize: 20,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  String headerText() {
-    var activeStep =
-        Provider.of<OrderProvider>(context, listen: false).activeStep;
-    switch (activeStep) {
-      case 1:
-        return 'Preface';
+  // String headerText() {
+  //   var activeStep =
+  //       Provider.of<OrderProvider>(context, listen: false).activeStep;
+  //   switch (activeStep) {
+  //     case 1:
+  //       return 'Preface';
 
-      case 2:
-        return 'Table of Contents';
+  //     case 2:
+  //       return 'Table of Contents';
 
-      case 3:
-        return 'About the Author';
+  //     case 3:
+  //       return 'About the Author';
 
-      default:
-        return 'Introduction';
-    }
-  }
+  //     default:
+  //       return 'Introduction';
+  //   }
+  // }
 }
 
 class GoogleMapStep extends StatefulWidget {
@@ -306,6 +334,7 @@ class _GoogleMapStepState extends State<GoogleMapStep> {
   Widget mapWidget() {
     double mapWidth = MediaQuery.of(context).size.width;
     double mapHeight = MediaQuery.of(context).size.height - 280;
+
     return Column(
       children: [
         Padding(
@@ -412,6 +441,7 @@ class AddressFormStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
         child: Consumer(
             builder: (context, ProductProvider productProvider, child) {
@@ -444,7 +474,8 @@ class AddressFormStep extends StatelessWidget {
                 controller: _controllerCountry,
                 maxLength: 20,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                style: const TextStyle(fontSize: 20, height: 2),
+                style: const TextStyle(
+                    fontSize: 20, height: 2, fontWeight: FontWeight.w500),
                 keyboardType: TextInputType.name,
                 cursorHeight: 50,
                 cursorWidth: 2,
@@ -452,10 +483,9 @@ class AddressFormStep extends StatelessWidget {
                   productProvier.address.country = value;
                 },
                 decoration: const InputDecoration(
-                  hintText: "البلد",
-                  hintStyle: TextStyle(
-                    fontSize: 20,
-                  ),
+                  hintText: "الدولة",
+                  hintStyle:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 30, vertical: 5),
                   border: OutlineInputBorder(
@@ -463,14 +493,21 @@ class AddressFormStep extends StatelessWidget {
                       Radius.circular(40),
                     ),
                   ),
-                  errorStyle: TextStyle(
-                    fontSize: 15.0,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 3.0,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(40),
+                    ),
                   ),
+                  errorStyle:
+                      TextStyle(fontSize: 15.0, fontWeight: FontWeight.w700),
                   counterText: '',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "رجاء ادخال البلد";
+                    return "رجاء ادخال الدولة";
                   }
                   return null;
                 },
@@ -483,7 +520,8 @@ class AddressFormStep extends StatelessWidget {
                 controller: _controllerCity,
                 maxLength: 20,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                style: const TextStyle(fontSize: 20, height: 2),
+                style: const TextStyle(
+                    fontSize: 20, height: 2, fontWeight: FontWeight.w500),
                 keyboardType: TextInputType.name,
                 cursorHeight: 50,
                 cursorWidth: 2,
@@ -492,9 +530,8 @@ class AddressFormStep extends StatelessWidget {
                 },
                 decoration: const InputDecoration(
                   hintText: "المدينة ",
-                  hintStyle: TextStyle(
-                    fontSize: 20,
-                  ),
+                  hintStyle:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 30, vertical: 5),
                   border: OutlineInputBorder(
@@ -502,9 +539,16 @@ class AddressFormStep extends StatelessWidget {
                       Radius.circular(40),
                     ),
                   ),
-                  errorStyle: TextStyle(
-                    fontSize: 15.0,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 3.0,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(40),
+                    ),
                   ),
+                  errorStyle:
+                      TextStyle(fontSize: 15.0, fontWeight: FontWeight.w700),
                   counterText: '',
                 ),
                 validator: (value) {
@@ -522,7 +566,8 @@ class AddressFormStep extends StatelessWidget {
                 controller: _controllerArea,
                 maxLength: 20,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                style: const TextStyle(fontSize: 20, height: 2),
+                style: const TextStyle(
+                    fontSize: 20, height: 2, fontWeight: FontWeight.w500),
                 keyboardType: TextInputType.name,
                 cursorHeight: 50,
                 cursorWidth: 2,
@@ -531,9 +576,8 @@ class AddressFormStep extends StatelessWidget {
                 },
                 decoration: const InputDecoration(
                   hintText: "المنطقة ",
-                  hintStyle: TextStyle(
-                    fontSize: 20,
-                  ),
+                  hintStyle:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 30, vertical: 5),
                   border: OutlineInputBorder(
@@ -541,9 +585,16 @@ class AddressFormStep extends StatelessWidget {
                       Radius.circular(40),
                     ),
                   ),
-                  errorStyle: TextStyle(
-                    fontSize: 15.0,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 3.0,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(40),
+                    ),
                   ),
+                  errorStyle:
+                      TextStyle(fontSize: 15.0, fontWeight: FontWeight.w700),
                   counterText: '',
                 ),
                 validator: (value) {
@@ -561,7 +612,8 @@ class AddressFormStep extends StatelessWidget {
                 controller: _controllerStreet,
                 maxLength: 20,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                style: const TextStyle(fontSize: 20, height: 2),
+                style: const TextStyle(
+                    fontSize: 20, height: 2, fontWeight: FontWeight.w500),
                 keyboardType: TextInputType.name,
                 cursorHeight: 50,
                 cursorWidth: 2,
@@ -570,9 +622,8 @@ class AddressFormStep extends StatelessWidget {
                 },
                 decoration: const InputDecoration(
                   hintText: "الشارع",
-                  hintStyle: TextStyle(
-                    fontSize: 20,
-                  ),
+                  hintStyle:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 30, vertical: 5),
                   border: OutlineInputBorder(
@@ -580,9 +631,16 @@ class AddressFormStep extends StatelessWidget {
                       Radius.circular(40),
                     ),
                   ),
-                  errorStyle: TextStyle(
-                    fontSize: 15.0,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 3.0,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(40),
+                    ),
                   ),
+                  errorStyle:
+                      TextStyle(fontSize: 15.0, fontWeight: FontWeight.w700),
                   counterText: '',
                 ),
                 validator: (value) {
@@ -600,7 +658,8 @@ class AddressFormStep extends StatelessWidget {
                 controller: _controllerBuilding,
                 maxLength: 20,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                style: const TextStyle(fontSize: 20, height: 2),
+                style: const TextStyle(
+                    fontSize: 20, height: 2, fontWeight: FontWeight.w500),
                 keyboardType: TextInputType.name,
                 cursorHeight: 50,
                 cursorWidth: 2,
@@ -609,9 +668,8 @@ class AddressFormStep extends StatelessWidget {
                 },
                 decoration: const InputDecoration(
                   hintText: "رقم البناية",
-                  hintStyle: TextStyle(
-                    fontSize: 20,
-                  ),
+                  hintStyle:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 30, vertical: 5),
                   border: OutlineInputBorder(
@@ -619,15 +677,21 @@ class AddressFormStep extends StatelessWidget {
                       Radius.circular(40),
                     ),
                   ),
-                  errorStyle: TextStyle(
-                    fontSize: 15.0,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 3.0,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(40),
+                    ),
                   ),
+                  errorStyle:
+                      TextStyle(fontSize: 15.0, fontWeight: FontWeight.w700),
                   counterText: '',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "الرجاء ادخال رقم البناية";
-                    ;
                   }
                   return null;
                 },
@@ -648,22 +712,25 @@ class PaymentMethodStep extends StatelessWidget {
     return Consumer(builder: (context, ProductProvider productProvier, child) {
       return Column(children: [
         Card(
+          color: Color.fromARGB(255, 241, 239, 239),
           child: ListTile(
-              onTap: () {
-                productProvier.updatePaymentMethod(1);
+            onTap: () {
+              productProvier.updatePaymentMethod(1);
+            },
+            leading: const Icon(
+              Icons.attach_money_outlined,
+              color: Colors.green,
+            ),
+            title: const Text("الدفع عند الاستلام"),
+            trailing: Radio<int>(
+              value: 1,
+              groupValue: productProvier.paymentMethod,
+              onChanged: (value) {
+                productProvier.updatePaymentMethod(value!);
               },
-              leading: const Icon(
-                Icons.attach_money_outlined,
-                color: Colors.green,
-              ),
-              title: const Text("الدفع عند الاستلام"),
-              trailing: Radio<int>(
-                value: 1,
-                groupValue: productProvier.paymentMethod,
-                onChanged: (value) {
-                  productProvier.updatePaymentMethod(value!);
-                },
-              )),
+              activeColor: Colors.black,
+            ),
+          ),
         ),
         // Card(
         //   child: ListTile(
@@ -695,6 +762,7 @@ class SummeryStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         child:
@@ -704,7 +772,7 @@ class SummeryStep extends StatelessWidget {
               children: [
                 const Text(
                   "الملخص",
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 20),
                 _addressWidget(productProvier),
@@ -723,7 +791,7 @@ Widget _addressWidget(ProductProvider productProvier) {
     children: [
       const Text(
         "عنوان التسليم",
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
       ),
       const SizedBox(height: 3),
       const Divider(),
@@ -731,14 +799,16 @@ Widget _addressWidget(ProductProvider productProvier) {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
-            "البلد",
-            style: TextStyle(fontSize: 14, color: Colors.grey),
-          ),
-          Text(
-            productProvier.address.country,
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
-          )
+          const Text("البلد",
+              style: TextStyle(
+                  fontSize: 19,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600)),
+          Text(productProvier.address.country,
+              style: const TextStyle(
+                  fontSize: 19,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600))
         ],
       ),
       const SizedBox(height: 3),
@@ -747,14 +817,16 @@ Widget _addressWidget(ProductProvider productProvier) {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
-            "المدينة",
-            style: TextStyle(fontSize: 14, color: Colors.grey),
-          ),
-          Text(
-            productProvier.address.city,
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
-          )
+          const Text("المدينة",
+              style: TextStyle(
+                  fontSize: 19,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600)),
+          Text(productProvier.address.city,
+              style: const TextStyle(
+                  fontSize: 19,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600))
         ],
       ),
       const SizedBox(height: 3),
@@ -763,14 +835,16 @@ Widget _addressWidget(ProductProvider productProvier) {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
-            "المنطقة",
-            style: TextStyle(fontSize: 14, color: Colors.grey),
-          ),
-          Text(
-            productProvier.address.area,
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
-          )
+          const Text("المنطقة",
+              style: TextStyle(
+                  fontSize: 19,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600)),
+          Text(productProvier.address.area,
+              style: const TextStyle(
+                  fontSize: 19,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600))
         ],
       ),
       const SizedBox(height: 3),
@@ -779,14 +853,16 @@ Widget _addressWidget(ProductProvider productProvier) {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
-            "الشارع",
-            style: TextStyle(fontSize: 14, color: Colors.grey),
-          ),
-          Text(
-            productProvier.address.street,
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
-          )
+          const Text("الشارع",
+              style: TextStyle(
+                  fontSize: 19,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600)),
+          Text(productProvier.address.street,
+              style: const TextStyle(
+                  fontSize: 19,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600))
         ],
       ),
       const SizedBox(height: 3),
@@ -795,14 +871,16 @@ Widget _addressWidget(ProductProvider productProvier) {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
-            "رقم البناية",
-            style: TextStyle(fontSize: 14, color: Colors.grey),
-          ),
-          Text(
-            productProvier.address.buildingNo,
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
-          )
+          const Text("رقم البناية",
+              style: TextStyle(
+                  fontSize: 19,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600)),
+          Text(productProvier.address.buildingNo,
+              style: const TextStyle(
+                  fontSize: 19,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600))
         ],
       )
     ],

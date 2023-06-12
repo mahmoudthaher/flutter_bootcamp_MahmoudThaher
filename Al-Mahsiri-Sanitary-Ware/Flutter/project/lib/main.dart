@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,7 +21,7 @@ import 'package:project/models/product_model.dart';
 import 'package:project/views/Login/forget_password.dart';
 import 'package:project/views/Login/verification_page.dart';
 import 'package:project/views/cart_page.dart';
-import 'package:project/views/category_page.dart';
+// import 'package:project/views/category_page.dart';
 import 'package:project/views/fliter.dart';
 import 'package:project/views/Login/login_page.dart';
 import 'package:project/views/my_order_page.dart';
@@ -77,7 +79,8 @@ class MyApp extends StatelessWidget {
           Locale('ar', 'AE'),
         ],
         title: 'Flutter Demo',
-        builder: EasyLoading.init(),
+        builder: EasyLoading.init(), // Initialize EasyLoading
+
         theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFffffff)),
         initialRoute: "/logoPage",
         onGenerateRoute: (settings) {
@@ -89,7 +92,7 @@ class MyApp extends StatelessWidget {
                 ),
             "/myhomepage": (context) => const MyHomePage(),
             "/bottomnavigation": (context) => const BottomNavigation(),
-            "/categoryPage": (context) => const CategoriesPage(),
+            //"/categoryPage": (context) => const CategoriesPage(),
             "/cartPage": (context) => const CartPage(),
             "/fliterPage": (context) => FliterPage(
                   onBack: () {},
@@ -107,6 +110,7 @@ class MyApp extends StatelessWidget {
                   onBack: () {},
                 ),
             "/logoPage": (context) => const LogoPage(),
+            // "/checkInternet": (context) => const CheckInternet(),
           };
           WidgetBuilder builder = routes[settings.name]!;
           return MaterialPageRoute(builder: (ctx) => builder(ctx));
@@ -124,16 +128,22 @@ class LogoPage extends StatefulWidget {
 }
 
 class _LogoPageState extends State<LogoPage> {
+  late Timer _timer;
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      // Replace this with your navigation logic to the main content of your app
-      // For example, you can use Navigator to push a new route:
+    _timer = Timer(const Duration(seconds: 3), () {
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const BottomNavigation()),
-          (Route<dynamic> route) => false);
+        MaterialPageRoute(builder: (context) => const BottomNavigation()),
+        (Route<dynamic> route) => false,
+      );
     });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -142,6 +152,22 @@ class _LogoPageState extends State<LogoPage> {
       // backgroundColor: const Color(0xFFffffff),
       body: Center(
         child: Image.asset('assets/images/logo.png'),
+      ),
+    );
+  }
+}
+
+class BackGroundImage extends StatelessWidget {
+  const BackGroundImage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/3.png'),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -170,6 +196,44 @@ class _BottomNavigationState extends State<BottomNavigation> {
     });
   }
 
+  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
+  bool _connectedToInternet = true;
+
+  @override
+  void initState() {
+    super.initState();
+    checkConnectivity();
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen(
+      (ConnectivityResult result) {
+        setState(() {
+          _connectedToInternet = result != ConnectivityResult.none;
+        });
+      },
+    );
+    _currentPage = pages[currentIndex];
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    super.dispose();
+  }
+
+  // void checkConnectivity() async {
+  //   final connectivityResult = await Connectivity().checkConnectivity();
+  //   if (connectivityResult == ConnectivityResult.none) {
+  //     setState(() {
+  //       _connectedToInternet = false;
+  //     });
+  //   }
+  // }
+  void checkConnectivity() async {
+    final connectivityResult = await (Connectivity().checkConnectivity());
+    setState(() {
+      _connectedToInternet = connectivityResult != ConnectivityResult.none;
+    });
+  }
+
   Widget? _currentPage;
   DateTime timeBackPressed = DateTime.now();
   @override
@@ -177,11 +241,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
     final productProvider = Provider.of<ProductProvider>(context);
     var products = productProvider.products;
     setState(() {
-      if (_currentPage == null) {
-        _currentPage = pages[currentIndex];
-      }
+      _currentPage ??= pages[currentIndex];
     });
-
     return WillPopScope(
       onWillPop: () async {
         final differnce = DateTime.now().difference(timeBackPressed);
@@ -215,18 +276,19 @@ class _BottomNavigationState extends State<BottomNavigation> {
                         size: 30,
                       ),
                       onTap: () {
-                        setState(() {
-                          products.clear();
-                          productProvider.hideAppBar = true;
-                          _currentPage = FliterPage(
-                            onBack: () {
-                              // products = [];
-                              setState(() {
-                                _currentPage = pages[currentIndex];
-                              });
-                            },
-                          );
-                        });
+                        setState(
+                          () {
+                            productProvider.hideAppBar = true;
+                            _currentPage = FliterPage(
+                              onBack: () {
+                                setState(() {
+                                  _currentPage = pages[currentIndex];
+                                });
+                              },
+                            );
+                          },
+                        );
+                        products.clear();
                       },
                     ),
                   ),
@@ -260,7 +322,28 @@ class _BottomNavigationState extends State<BottomNavigation> {
                   ],
                 ),
               ),
-        body: _currentPage,
+        body: _connectedToInternet
+            ? _currentPage
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.cloud_off,
+                      size: 80,
+                      color: Colors.grey,
+                    ),
+                    Text(
+                      'لا يوجد اتصال بالإنترنت',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      'يرجى التحقق من اتصالك بالإنترنت وحاول مرة أخرى',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
         bottomNavigationBar: BottomNavigationBar(
           unselectedLabelStyle:
               const TextStyle(fontSize: 15, color: Colors.black),
@@ -369,6 +452,37 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController _pageController2 = PageController();
   int _currentPageIndex = 0;
   int _currentPageIndex2 = 0;
+  String? name;
+  bool _isDisposed = false;
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _pageController.dispose();
+    _pageController2.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(
+      initialPage: imageUrls.length * 1000,
+    )..addListener(_pageListener);
+    _pageController2 = PageController(
+      initialPage: imageUrls2.length * 1000,
+    )..addListener(_pageListener2);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    showName();
+    final provider = Provider.of<CategoryProvider>(context, listen: false);
+    provider.getAllCategory();
+    final productProvider =
+        Provider.of<ProductProvider>(context, listen: false);
+    productProvider.getAllProductsByCategoryID();
+  }
 
   void _pageListener() {
     setState(() {
@@ -382,36 +496,9 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    _pageController2.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final provider = Provider.of<CategoryProvider>(context, listen: false);
-    provider.getAllCategory();
-    final productProvider =
-        Provider.of<ProductProvider>(context, listen: false);
-    setState(() {
-      productProvider.getAllProductsByCategoryID();
-    });
-
-    _pageController = PageController(
-      initialPage: imageUrls.length * 1000,
-    )..addListener(_pageListener);
-    _pageController2 = PageController(
-      initialPage: imageUrls2.length * 1000,
-    )..addListener(_pageListener2);
-
-    showName();
-  }
-
-  String? name;
   Future<void> showName() async {
+    if (_isDisposed) return;
+
     if (await const FlutterSecureStorage().containsKey(key: 'token')) {
       String? fistName = await FlutterSecureStorage().read(key: 'fistName');
       String? gender = await FlutterSecureStorage().read(key: 'genderId');
@@ -420,343 +507,444 @@ class _MyHomePageState extends State<MyHomePage> {
       } else if (int.parse(gender) == 2) {
         name = "اهلا السيدة $fistName";
       }
-      setState(() {
-        final provider = Provider.of<CategoryProvider>(context, listen: false);
-        provider.name = name!;
-      });
+
+      if (!_isDisposed) {
+        setState(() {
+          final provider =
+              Provider.of<CategoryProvider>(context, listen: false);
+          provider.name = name!;
+        });
+      }
     }
   }
 
-  bool hideAppBar = false;
+  // bool hideAppBar = false;
   @override
   Widget build(BuildContext context) {
     final categoryProvider = Provider.of<CategoryProvider>(context);
     final category = categoryProvider.categories;
     final productProvider = Provider.of<ProductProvider>(context);
     var products = productProvider.products;
-    return Scaffold(
-      body: SafeArea(
-        child: _currentPage is MyHomePage
-            ? SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 20, top: 10),
-                      child: Row(
-                        children: const [
-                          Text(
-                            "وصل حديثا",
-                            style: TextStyle(
-                                fontSize: 25, fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      height: 200,
-                      child: PageView.builder(
-                        controller: _pageController,
-                        itemCount: imageUrls.length * 10000,
-                        itemBuilder: (BuildContext context, int index) {
-                          final int imageIndex = index % imageUrls.length;
-                          return InteractiveViewer(
-                            minScale: 0.1,
-                            maxScale: 5.0,
-                            child: Center(
-                              child: Image.network(
-                                imageUrls[imageIndex],
-                                fit: BoxFit.fill,
-                                width: double.infinity,
-                                height: 200,
+    return Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/2.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
+            child: Stack(
+              children: [
+                _currentPage is MyHomePage
+                    ? SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 20, top: 10),
+                              child: Row(
+                                children: const [
+                                  Text(
+                                    "وصل حديثا",
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(imageUrls.length, (index) {
-                        return Container(
-                          width: 15,
-                          height: 5,
-                          margin: EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            color: _currentPageIndex == index
-                                ? Colors.blue
-                                : Colors.grey,
-                          ),
-                        );
-                      }),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 20, top: 10),
-                      child: Row(
-                        children: const [
-                          Text(
-                            "قريبا",
-                            style: TextStyle(
-                                fontSize: 25, fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 200,
-                      child: PageView.builder(
-                        controller: _pageController2,
-                        itemCount: imageUrls2.length * 10000,
-                        itemBuilder: (BuildContext context, int index) {
-                          final int imageIndex = index % imageUrls2.length;
-                          return InteractiveViewer(
-                            minScale: 0.1,
-                            maxScale: 5.0,
-                            child: Center(
-                              child: Image.network(
-                                imageUrls2[imageIndex],
-                                fit: BoxFit.fill,
-                                width: double.infinity,
-                                height: 200,
-                              ),
+                            const SizedBox(
+                              height: 10,
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(imageUrls2.length, (index) {
-                        return Container(
-                          width: 15,
-                          height: 5,
-                          margin: EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            color: _currentPageIndex2 == index
-                                ? Colors.blue
-                                : Colors.grey,
-                          ),
-                        );
-                      }),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 20, top: 10),
-                      child: Row(
-                        children: const [
-                          Text(
-                            "الأقسام",
-                            style: TextStyle(
-                                fontSize: 25, fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      // height: 120,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: SizedBox(
-                          height: 60,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: category.length,
-                            itemBuilder: (context, index) {
-                              CategoryModel categories = category[index];
-                              return Consumer(
-                                builder: (context,
-                                    ProductProvider productProvider, child) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        productProvider.id = categories.id;
-                                        productProvider
-                                            .getAllProductsByCategoryID();
-                                      });
-                                    },
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 12),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  bottom: BorderSide(
-                                                    color: productProvider.id ==
-                                                            categories.id
-                                                        ? Colors.black
-                                                        : Colors.transparent,
-                                                    width: 2.0,
-                                                  ),
-                                                ),
-                                              ),
-                                              child: Text(
-                                                categories.category,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w900,
-                                                  color: productProvider.id ==
-                                                          categories.id
-                                                      ? Colors.black
-                                                      : Colors.grey,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                            SizedBox(
+                              height: 200,
+                              child: PageView.builder(
+                                controller: _pageController,
+                                itemCount: imageUrls.length * 10000,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final int imageIndex =
+                                      index % imageUrls.length;
+                                  return InteractiveViewer(
+                                    minScale: 0.1,
+                                    maxScale: 5.0,
+                                    child: CachedNetworkImage(
+                                      imageUrl: imageUrls[imageIndex],
+                                      placeholder: (context, url) =>
+                                          const Align(
+                                        alignment: Alignment.center,
+                                        child: SizedBox(
+                                          width: 70,
+                                          height: 70,
+                                          child: CircularProgressIndicator(
+                                              color: Colors.black),
+                                        ),
                                       ),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(
+                                        Icons.error,
+                                        size: 50,
+                                      ),
+                                      fit: BoxFit.fill,
                                     ),
                                   );
                                 },
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 600,
-                      child: products.isEmpty
-                          ? const Center(
-                              child: SizedBox(
-                              width: 80,
-                              height: 80,
-                              child: CircularProgressIndicator(),
-                            ))
-                          : GridView.builder(
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 0.65,
                               ),
-                              itemCount: products.length,
-                              itemBuilder: (context, index) {
-                                ProductModel product = products[index];
-
-                                return Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                      child: Card(
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(10),
-                                            ),
-                                            side: BorderSide(
-                                                color: Colors.black26)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10, top: 10, right: 10),
-                                          child: Wrap(
-                                            children: [
-                                              Image.network(
-                                                product.image,
-                                                width: 200,
-                                                height: 100,
-                                              ),
-                                              Row(
-                                                children: const [
-                                                  SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                ],
-                                              ),
-                                              Container(
-                                                height: 70,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10),
-                                                child: Text(
-                                                  product.name,
-                                                  maxLines: 2,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 18),
-                                                ),
-                                              ),
-                                              Row(
-                                                children: const [
-                                                  SizedBox(
-                                                    height: 35,
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Container(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            right: 10),
-                                                    child: Text(
-                                                      "${product.finalPrice.toStringAsFixed(2)} د.أ",
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 18),
-                                                    ),
-                                                  ),
-                                                  IconButton(
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        shape: RoundedRectangleBorder(
-                                                            // borderRadius:
-                                                            //     BorderRadius.circular(40),
-                                                            ),
-                                                        backgroundColor:
-                                                            Colors.white,
-                                                      ),
-                                                      onPressed: () {
-                                                        productProvider
-                                                            .addToCart(product);
-                                                        EasyLoading.dismiss();
-                                                        EasyLoading.showSuccess(
-                                                            "تم الاضافة الى السلة");
-                                                      },
-                                                      icon: Icon(
-                                                        Icons.add_shopping_cart,
-                                                        size: 30,
-                                                      )),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
+                            ),
+                            const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children:
+                                  List.generate(imageUrls.length, (index) {
+                                return Container(
+                                  width: 15,
+                                  height: 5,
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    color: _currentPageIndex == index
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  ),
+                                );
+                              }),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 20, top: 10),
+                              child: Row(
+                                children: const [
+                                  Text(
+                                    "قريبا",
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 200,
+                              child: PageView.builder(
+                                controller: _pageController2,
+                                itemCount: imageUrls2.length * 10000,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final int imageIndex =
+                                      index % imageUrls2.length;
+                                  return InteractiveViewer(
+                                    minScale: 0.1,
+                                    maxScale: 5.0,
+                                    child: CachedNetworkImage(
+                                      imageUrl: imageUrls2[imageIndex],
+                                      placeholder: (context, url) =>
+                                          const Align(
+                                        alignment: Alignment.center,
+                                        child: SizedBox(
+                                          width: 70,
+                                          height: 70,
+                                          child: CircularProgressIndicator(
+                                              color: Colors.black),
                                         ),
                                       ),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(
+                                        Icons.error,
+                                        size: 50,
+                                      ),
+                                      fit: BoxFit.fill,
                                     ),
-                                  ],
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             ),
-                    )
-                  ],
-                ),
-              )
-            : FliterPage(
-                onBack: () {
-                  setState(() {
-                    _currentPage = const MyHomePage();
-                  });
-                },
-              ),
-      ),
-    );
+                            const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children:
+                                  List.generate(imageUrls2.length, (index) {
+                                return Container(
+                                  width: 15,
+                                  height: 5,
+                                  margin: EdgeInsets.symmetric(horizontal: 4),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    color: _currentPageIndex2 == index
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  ),
+                                );
+                              }),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 20, top: 10),
+                              child: Row(
+                                children: const [
+                                  Text(
+                                    "الأقسام",
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              // height: 120,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 5),
+                                child: SizedBox(
+                                  height: 60,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: category.length,
+                                    itemBuilder: (context, index) {
+                                      CategoryModel categories =
+                                          category[index];
+                                      return Consumer(
+                                        builder: (context,
+                                            ProductProvider productProvider,
+                                            child) {
+                                          return GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                productProvider.id =
+                                                    categories.id;
+                                                productProvider
+                                                    .getAllProductsByCategoryID();
+                                              });
+                                            },
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        border: Border(
+                                                          bottom: BorderSide(
+                                                            color: productProvider
+                                                                        .id ==
+                                                                    categories
+                                                                        .id
+                                                                ? Colors.black
+                                                                : Colors
+                                                                    .transparent,
+                                                            width: 2.0,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      child: Text(
+                                                        categories.category,
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w900,
+                                                          color: productProvider
+                                                                      .id ==
+                                                                  categories.id
+                                                              ? Colors.black
+                                                              : Colors.black54,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 600,
+                              child: products.isEmpty
+                                  ? const Center(
+                                      child: SizedBox(
+                                      width: 80,
+                                      height: 80,
+                                      child: CircularProgressIndicator(
+                                          color: Colors.black),
+                                    ))
+                                  : GridView.builder(
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        childAspectRatio: 0.65,
+                                      ),
+                                      itemCount: products.length,
+                                      itemBuilder: (context, index) {
+                                        ProductModel product = products[index];
+
+                                        return Column(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 5),
+                                              child: Card(
+                                                shape:
+                                                    const RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                          Radius.circular(10),
+                                                        ),
+                                                        side: BorderSide(
+                                                            color: Colors
+                                                                .black26)),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 10,
+                                                          top: 10,
+                                                          right: 10),
+                                                  child: Wrap(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 200,
+                                                        height: 100,
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          imageUrl:
+                                                              product.image,
+                                                          placeholder:
+                                                              (context, url) =>
+                                                                  const Align(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: SizedBox(
+                                                              width: 70,
+                                                              height: 70,
+                                                              child: CircularProgressIndicator(
+                                                                  color: Colors
+                                                                      .black),
+                                                            ),
+                                                          ),
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              const Icon(
+                                                            Icons.error,
+                                                            size: 50,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Row(
+                                                        children: const [
+                                                          SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Container(
+                                                        height: 70,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 10),
+                                                        child: Text(
+                                                          product.name,
+                                                          maxLines: 2,
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize: 18),
+                                                        ),
+                                                      ),
+                                                      Row(
+                                                        children: const [
+                                                          SizedBox(
+                                                            height: 35,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    right: 10),
+                                                            child: Text(
+                                                              "${product.finalPrice.toStringAsFixed(2)} د.أ",
+                                                              style: const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 18),
+                                                            ),
+                                                          ),
+                                                          IconButton(
+                                                              style:
+                                                                  ElevatedButton
+                                                                      .styleFrom(
+                                                                shape: RoundedRectangleBorder(
+                                                                    // borderRadius:
+                                                                    //     BorderRadius.circular(40),
+                                                                    ),
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .white,
+                                                              ),
+                                                              onPressed: () {
+                                                                productProvider
+                                                                    .addToCart(
+                                                                        product);
+                                                                EasyLoading
+                                                                    .dismiss();
+                                                                EasyLoading
+                                                                    .showSuccess(
+                                                                        "تم الاضافة الى السلة");
+                                                              },
+                                                              icon: Icon(
+                                                                Icons
+                                                                    .add_shopping_cart,
+                                                                size: 30,
+                                                              )),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                            )
+                          ],
+                        ),
+                      )
+                    : FliterPage(
+                        onBack: () {
+                          setState(() {
+                            _currentPage = const MyHomePage();
+                          });
+                        },
+                      ),
+              ],
+            ),
+          ),
+        ));
   }
 }

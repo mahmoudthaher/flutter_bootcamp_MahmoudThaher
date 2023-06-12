@@ -32,83 +32,97 @@ class _MyOrederPageState extends State<MyOrederPage> {
     final provider = Provider.of<OrderProvider>(context);
     final orders = provider.orders;
     final orderProvider = Provider.of<OrderProductProvider>(context);
-
-    return Scaffold(
-      body: _currentPage is MyOrederPage
-          ? _isLoading // Check the state variable before rendering the Text widget
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : orders.isEmpty
-                  ? _showEmptyMessage
-                      ? const Center(
-                          child: Text(
-                            "لم تقم باضافة اي طلب حتى الان",
-                            style: TextStyle(fontSize: 25),
-                          ),
-                        )
-                      : Container() //
-                  : ListView.builder(
-                      itemCount: orders.length,
-                      itemBuilder: (context, index) {
-                        OrderModel order = orders[index];
-                        return SizedBox(
-                          height: 95,
-                          child: InkWell(
-                            child: Card(
-                              child: ListTile(
-                                leading: Padding(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  child: Column(
-                                    children: [
-                                      Text(order.createdAt!.substring(0, 10)),
-                                      // const SizedBox(
-                                      //   height: 10,
-                                      // ),
-                                      Text(order.createdAt!.substring(11, 19)),
-                                    ],
+    return Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/2.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: _currentPage is MyOrederPage
+              ? _isLoading // Check the state variable before rendering the Text widget
+                  ? const Center(
+                      child: CircularProgressIndicator(color: Colors.black),
+                    )
+                  : orders.isEmpty
+                      ? _showEmptyMessage
+                          ? Container(
+                              margin: EdgeInsets.only(bottom: 75),
+                              child: const Center(
+                                child: Text(
+                                  "لم تقم باضافة أي طلب حتى الآن",
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            )
+                          : Container() //
+                      : ListView.builder(
+                          itemCount: orders.length,
+                          itemBuilder: (context, index) {
+                            OrderModel order = orders[index];
+                            return SizedBox(
+                              height: 95,
+                              child: InkWell(
+                                child: Card(
+                                  child: ListTile(
+                                    leading: Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: Column(
+                                        children: [
+                                          Text(order.createdAt!
+                                              .substring(0, 10)),
+                                          // const SizedBox(
+                                          //   height: 10,
+                                          // ),
+                                          Text(order.createdAt!
+                                              .substring(11, 19)),
+                                        ],
+                                      ),
+                                    ),
+                                    title: Text(
+                                      "المجموع : ${order.total.toStringAsFixed(2)}",
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    subtitle: Text(
+                                      "المجموع بدون الضريبة : ${order.subTotal.toStringAsFixed(2)}",
+                                      style: const TextStyle(fontSize: 13),
+                                    ),
+                                    trailing:
+                                        Text("الحالة : ${order.status.status}"),
                                   ),
                                 ),
-                                title: Text(
-                                  "المجموع : ${order.total.toStringAsFixed(2)}",
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                subtitle: Text(
-                                  "المجموع بدون الضريبة : ${order.subTotal.toStringAsFixed(2)}",
-                                  style: const TextStyle(fontSize: 13),
-                                ),
-                                trailing:
-                                    Text("الحالة : ${order.status.status}"),
+                                onTap: () {
+                                  setState(() {
+                                    orderProvider.orderId = order.id;
+                                    _currentPage = OrderDetailPage(
+                                      onBack: () {
+                                        setState(() {
+                                          _currentPage = const MyOrederPage();
+                                        });
+                                      },
+                                    );
+                                  });
+                                },
                               ),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                orderProvider.orderId = order.id;
-                                _currentPage = OrderDetailPage(
-                                  onBack: () {
-                                    setState(() {
-                                      _currentPage = const MyOrederPage();
-                                    });
-                                  },
-                                );
-                              });
-                            },
-                          ),
-                        );
+                            );
+                          },
+                        )
+              : OrderDetailPage(
+                  onBack: () {
+                    setState(
+                      () {
+                        _currentPage = const MyOrederPage();
                       },
-                    )
-          : OrderDetailPage(
-              onBack: () {
-                setState(
-                  () {
-                    _currentPage = const MyOrederPage();
+                    );
                   },
-                );
-              },
-            ),
-    );
+                ),
+        ));
   }
 
   Future<void> _UserId() async {

@@ -21,27 +21,39 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Consumer(
-        builder: (context, ProductProvider productProvider, child) {
-          if (productProvider.selectedProducts.isEmpty) {
-            return const Center(
-                child: Text(
-              "لا يوجد منتجات في السلة",
-              style: TextStyle(fontSize: 25),
-            ));
-          }
-          return Column(
-            children: [
-              Expanded(
-                flex: 5,
-                child: _productsListWidget(productProvider),
-              ),
-              SummeryWidget(),
-              _buttonCheckoutWidget(context)
-            ],
-          );
-        },
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/2.png'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Consumer(
+          builder: (context, ProductProvider productProvider, child) {
+            if (productProvider.selectedProducts.isEmpty) {
+              return Container(
+                margin: EdgeInsets.only(bottom: 75),
+                child: const Center(
+                    child: Text(
+                  "لا يوجد منتجات في السلة",
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+                )),
+              );
+            }
+            return Column(
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: _productsListWidget(productProvider),
+                ),
+                SummeryWidget(),
+                _buttonCheckoutWidget(context)
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -54,21 +66,29 @@ class _CartPageState extends State<CartPage> {
         child: SizedBox(
           width: double.infinity,
           height: 50,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40),
-                ),
-                backgroundColor: Colors.blue[700]),
-            onPressed: () {
+          child: InkWell(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            onTap: () {
               _handleBeginCheckoutAction(context);
             },
-            child: const Text(
-              'أرسل',
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black,
+                  width: 3.0,
+                ),
+                borderRadius: BorderRadius.circular(40),
+              ),
+              child: const Center(
+                child: Text(
+                  'أرسل',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+              ),
             ),
           ),
         ),
@@ -83,12 +103,13 @@ class _CartPageState extends State<CartPage> {
         ProductModel product = productProvider.selectedProducts[index];
         return Card(
           elevation: 2,
-          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
           child: ListTile(
-            contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             leading: Container(
               width: 60,
               height: 80,
@@ -104,20 +125,20 @@ class _CartPageState extends State<CartPage> {
               product.name,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
             subtitle: Text(
               "المجموع : ${product.total.toStringAsFixed(2)}",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 15,
                 color: Colors.grey,
               ),
             ),
             trailing: Container(
-              margin: EdgeInsets.only(top: 12),
+              margin: const EdgeInsets.only(top: 12),
               width: 100,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -139,7 +160,7 @@ class _CartPageState extends State<CartPage> {
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.add,
                         color: Colors.white,
                       ),
@@ -147,7 +168,7 @@ class _CartPageState extends State<CartPage> {
                   ),
                   Text(
                     "${product.selectedQty}",
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -189,7 +210,6 @@ class _CartPageState extends State<CartPage> {
     bool exists = await FlutterSecureStorage().containsKey(key: "token");
 
     if (exists) {
-      // ignore: use_build_context_synchronously
       _handleGoToOrderCheckout(context);
     } else {
       // var result = await Navigator.pushNamed(context, "/loginPage");
@@ -206,15 +226,28 @@ class _CartPageState extends State<CartPage> {
             content: const Text(
                 'انتا غير مسجل اضغط على الذهاب الى صفحة تسجيل الدخول لاتمام عملية الطلب'),
             actions: [
-              TextButton(
-                child: const Text('الذهاب الى صفحة تسجيل الدخول'),
-                onPressed: () {
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                child: const Text(
+                  'الذهاب الى صفحة تسجيل الدخول',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                ),
+                onTap: () {
                   Navigator.pushNamed(context, "/loginPage");
                 },
               ),
-              TextButton(
-                child: const Text('رجوع'),
-                onPressed: () {
+              const SizedBox(
+                width: 30,
+              ),
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                child: const Text(
+                  'رجوع',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                ),
+                onTap: () {
                   Navigator.pop(context);
                 },
               ),

@@ -23,92 +23,87 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   Widget build(BuildContext context) {
     final provider = Provider.of<OrderProductProvider>(context);
     final orderProduct = provider.orderProducts;
-
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: Text("تفاصيل الطلب"),
-      //   leading: InkWell(
-      //     onTap: () {
-      //       Provider.of<OrderProductProvider>(context, listen: false)
-      //           .orderProducts = [];
-      //       widget.onBack();
-      //     },
-      //     splashColor: Colors.transparent,
-      //     highlightColor: Colors.transparent,
-      //     child: Icon(
-      //       Icons.arrow_back_sharp,
-      //       size: 30,
-      //     ),
-      //   ),
-      // ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Row(
+    return Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/2.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
+            child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: InkWell(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    child: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                      size: 30,
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: InkWell(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        child: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                          size: 30,
+                        ),
+                        onTap: () {
+                          Provider.of<OrderProductProvider>(context,
+                                  listen: false)
+                              .orderProducts = [];
+                          widget.onBack();
+                        },
+                      ),
                     ),
-                    onTap: () {
-                      Provider.of<OrderProductProvider>(context, listen: false)
-                          .orderProducts = [];
-                      widget.onBack();
-                    },
-                  ),
+                  ],
+                ),
+                Expanded(
+                  child: orderProduct.isEmpty
+                      ? const Center(
+                          child: SizedBox(
+                            width: 80,
+                            height: 80,
+                            child:
+                                CircularProgressIndicator(color: Colors.black),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: orderProduct.length,
+                          itemBuilder: (context, index) {
+                            OrderProductModel orderProducts =
+                                orderProduct[index];
+                            return SizedBox(
+                              height: 100,
+                              child: Card(
+                                child: ListTile(
+                                  leading: Image.network(
+                                    orderProducts.products.image,
+                                    width: 90,
+                                  ),
+                                  title: SizedBox(
+                                    height: 60,
+                                    child: Text(
+                                      orderProducts.products.name,
+                                      maxLines: 2,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                      "السعر : ${orderProducts.products.price.toString()}"),
+                                  trailing:
+                                      Text("العدد : ${orderProducts.qty}"),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                 ),
               ],
             ),
-            Expanded(
-              child: orderProduct.isEmpty
-                  ? const Center(
-                      child: SizedBox(
-                        width: 80,
-                        height: 80,
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: orderProduct.length,
-                      itemBuilder: (context, index) {
-                        OrderProductModel orderProducts = orderProduct[index];
-                        return SizedBox(
-                          height: 100,
-                          child: Card(
-                            child: ListTile(
-                              leading: Image.network(
-                                orderProducts.products.image,
-                                width: 90,
-                              ),
-                              title: SizedBox(
-                                height: 60,
-                                child: Text(
-                                  orderProducts.products.name,
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              subtitle: Text(
-                                  "السعر : ${orderProducts.products.price.toString()}"),
-                              trailing: Text("العدد : ${orderProducts.qty}"),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }

@@ -22,138 +22,164 @@ class _ProfilePageBasicState extends State<ProfilePageBasic> {
   @override
   Widget build(BuildContext context) {
     var userProvider = Provider.of<UserProvider>(context);
-
-    return Scaffold(
-      body: SafeArea(
-        child: _currentPage is ProfilePageBasic
-            ? SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(top: 10, right: 20, left: 20),
-                      child: Container(
-                        width: double.infinity,
-                        height: 50,
-                        color: Colors.white,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 40,
-                            ),
-                            InkWell(
-                                onTap: () async {
-                                  FlutterSecureStorage storage =
-                                      const FlutterSecureStorage();
-                                  await storage.deleteAll();
-                                  Provider.of<CategoryProvider>(context,
-                                          listen: false)
-                                      .name = "";
-                                  userProvider.user = null;
-                                  Provider.of<OrderProvider>(context,
-                                          listen: false)
-                                      .orders
-                                      .clear();
-                                  Navigator.pushReplacementNamed(
-                                    context,
-                                    "/bottomnavigation",
-                                  );
-                                  EasyLoading.dismiss();
-                                  EasyLoading.showSuccess(
-                                      "تم تسجيل الخروج بنجاح");
-                                },
-                                child: Row(
-                                  children: const [
-                                    Text(
-                                      'لتسجيل خروج انقر هنا',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Icon(
-                                      Icons.logout,
-                                      color: Colors.black,
-                                    ),
-                                  ],
-                                )),
-                          ],
+    return Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/2.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
+            child: _currentPage is ProfilePageBasic
+                ? SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 200,
                         ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 200,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 80),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                              backgroundColor: Colors.blue[700]),
-                          onPressed: () {
-                            setState(() {
-                              _currentPage = ProfilePage(onBack: () {
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 80),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: InkWell(
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () {
                                 setState(() {
-                                  _currentPage = ProfilePageBasic();
-                                });
-                              });
-                            });
-                          },
-                          child: const Text(
-                            'تحديث المعلومات الشخصية',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 90,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 80),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                              backgroundColor: Colors.blue[700]),
-                          onPressed: () {
-                            setState(() {
-                              _currentPage = RestPasswordPage(
-                                onBack: () {
-                                  setState(() {
-                                    _currentPage = ProfilePageBasic();
+                                  _currentPage = ProfilePage(onBack: () {
+                                    setState(() {
+                                      _currentPage = ProfilePageBasic();
+                                    });
                                   });
-                                },
-                              );
-                            });
-                          },
-                          child: const Text(
-                            'تغير كلمة المرور',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white),
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.black,
+                                    width: 3.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'تحديث المعلومات الشخصية',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        SizedBox(
+                          height: 90,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 80),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: InkWell(
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () {
+                                setState(() {
+                                  _currentPage = RestPasswordPage(
+                                    onBack: () {
+                                      setState(() {
+                                        _currentPage = ProfilePageBasic();
+                                      });
+                                    },
+                                  );
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.black,
+                                    width: 3.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(40),
+                                  //
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'تغير كلمة المرور',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 180, right: 230, left: 40),
+                          child: Container(
+                            width: double.infinity,
+                            height: 50,
+                            color: Colors.transparent,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                InkWell(
+                                    onTap: () async {
+                                      FlutterSecureStorage storage =
+                                          const FlutterSecureStorage();
+                                      await storage.deleteAll();
+                                      Provider.of<CategoryProvider>(context,
+                                              listen: false)
+                                          .name = "";
+                                      userProvider.user = null;
+                                      Provider.of<OrderProvider>(context,
+                                              listen: false)
+                                          .orders
+                                          .clear();
+                                      Navigator.pushReplacementNamed(
+                                        context,
+                                        "/bottomnavigation",
+                                      );
+                                      EasyLoading.dismiss();
+                                      EasyLoading.showSuccess(
+                                          "تم تسجيل الخروج بنجاح");
+                                    },
+                                    child: Row(
+                                      children: const [
+                                        Text(
+                                          'لتسجيل خروج',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 17),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Icon(
+                                          Icons.login,
+                                          color: Colors.black,
+                                          size: 25,
+                                        ),
+                                      ],
+                                    )),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              )
-            : _currentPage,
-      ),
-    );
+                  )
+                : _currentPage,
+          ),
+        ));
   }
 }

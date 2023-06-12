@@ -15,71 +15,95 @@ class SummeryWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "ملخص الفاتورة",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Divider(),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   "عدد المنتجات",
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: TextStyle(
+                      fontSize: 19,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600),
                 ),
                 Text(
                   productProvider.selectedProducts.length.toString(),
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: const TextStyle(
+                      fontSize: 19,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600),
                 )
               ],
             ),
-            SizedBox(height: 5),
-            Divider(),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
+            const Divider(),
+            const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   "المجموع قبل الضريبة",
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: TextStyle(
+                      fontSize: 19,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600),
                 ),
                 Text(
                   productProvider.subTotal.toStringAsFixed(2),
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: const TextStyle(
+                      fontSize: 19,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600),
                 )
               ],
             ),
-            SizedBox(height: 5),
-            Divider(),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
+            const Divider(),
+            const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   "الضريبة 16%",
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: TextStyle(
+                      fontSize: 19,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600),
                 ),
                 Text(
                   productProvider.taxAmount.toStringAsFixed(2),
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: const TextStyle(
+                      fontSize: 19,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600),
                 )
               ],
             ),
-            SizedBox(height: 5),
-            Divider(),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
+            const Divider(),
+            const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   "المجموع",
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: TextStyle(
+                      fontSize: 19,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600),
                 ),
                 Text(
                   productProvider.total.toStringAsFixed(2),
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: const TextStyle(
+                      fontSize: 19,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600),
                 )
               ],
             )
