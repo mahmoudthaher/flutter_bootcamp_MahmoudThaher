@@ -100,18 +100,16 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
                     SummeryStep(),
                   ],
                 )),
-                Container(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 15),
-                    child: Row(
-                      children: [
-                        previousButton(),
-                        SizedBox(
-                          width: 165,
-                        ),
-                        nextButton(),
-                      ],
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: Row(
+                    children: [
+                      previousButton(),
+                      const SizedBox(
+                        width: 165,
+                      ),
+                      nextButton(),
+                    ],
                   ),
                 ),
               ],
@@ -120,7 +118,6 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
         ));
   }
 
-  /// Returns the next button.
   Widget nextButton() {
     int activeStep = Provider.of<OrderProvider>(context).activeStep;
     return SizedBox(
@@ -256,47 +253,6 @@ class _OrderCheckoutPageState extends State<OrderCheckoutPage> {
       ),
     );
   }
-
-  // Widget header() {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       color: Colors.orange,
-  //       borderRadius: BorderRadius.circular(5),
-  //     ),
-  //     child: Row(
-  //       children: [
-  //         Padding(
-  //           padding: const EdgeInsets.all(8.0),
-  //           child: Text(
-  //             headerText(),
-  //             style: const TextStyle(
-  //               color: Colors.black,
-  //               fontSize: 20,
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // String headerText() {
-  //   var activeStep =
-  //       Provider.of<OrderProvider>(context, listen: false).activeStep;
-  //   switch (activeStep) {
-  //     case 1:
-  //       return 'Preface';
-
-  //     case 2:
-  //       return 'Table of Contents';
-
-  //     case 3:
-  //       return 'About the Author';
-
-  //     default:
-  //       return 'Introduction';
-  //   }
-  // }
 }
 
 class GoogleMapStep extends StatefulWidget {
@@ -333,7 +289,7 @@ class _GoogleMapStepState extends State<GoogleMapStep> {
 
   Widget mapWidget() {
     double mapWidth = MediaQuery.of(context).size.width;
-    double mapHeight = MediaQuery.of(context).size.height - 280;
+    double mapHeight = MediaQuery.of(context).size.height - 303;
 
     return Column(
       children: [
@@ -464,7 +420,7 @@ class AddressFormStep extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 30),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 25,
             ),
             SizedBox(
@@ -712,7 +668,7 @@ class PaymentMethodStep extends StatelessWidget {
     return Consumer(builder: (context, ProductProvider productProvier, child) {
       return Column(children: [
         Card(
-          color: Color.fromARGB(255, 241, 239, 239),
+          color: const Color.fromARGB(255, 241, 239, 239),
           child: ListTile(
             onTap: () {
               productProvier.updatePaymentMethod(1);
@@ -732,25 +688,6 @@ class PaymentMethodStep extends StatelessWidget {
             ),
           ),
         ),
-        // Card(
-        //   child: ListTile(
-        //     onTap: () {
-        //       productProvier.updatePaymentMethod(2);
-        //     },
-        //     leading: Icon(
-        //       Icons.payment,
-        //       color: Colors.green,
-        //     ),
-        //     title: Text("بطاقة ائتمان"),
-        //     trailing: Radio<int>(
-        //       value: 2,
-        //       groupValue: productProvier.paymentMethod,
-        //       onChanged: (value) {
-        //         productProvier.updatePaymentMethod(value!);
-        //       },
-        //     ),
-        //   ),
-        // )
       ]);
     });
   }

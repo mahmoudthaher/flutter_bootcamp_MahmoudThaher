@@ -43,28 +43,8 @@ class _LoginPageState extends State<LoginPage> {
                       key: _keyForm,
                       child: Column(
                         children: [
-                          Row(
-                            children: const [
-                              SizedBox(
-                                height: 20,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            width: 160,
-                            height: 160,
-                            child: Column(
-                              children: [
-                                Image.asset('assets/images/logoLogin.png')
-                              ],
-                            ),
-                          ),
-                          Row(
-                            children: const [
-                              SizedBox(
-                                height: 25,
-                              ),
-                            ],
+                          const SizedBox(
+                            height: 80,
                           ),
                           SizedBox(
                             width: double.infinity,
@@ -295,11 +275,13 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: 350,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 40),
                             child: TextField(
                               style: const TextStyle(
-                                  fontSize: 19, color: Colors.red),
+                                  fontSize: 19,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w800),
                               controller: loginController,
                               readOnly: true,
                               decoration: const InputDecoration(

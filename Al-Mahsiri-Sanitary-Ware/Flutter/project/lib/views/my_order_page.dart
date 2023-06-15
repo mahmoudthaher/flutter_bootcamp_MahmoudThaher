@@ -42,7 +42,7 @@ class _MyOrederPageState extends State<MyOrederPage> {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           body: _currentPage is MyOrederPage
-              ? _isLoading // Check the state variable before rendering the Text widget
+              ? _isLoading
                   ? const Center(
                       child: CircularProgressIndicator(color: Colors.black),
                     )
@@ -132,8 +132,7 @@ class _MyOrederPageState extends State<MyOrederPage> {
     if (idUser != null) {
       provider.userId = idUser;
       provider.getAllOrders();
-      await Future.delayed(
-          Duration(seconds: 1)); // Adjust the delay duration as needed
+      await Future.delayed(Duration(seconds: 1));
       setState(() {
         _isLoading = false;
         _showEmptyMessage = provider.orders.isEmpty;

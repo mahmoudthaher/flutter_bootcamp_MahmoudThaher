@@ -121,9 +121,7 @@ class _FliterPageState extends State<FliterPage> {
                           child: SizedBox(
                           width: 80,
                           height: 80,
-                          child: CircularProgressIndicator(
-                            color: Colors.black,
-                          ),
+                          child: CircularProgressIndicator(),
                         ))
                       : GridView.builder(
                           gridDelegate:

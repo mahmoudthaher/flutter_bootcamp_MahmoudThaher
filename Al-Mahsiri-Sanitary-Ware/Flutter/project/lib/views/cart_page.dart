@@ -212,31 +212,25 @@ class _CartPageState extends State<CartPage> {
     if (exists) {
       _handleGoToOrderCheckout(context);
     } else {
-      // var result = await Navigator.pushNamed(context, "/loginPage");
-
-      // if (result != null) {
-      //   _handleGoToOrderCheckout(context);
-      // }
-
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('غير مسجل'),
             content: const Text(
-                'انتا غير مسجل اضغط على الذهاب الى صفحة تسجيل الدخول لاتمام عملية الطلب'),
+                'انتا غير مسجل يرجى الذهاب الى حسابي لتسجيل الدخول ويمكنك العودة مرة اخرى الى السلة لاتمام عملية الطلب'),
             actions: [
-              InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                child: const Text(
-                  'الذهاب الى صفحة تسجيل الدخول',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, "/loginPage");
-                },
-              ),
+              // InkWell(
+              //   splashColor: Colors.transparent,
+              //   highlightColor: Colors.transparent,
+              //   child: const Text(
+              //     'الذهاب الى صفحة تسجيل الدخول',
+              //     style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              //   ),
+              //   onTap: () {
+              //     Navigator.pushNamed(context, "/loginPage");
+              //   },
+              // ),
               const SizedBox(
                 width: 30,
               ),
@@ -244,7 +238,7 @@ class _CartPageState extends State<CartPage> {
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 child: const Text(
-                  'رجوع',
+                  'حسنا',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
                 onTap: () {
@@ -262,13 +256,17 @@ class _CartPageState extends State<CartPage> {
     try {
       EasyLoading.show(status: "جاري تحديد الموقع");
       Position location = await LocationController().determinePosition();
+      if (mounted) {
+        setState(() {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OrderCheckoutPage(location),
+            ),
+          );
+        });
+      }
 
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => OrderCheckoutPage(
-                    location,
-                  )));
       EasyLoading.dismiss();
     } catch (ex) {
       EasyLoading.dismiss();

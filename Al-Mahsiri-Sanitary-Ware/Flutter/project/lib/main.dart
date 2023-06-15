@@ -165,7 +165,7 @@ class BackGroundImage extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/images/3.png'),
+          image: AssetImage('assets/images/2.png'),
           fit: BoxFit.cover,
         ),
       ),
@@ -296,7 +296,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
                 title: Row(
                   children: [
                     SizedBox(
-                      width: 140,
+                      width: 149,
                       child:
                           Provider.of<CategoryProvider>(context, listen: false)
                                   .name
@@ -306,17 +306,19 @@ class _BottomNavigationState extends State<BottomNavigation> {
                                           listen: false)
                                       .name,
                                   style: TextStyle(
-                                    fontSize: 17,
+                                    fontSize: 14,
                                   ),
-                                  maxLines: 2,
+                                  maxLines: 1,
                                 )
                               : Container(),
                     ),
-                    SizedBox(
-                      width: 150,
-                      // height: 150,
-                      child: Image.asset(
-                        'assets/images/logoLogin.png',
+                    Center(
+                      child: SizedBox(
+                        width: 150,
+                        // height: 150,
+                        child: Image.asset(
+                          'assets/images/logoLogin.png',
+                        ),
                       ),
                     )
                   ],
@@ -401,6 +403,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   Widget _currentPage = Container();
+  bool isLoading = true;
   bool exists = false;
   @override
   void initState() {
@@ -417,15 +420,22 @@ class _SplashScreenState extends State<SplashScreen> {
       } else {
         _currentPage = const LoginPage();
 
-        EasyLoading.dismiss();
-        EasyLoading.showError("انت غير مسجل الرجاء قم بتسجيل الدخول");
+        // EasyLoading.dismiss();
+        // EasyLoading.showError("انت غير مسجل الرجاء قم بتسجيل الدخول");
       }
+      isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _currentPage);
+    if (isLoading) {
+      return const Scaffold(body: BackGroundImage());
+    } else {
+      return Scaffold(
+        body: _currentPage,
+      );
+    }
   }
 }
 
@@ -439,38 +449,76 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Widget _currentPage = const MyHomePage();
   final List<String> imageUrls = [
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/home23.png',
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/home21.png',
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/home3.png',
+    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/1.png',
+    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/21.png',
+    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/12.png',
   ];
   final List<String> imageUrls2 = [
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/home22.png',
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/home123.png',
-    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/home2.png',
+    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/2.png',
+    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/11.png',
+    'https://mahmoud.nyc3.cdn.digitaloceanspaces.com/home/22.png',
   ];
-  PageController _pageController = PageController();
-  PageController _pageController2 = PageController();
+  PageController? _pageController;
+  PageController? _pageController2;
   int _currentPageIndex = 0;
   int _currentPageIndex2 = 0;
   String? name;
+  Timer? _timer;
   bool _isDisposed = false;
-  @override
-  void dispose() {
-    _isDisposed = true;
-    _pageController.dispose();
-    _pageController2.dispose();
-    super.dispose();
-  }
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(
-      initialPage: imageUrls.length * 1000,
-    )..addListener(_pageListener);
-    _pageController2 = PageController(
-      initialPage: imageUrls2.length * 1000,
-    )..addListener(_pageListener2);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _pageController = PageController(
+        initialPage: imageUrls.length * 1000,
+      )..addListener(_pageListener);
+      _pageController2 = PageController(
+        initialPage: imageUrls2.length * 1000,
+      )..addListener(_pageListener2);
+    });
+    _timer = Timer.periodic(const Duration(seconds: 7), (timer) {
+      var nextPageIndex = _currentPageIndex + 1;
+      var nextPageIndex2 = _currentPageIndex2 + 1;
+
+      if (nextPageIndex >= imageUrls.length) {
+        nextPageIndex = 0;
+        _pageController!.animateToPage(
+          nextPageIndex,
+          duration: const Duration(seconds: 3),
+          curve: Curves.easeInOut,
+        );
+      } else {
+        _pageController!.animateToPage(
+          nextPageIndex,
+          duration: const Duration(seconds: 3),
+          curve: Curves.easeInOut,
+        );
+      }
+
+      if (nextPageIndex2 >= imageUrls2.length) {
+        nextPageIndex2 = 0;
+        _pageController2!.animateToPage(
+          nextPageIndex2,
+          duration: const Duration(seconds: 3),
+          curve: Curves.easeInOut,
+        );
+      } else {
+        _pageController2!.animateToPage(
+          nextPageIndex2,
+          duration: const Duration(seconds: 3),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _timer?.cancel();
+
+    super.dispose();
   }
 
   @override
@@ -486,13 +534,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _pageListener() {
     setState(() {
-      _currentPageIndex = _pageController.page!.round() % imageUrls.length;
+      _currentPageIndex = _pageController!.page!.round() % imageUrls.length;
     });
   }
 
   void _pageListener2() {
     setState(() {
-      _currentPageIndex2 = _pageController2.page!.round() % imageUrls2.length;
+      _currentPageIndex2 = _pageController2!.page!.round() % imageUrls2.length;
     });
   }
 
@@ -577,8 +625,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         child: SizedBox(
                                           width: 70,
                                           height: 70,
-                                          child: CircularProgressIndicator(
-                                              color: Colors.black),
+                                          child: CircularProgressIndicator(),
                                         ),
                                       ),
                                       errorWidget: (context, url, error) =>
@@ -593,24 +640,24 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children:
-                                  List.generate(imageUrls.length, (index) {
-                                return Container(
-                                  width: 15,
-                                  height: 5,
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 4),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.rectangle,
-                                    color: _currentPageIndex == index
-                                        ? Colors.blue
-                                        : Colors.grey,
-                                  ),
-                                );
-                              }),
-                            ),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.center,
+                            //   children:
+                            //       List.generate(imageUrls.length, (index) {
+                            //     return Container(
+                            //       width: 15,
+                            //       height: 5,
+                            //       margin:
+                            //           const EdgeInsets.symmetric(horizontal: 4),
+                            //       decoration: BoxDecoration(
+                            //         shape: BoxShape.rectangle,
+                            //         color: _currentPageIndex == index
+                            //             ? Colors.blue
+                            //             : Colors.grey,
+                            //       ),
+                            //     );
+                            //   }),
+                            // ),
                             const SizedBox(
                               height: 20,
                             ),
@@ -647,8 +694,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         child: SizedBox(
                                           width: 70,
                                           height: 70,
-                                          child: CircularProgressIndicator(
-                                              color: Colors.black),
+                                          child: CircularProgressIndicator(),
                                         ),
                                       ),
                                       errorWidget: (context, url, error) =>
@@ -663,23 +709,23 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children:
-                                  List.generate(imageUrls2.length, (index) {
-                                return Container(
-                                  width: 15,
-                                  height: 5,
-                                  margin: EdgeInsets.symmetric(horizontal: 4),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.rectangle,
-                                    color: _currentPageIndex2 == index
-                                        ? Colors.blue
-                                        : Colors.grey,
-                                  ),
-                                );
-                              }),
-                            ),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.center,
+                            //   children:
+                            //       List.generate(imageUrls2.length, (index) {
+                            //     return Container(
+                            //       width: 15,
+                            //       height: 5,
+                            //       margin: EdgeInsets.symmetric(horizontal: 4),
+                            //       decoration: BoxDecoration(
+                            //         shape: BoxShape.rectangle,
+                            //         color: _currentPageIndex2 == index
+                            //             ? Colors.blue
+                            //             : Colors.grey,
+                            //       ),
+                            //     );
+                            //   }),
+                            // ),
                             Padding(
                               padding:
                                   const EdgeInsets.only(right: 20, top: 10),
@@ -772,14 +818,13 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                             ),
                             SizedBox(
-                              height: 600,
+                              height: 540,
                               child: products.isEmpty
                                   ? const Center(
                                       child: SizedBox(
                                       width: 80,
                                       height: 80,
-                                      child: CircularProgressIndicator(
-                                          color: Colors.black),
+                                      child: CircularProgressIndicator(),
                                     ))
                                   : GridView.builder(
                                       gridDelegate:
@@ -830,9 +875,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                                             child: SizedBox(
                                                               width: 70,
                                                               height: 70,
-                                                              child: CircularProgressIndicator(
-                                                                  color: Colors
-                                                                      .black),
+                                                              child:
+                                                                  CircularProgressIndicator(),
                                                             ),
                                                           ),
                                                           errorWidget: (context,

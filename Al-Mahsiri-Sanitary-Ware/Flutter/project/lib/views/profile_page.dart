@@ -437,56 +437,80 @@ class _ProfilePageState extends State<ProfilePage> {
                           borderRadius: BorderRadius.circular(40),
                           border: Border.all(
                             style: BorderStyle.solid,
-                            width: 0.4,
+                            width: selectedName == null ? 1 : 0.4,
+                            color: selectedName == null
+                                ? Colors.red
+                                : Colors.black,
                           ),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.only(left: 10, right: 25),
-                          child: DropdownButtonFormField(
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
+                          child: SizedBox(
+                            child: DropdownButtonFormField(
+                              icon: const Icon(Icons.arrow_drop_down,
+                                  color: Colors.black),
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                              ),
+                              value: selectedName,
+                              hint: const Text(
+                                'تحديد المنطقة',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w800),
+                              ),
+                              items: cities.map((e) {
+                                return DropdownMenuItem(
+                                  value: e.id,
+                                  child: Text(
+                                    e.city,
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.5),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                if (mounted) {
+                                  setState(() {
+                                    selectedName = value;
+                                  });
+                                }
+                              },
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              validator: (value) {
+                                // if (value == null) {
+                                //   return 'الرجاء ادخال المدينة';
+                                // }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                cityname = value.toString();
+                              },
                             ),
-                            value: selectedName,
-                            hint: const Text(
-                              'اختار المنطقة',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w800),
-                            ),
-                            items: cities.map((e) {
-                              return DropdownMenuItem(
-                                value: e.id,
-                                child: Text(
-                                  e.city,
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600,
-                                      height: 0.8),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              if (mounted) {
-                                setState(() {
-                                  selectedName = value;
-                                });
-                              }
-                            },
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            validator: (value) {
-                              if (value == null) {
-                                return 'الرجاء ادخال المدينة';
-                              }
-                              return null;
-                            },
-                            onSaved: (value) {
-                              cityname = value.toString();
-                            },
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 45,
+                      SizedBox(
+                        height: 50,
+                        child: selectedName == null
+                            ? Row(
+                                children: const [
+                                  Padding(
+                                    padding: EdgeInsets.only(right: 25),
+                                    child: Text(
+                                      'الرجاء ادخال المدينة',
+                                      style: TextStyle(
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : const SizedBox(),
                       ),
                       Container(
                         width: double.infinity,
