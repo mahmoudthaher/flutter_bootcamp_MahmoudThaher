@@ -9,7 +9,8 @@ class ProductProvider with ChangeNotifier {
   bool hideAppBar = false;
 
   List<ProductModel> products = [];
-  ProductModel? products2;
+  List<ProductModel> productsFilter = [];
+  // ProductModel? products2;
 
   //ProductModel? products2;
   int id = 1;
@@ -82,7 +83,7 @@ class ProductProvider with ChangeNotifier {
 
   filterProduct() async {
     ProductController().fliterProduct(name).then((result) {
-      products = result;
+      productsFilter = result;
       notifyListeners();
     }).catchError((ex) {
       print(ex);

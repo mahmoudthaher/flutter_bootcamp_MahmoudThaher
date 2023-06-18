@@ -396,13 +396,18 @@ class AddressFormStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SingleChildScrollView(
-        child: Consumer(
-            builder: (context, ProductProvider productProvider, child) {
-          return formWidget(productProvider);
-        }),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SingleChildScrollView(
+          child: Consumer(
+              builder: (context, ProductProvider productProvider, child) {
+            return formWidget(productProvider);
+          }),
+        ),
       ),
     );
   }

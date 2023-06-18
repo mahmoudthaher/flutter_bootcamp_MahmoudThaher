@@ -317,7 +317,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
                         width: 150,
                         // height: 150,
                         child: Image.asset(
-                          'assets/images/logoLogin.png',
+                          'assets/images/logoAppBar.png',
                         ),
                       ),
                     )
