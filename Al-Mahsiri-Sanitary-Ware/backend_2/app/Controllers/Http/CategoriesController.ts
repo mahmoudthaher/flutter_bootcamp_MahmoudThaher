@@ -12,7 +12,8 @@ export default class CategoriesController {
             return query.where("category", category).paginate(page, limit);
         }
         else
-            return query.whereNot("id",9).paginate(page, limit);
+            return query.paginate(page, limit);
+            //whereNot("id",9).
     }
     public async getById(ctx: HttpContextContract) {
         var id = ctx.params.id;
