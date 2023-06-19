@@ -250,7 +250,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
         timeBackPressed = DateTime.now();
         if (isExitWarning) {
           const message = "انقر مرتين للخروج";
-          // EasyLoading.showToast(message);
           Fluttertoast.showToast(msg: message, fontSize: 18);
           return false;
         } else {
@@ -259,137 +258,134 @@ class _BottomNavigationState extends State<BottomNavigation> {
         }
       },
       child: Scaffold(
-        appBar: productProvider.hideAppBar
-            ? null
-            : AppBar(
-                backgroundColor: Colors.blue[700],
-                toolbarHeight: 47,
-                actions: [
-                  Container(
-                    margin: EdgeInsets.only(left: 15),
-                    child: InkWell(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      child: const Icon(
-                        Icons.search,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                      onTap: () {
-                        setState(
-                          () {
-                            productProvider.hideAppBar = true;
-                            _currentPage = FliterPage(
-                              onBack: () {
-                                setState(() {
-                                  _currentPage = pages[currentIndex];
-                                });
-                              },
-                            );
-                          },
-                        );
-                        products.clear();
-                      },
-                    ),
-                  ),
-                ],
-                title: Row(
-                  children: [
-                    SizedBox(
-                      width: 149,
-                      child:
-                          Provider.of<CategoryProvider>(context, listen: false)
-                                  .name
-                                  .isNotEmpty
-                              ? Text(
-                                  Provider.of<CategoryProvider>(context,
-                                          listen: false)
-                                      .name,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                  maxLines: 1,
-                                )
-                              : Container(),
-                    ),
-                    Center(
-                      child: SizedBox(
-                        width: 150,
-                        // height: 150,
-                        child: Image.asset(
-                          'assets/images/logoAppBar.png',
+          appBar: productProvider.hideAppBar
+              ? null
+              : AppBar(
+                  backgroundColor: Colors.blue[700],
+                  toolbarHeight: 47,
+                  actions: [
+                    Container(
+                      margin: EdgeInsets.only(left: 15),
+                      child: InkWell(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        child: const Icon(
+                          Icons.search,
+                          color: Colors.white,
+                          size: 30,
                         ),
+                        onTap: () {
+                          setState(
+                            () {
+                              productProvider.hideAppBar = true;
+                              productProvider.hideNavigationBar = true;
+                              _currentPage = FliterPage(
+                                onBack: () {
+                                  setState(() {
+                                    _currentPage = pages[currentIndex];
+                                  });
+                                },
+                              );
+                            },
+                          );
+                          products.clear();
+                        },
                       ),
-                    )
-                  ],
-                ),
-              ),
-        body: _connectedToInternet
-            ? _currentPage
-            : Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(
-                      Icons.cloud_off,
-                      size: 80,
-                      color: Colors.grey,
-                    ),
-                    Text(
-                      'لا يوجد اتصال بالإنترنت',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    Text(
-                      'يرجى التحقق من اتصالك بالإنترنت وحاول مرة أخرى',
-                      textAlign: TextAlign.center,
                     ),
                   ],
+                  title: Row(
+                    children: [
+                      SizedBox(
+                        width: 149,
+                        child: Provider.of<CategoryProvider>(context,
+                                    listen: false)
+                                .name
+                                .isNotEmpty
+                            ? Text(
+                                Provider.of<CategoryProvider>(context,
+                                        listen: false)
+                                    .name,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                                maxLines: 1,
+                              )
+                            : Container(),
+                      ),
+                      Center(
+                        child: SizedBox(
+                          width: 150,
+                          // height: 150,
+                          child: Image.asset(
+                            'assets/images/logoAppBar.png',
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-        bottomNavigationBar: BottomNavigationBar(
-          unselectedLabelStyle:
-              const TextStyle(fontSize: 15, color: Colors.black),
-          selectedLabelStyle: TextStyle(fontSize: 15, color: Colors.blue[700]),
-          showUnselectedLabels: true,
-          unselectedItemColor: Colors.grey,
-          selectedItemColor: Colors.blue[700],
-          type: BottomNavigationBarType.fixed,
-          //type: BottomNavigationBarType.shifting,طريقة الكبسة
-          onTap: onTap,
-          currentIndex: currentIndex,
-          // elevation: 0,الخط الفوق
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home,
-              ),
-              label: "الرئيسة",
-            ),
-            // BottomNavigationBarItem(
-            //   icon: Icon(
-            //     Icons.category,
-            //   ),
-            //   label: "الاقسام",
-            // ),
-            BottomNavigationBarItem(
-              icon: ShoppingCartIcon(),
-              label: "السلة",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.shopping_bag_outlined,
-              ),
-              label: "طلباتي",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.person_rounded,
-              ),
-              label: "حسابي",
-            ),
-          ],
-        ),
-      ),
+          body: _connectedToInternet
+              ? _currentPage
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(
+                        Icons.cloud_off,
+                        size: 80,
+                        color: Colors.grey,
+                      ),
+                      Text(
+                        'لا يوجد اتصال بالإنترنت',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      Text(
+                        'يرجى التحقق من اتصالك بالإنترنت وحاول مرة أخرى',
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+          bottomNavigationBar: productProvider.hideNavigationBar
+              ? null
+              : BottomNavigationBar(
+                  unselectedLabelStyle:
+                      const TextStyle(fontSize: 15, color: Colors.black),
+                  selectedLabelStyle:
+                      TextStyle(fontSize: 15, color: Colors.blue[700]),
+                  showUnselectedLabels: true,
+                  unselectedItemColor: Colors.grey,
+                  selectedItemColor: Colors.blue[700],
+                  type: BottomNavigationBarType.fixed,
+                  //type: BottomNavigationBarType.shifting,طريقة الكبسة
+                  onTap: onTap,
+                  currentIndex: currentIndex,
+                  // elevation: 0,الخط الفوق
+                  items: const [
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.home,
+                      ),
+                      label: "الرئيسة",
+                    ),
+                    BottomNavigationBarItem(
+                      icon: ShoppingCartIcon(),
+                      label: "السلة",
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.shopping_bag_outlined,
+                      ),
+                      label: "طلباتي",
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.person_rounded,
+                      ),
+                      label: "حسابي",
+                    ),
+                  ],
+                )),
     );
   }
 }
@@ -408,7 +404,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
     _checkLogin();
   }
 
@@ -419,9 +414,6 @@ class _SplashScreenState extends State<SplashScreen> {
         _currentPage = const ProfilePageBasic();
       } else {
         _currentPage = const LoginPage();
-
-        // EasyLoading.dismiss();
-        // EasyLoading.showError("انت غير مسجل الرجاء قم بتسجيل الدخول");
       }
       isLoading = false;
     });

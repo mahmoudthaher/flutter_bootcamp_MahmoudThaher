@@ -6,8 +6,9 @@ import 'package:project/models/product_model.dart';
 import 'package:project/controllers/product_controller.dart';
 
 class ProductProvider with ChangeNotifier {
+  bool checkFliter = false;
   bool hideAppBar = false;
-
+  bool hideNavigationBar = false;
   List<ProductModel> products = [];
   List<ProductModel> productsFilter = [];
   // ProductModel? products2;

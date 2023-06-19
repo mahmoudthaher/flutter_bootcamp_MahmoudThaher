@@ -48,12 +48,11 @@ class _LoginPageState extends State<LoginPage> {
                         child: Column(
                           children: [
                             Container(
-                              margin: EdgeInsets.only(right: 22),
+                              margin: EdgeInsets.only(right: 40),
                               child: const Image(
                                 image:
                                     AssetImage('assets/images/logoLogin.png'),
-                                width: 150,
-                                height: 150,
+                                height: 175,
                               ),
                             ),
                             SizedBox(
