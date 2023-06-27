@@ -8,6 +8,7 @@ Route.group(() => {
     Route.delete("/:id", "CartItemsController.destory");
   }).prefix("/CartItems");
   Route.group(() => {
+    Route.get("/category/:category", "CategoriesController.checkCategory");
     Route.get("/:id", "CategoriesController.getById");
     Route.get("/", "CategoriesController.getAll");
     Route.post("/", "CategoriesController.create");
@@ -60,7 +61,9 @@ Route.group(() => {
     Route.delete("/:id", "PaymentsController.destory");
   }).prefix("/Payments");
   Route.group(() => {
+    Route.get("/product/:name", "ProductsController.checkProduct");
     Route.get("/fliterProduct/:name", "ProductsController.fliterProduct");
+    Route.get("/productID/:id", "ProductsController.getById");
     Route.get("/:categoryId", "ProductsController.getBycategoryId");
     Route.get("/", "ProductsController.getAll");
     Route.post("/", "ProductsController.create");

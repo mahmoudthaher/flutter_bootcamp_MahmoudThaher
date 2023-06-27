@@ -92,7 +92,7 @@ export default class ProductsController {
             quantity_in_stock: schema.number(),
             image: schema.string(),
             category_id: schema.number(),
-            discount_id: schema.number(),
+           
         });
 
         const fields = await ctx.request.validate({
@@ -124,7 +124,7 @@ export default class ProductsController {
             product.quantityInStock = fields.quantity_in_stock;
             product.image = fields.image;
             product.categoryId = fields.category_id;
-            product.discountId = fields.discount_id;
+           
             await product.save();
             return { message: "The product has been updated!" };
         } catch (error) {
@@ -136,5 +136,15 @@ export default class ProductsController {
         var product = await Product.findOrFail(id);
         await product.delete();
         return { message: "The product has been deleted!" };
+    }
+    public async checkProduct(ctx: HttpContextContract) {
+        var product = decodeURIComponent(ctx.params.name);
+        var result = Product.query().select('name').where('name',product);
+        return result;
+    }
+    public async getById(ctx: HttpContextContract) {
+        var id = ctx.params.id;
+        var result = await  Product.findOrFail(id);
+        return result;
     }
 }

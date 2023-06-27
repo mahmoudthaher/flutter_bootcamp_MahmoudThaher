@@ -7,8 +7,6 @@ export default class CitiesController {
         
         var city = ctx.request.input("city");
         var query = City.query()
-       // const page = ctx.request.input('page', 1)
-       // const limit = 10
         if (city) {
             return query.where("city", city);
         }

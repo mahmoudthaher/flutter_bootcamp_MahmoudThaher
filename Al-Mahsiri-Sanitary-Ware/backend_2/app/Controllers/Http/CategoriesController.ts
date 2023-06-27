@@ -6,13 +6,11 @@ export default class CategoriesController {
     public async getAll(ctx: HttpContextContract) {
         var category = ctx.request.input("category");
         var query = Category.query();
-        const page = ctx.request.input('page', 1)
-        const limit = 10
         if (category) {
-            return query.where("category", category).paginate(page, limit);
+            return query.where("category", category)
         }
         else
-            return query.paginate(page, limit);
+            return query
             //whereNot("id",9).
     }
     public async getById(ctx: HttpContextContract) {
@@ -42,6 +40,12 @@ export default class CategoriesController {
         return { message: "The category has been created!" };
 
     }
+    public async checkCategory(ctx: HttpContextContract) {
+        var category = ctx.params.category;
+       
+        var result = Category.query().select('category').where("category", category);
+        return result;
+    }
     public async update(ctx: HttpContextContract) {
         const newSchema = schema.create({
             id: schema.number(),
@@ -55,6 +59,7 @@ export default class CategoriesController {
         })
         try {
             var id = fields.id;
+           
             var category = await Category.findOrFail(id);
             try {
                 await Category.query()
@@ -76,4 +81,9 @@ export default class CategoriesController {
         await category.delete();
         return { message: "The category has been deleted!" };
     }
+
+   
+
+    
 }
+
