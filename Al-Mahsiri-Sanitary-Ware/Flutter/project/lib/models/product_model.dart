@@ -1,5 +1,5 @@
 class ProductModel {
-  int id;
+  int? id;
   String name;
   double price;
   int quantityInStock;
@@ -10,7 +10,7 @@ class ProductModel {
   int selectedQty = 1;
   double tax = 16;
   ProductModel(
-      {required this.id,
+      {this.id,
       required this.name,
       required this.price,
       required this.quantityInStock,
@@ -41,11 +41,11 @@ class ProductModel {
     return ProductModel(
       id: json["id"],
       name: json["name"],
-      price: json["price"],
-      quantityInStock: json["quantity_in_stock"],
+      price: double.parse(json["price"].toString()),
+      quantityInStock: int.parse(json["quantity_in_stock"].toString()),
       image: json["image"],
       description: json["description"],
-      categoryId: json["category_id"],
+      categoryId: int.parse(json["category_id"].toString()),
       discountId: json["discount_id"],
     );
   }
@@ -55,5 +55,21 @@ class ProductModel {
         "qty": selectedQty,
         "price": price,
         "total": total,
+      };
+
+  Map<String, dynamic> toJsonC() => {
+        "name": name,
+        "price": price.toString(),
+        "quantity_in_stock": quantityInStock.toString(),
+        "image": image,
+        "category_id": categoryId.toString(),
+      };
+  Map<String, dynamic> toJsonU() => {
+        "id": id.toString(),
+        "name": name,
+        "price": price.toString(),
+        "quantity_in_stock": quantityInStock.toString(),
+        "image": image,
+        "category_id": categoryId.toString(),
       };
 }

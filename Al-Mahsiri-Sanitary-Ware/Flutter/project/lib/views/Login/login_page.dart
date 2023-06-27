@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project/Providers/user_provider.dart';
 import 'package:project/controllers/user_controller.dart';
 import 'package:project/main.dart';
@@ -235,21 +238,18 @@ class _LoginPageState extends State<LoginPage> {
                                               emailController.text,
                                             )
                                                 .then((value) {
+                                              checkType();
                                               // setState(() {
-                                              Navigator.pushNamedAndRemoveUntil(
-                                                context,
-                                                "/bottomnavigation",
-                                                (route) => false,
-                                              );
+                                              // Navigator.pushNamedAndRemoveUntil(
+                                              //   context,
+                                              //   "/bottomnavigation",
+                                              //   (route) => false,
+                                              // );
                                               // _currentPage = BottomNavigation();
                                               // });
                                               EasyLoading.dismiss();
                                               EasyLoading.showSuccess(
                                                   "تم تسجيل الدخول بنجاح");
-                                              // Navigator.pushReplacementNamed(
-                                              //   context,
-                                              //   "/bottomnavigation",
-                                              // );
                                             }).catchError((ex) {
                                               print(ex);
                                             });
@@ -389,5 +389,28 @@ class _LoginPageState extends State<LoginPage> {
                 : _currentPage,
           ),
         ));
+  }
+
+  // int? typeId;
+  Future<void> checkType() async {
+    if (await const FlutterSecureStorage().containsKey(key: 'token')) {
+      String? type = await FlutterSecureStorage().read(key: 'typeId');
+
+      if (int.parse(type!) == 1) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          "/bottomnavigation",
+          (route) => false,
+        );
+        // typeId = int.parse(type);
+      } else if (int.parse(type) == 2) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          "/bottomNavigationAdmin",
+          (route) => false,
+        );
+        // typeId = int.parse(type);
+      }
+    }
   }
 }

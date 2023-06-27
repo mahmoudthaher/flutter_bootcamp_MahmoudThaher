@@ -1,9 +1,9 @@
 class CategoryModel {
-  int id;
+  int? id;
   String category;
 
   CategoryModel({
-    required this.id,
+    this.id,
     required this.category,
   });
 
@@ -13,4 +13,12 @@ class CategoryModel {
       category: json["category"],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        "category": category,
+      };
+  Map<String, dynamic> toJsonU() => {
+        "id": id.toString(),
+        "category": category,
+      };
 }

@@ -10,11 +10,14 @@ class ProductProvider with ChangeNotifier {
   bool hideAppBar = false;
   bool hideNavigationBar = false;
   List<ProductModel> products = [];
+  List<ProductModel> productsAll = [];
+
   List<ProductModel> productsFilter = [];
   // ProductModel? products2;
 
   //ProductModel? products2;
   int id = 1;
+  int? udpateIDAdimn;
   late String name;
   CategoryModel? categories;
   List<ProductModel> selectedProducts = [];
@@ -66,7 +69,7 @@ class ProductProvider with ChangeNotifier {
 
   getAllProducts() async {
     ProductController().getProducts().then((result) {
-      products = result;
+      productsAll = result;
       notifyListeners();
     }).catchError((ex) {
       print(ex);

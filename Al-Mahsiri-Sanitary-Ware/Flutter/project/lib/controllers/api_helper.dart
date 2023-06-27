@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiHelper {
-  final String DOMAIN = "164.90.179.56:3333";
+  final String DOMAIN = "192.168.8.124:3333";
 
   Future<String> getToken() async {
     var storage = FlutterSecureStorage();
@@ -39,7 +39,7 @@ class ApiHelper {
   }
 
   Future<dynamic> deleteRequest(String path) async {
-    Uri uriFunction = Uri.https(DOMAIN, path);
+    Uri uriFunction = Uri.http(DOMAIN, path);
     http.Response resposne = await http.delete(uriFunction);
     return resposneFunction(resposne);
   }

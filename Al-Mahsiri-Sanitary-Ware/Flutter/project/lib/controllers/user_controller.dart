@@ -62,6 +62,7 @@ class UserController {
           await ApiHelper().postRequest("api/Users", user.toJsonCreate());
       return UserModel.fromJson(jsonObject);
     } catch (ex) {
+      print(ex);
       rethrow;
     }
   }

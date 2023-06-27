@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, curly_braces_in_flow_control_structures
+
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -18,6 +20,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:project/firebase_options.dart';
 import 'package:project/models/category_model.dart';
 import 'package:project/models/product_model.dart';
+import 'package:project/views/Admin/dash_board.dart';
 import 'package:project/views/Login/forget_password.dart';
 import 'package:project/views/Login/verification_page.dart';
 import 'package:project/views/cart_page.dart';
@@ -110,7 +113,9 @@ class MyApp extends StatelessWidget {
                   onBack: () {},
                 ),
             "/logoPage": (context) => const LogoPage(),
-            // "/checkInternet": (context) => const CheckInternet(),
+            "/dashBoard": (context) => const DashBoard(),
+            "/bottomNavigationAdmin": (context) =>
+                const BottomNavigationAdmin(),
           };
           WidgetBuilder builder = routes[settings.name]!;
           return MaterialPageRoute(builder: (ctx) => builder(ctx));
@@ -133,10 +138,7 @@ class _LogoPageState extends State<LogoPage> {
   void initState() {
     super.initState();
     _timer = Timer(const Duration(seconds: 3), () {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const BottomNavigation()),
-        (Route<dynamic> route) => false,
-      );
+      checkType();
     });
   }
 
@@ -154,6 +156,25 @@ class _LogoPageState extends State<LogoPage> {
         child: Image.asset('assets/images/logo.png'),
       ),
     );
+  }
+
+  int? typeId;
+  Future<void> checkType() async {
+    if (await const FlutterSecureStorage().containsKey(key: 'token')) {
+      String? type = await FlutterSecureStorage().read(key: 'typeId');
+
+      if (int.parse(type!) == 2) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) => const BottomNavigationAdmin()),
+          (Route<dynamic> route) => false,
+        );
+      }
+    } else
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const BottomNavigation()),
+        (Route<dynamic> route) => false,
+      );
   }
 }
 
@@ -219,14 +240,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
     super.dispose();
   }
 
-  // void checkConnectivity() async {
-  //   final connectivityResult = await Connectivity().checkConnectivity();
-  //   if (connectivityResult == ConnectivityResult.none) {
-  //     setState(() {
-  //       _connectedToInternet = false;
-  //     });
-  //   }
-  // }
   void checkConnectivity() async {
     final connectivityResult = await (Connectivity().checkConnectivity());
     setState(() {
@@ -753,7 +766,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             onTap: () {
                                               setState(() {
                                                 productProvider.id =
-                                                    categories.id;
+                                                    categories.id!;
                                                 productProvider
                                                     .getAllProductsByCategoryID();
                                               });
