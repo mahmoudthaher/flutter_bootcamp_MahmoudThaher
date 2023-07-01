@@ -7,23 +7,9 @@ import OrderProduct from 'App/Models/OrderProduct';
 export default class OrdersController {
     public async getAll(ctx: HttpContextContract) {
         const token = await ctx.auth.authenticate();
-        var userId = ctx.request.input("user_id");
-        var productId = ctx.request.input("product_id");
-        var statusId = ctx.request.input("status_id");
-        var query = Order.query().preload('user').preload('product').preload('status');
-        const page = ctx.request.input('page', 1)
-        const limit = 10
-        if (userId) {
-            return query.where("user_id", userId).paginate(page, limit);
-        }
-        if (productId) {
-            return query.where("product_id", productId).paginate(page, limit);
-        }
-        if (statusId) {
-            return query.where("status_id", statusId).paginate(page, limit);
-        }
-        else
-            return await query.paginate(page, limit);
+        
+        var result =await Order.query().where("status_id",1).orderBy('id',"asc");
+            return result
     }
     public async getById(ctx: HttpContextContract) {
         var userId = ctx.params.userId;
@@ -44,7 +30,7 @@ export default class OrdersController {
             order.subTotal = data.sub_total;
             order.total = data.total;
             order.paymentMethodId = data.payment_method_id;
-            order.statusId=1;
+            order.statusId=3;
             var newOrder = await order.save();
 
             var address = new OrderAddress();
@@ -76,31 +62,59 @@ export default class OrdersController {
         }
         
     }
-    public async update(ctx: HttpContextContract) {
-        // const newSchema = schema.create({
-        //     id: schema.number(),
-        //     quantity: schema.number(),
-        //     total_price: schema.number(),
-        //     user_id: schema.number(),
-        //     product_id: schema.number(),
-        //     status_id: schema.number(),
-        // });
-
-        // const fields = await ctx.request.validate({ schema: newSchema })
-        // var id = fields.id;
-        // var order = await Order.findOrFail(id);
-        // order.quantity = fields.quantity;
-        // order.totalPrice = fields.total_price;
-        // order.userId = fields.user_id;
-        // order.productId = fields.product_id;
-        // order.statusId = fields.status_id;
-        // await order.save();
-        // return { message: "The order has been updated!" };
-    }
+    
     public async destory(ctx: HttpContextContract) {
-        var id = ctx.params.id;
-        var order = await Order.findOrFail(id);
-        await order.delete();
+        const id = ctx.params.id;
+      
+        
+      
+        //const user = await User.findOrFail(id);
+      
+        const orders = await Order.query().where('id', id).preload('orderAddress').preload('orderProducts');
+      
+        for (const order of orders) {
+          for (const orderProduct of order.orderProducts) {
+            await orderProduct.delete();
+          }
+      
+          if (order.orderAddress) {
+            await order.orderAddress.delete();
+          }
+      
+          await order.delete();
+        }
+      
+        
+      
         return { message: "The order has been deleted!" };
+        // var id = ctx.params.id;
+        // var order = await Order.findOrFail(id);
+        // await order.delete();
+        // return { message: "The order has been deleted!" };
     }
+
+    public async callOrder(ctx: HttpContextContract) {
+        
+      
+        
+        var result =await Order.query().preload("status").preload("user").where("status_id",3).orderBy('id',"asc");
+            return result
+    }
+  
+    public async modifyStatusOrder(ctx: HttpContextContract) {
+        const newSchema = schema.create({
+            id: schema.number(),
+           
+        });
+        const fields = await ctx.request.validate({
+            schema: newSchema,
+            messages: {}
+        })
+        var id = fields.id;
+        var order = await Order.findOrFail(id);
+        order.statusId = 1;
+        await order.save();
+        return { message: "The order status has been updated!" };
+    }
+
 }

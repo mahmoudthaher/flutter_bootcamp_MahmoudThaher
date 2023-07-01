@@ -4,6 +4,10 @@ import User from 'App/Models/User';
 import I18n from '@ioc:Adonis/Addons/I18n'
 import Hash from '@ioc:Adonis/Core/Hash'
 import Mail from '@ioc:Adonis/Addons/Mail';
+import Database from '@ioc:Adonis/Lucid/Database';
+import Order from 'App/Models/Order';
+import OrderAddress from 'App/Models/OrderAddress';
+import OrderProduct from 'App/Models/OrderProduct';
 
 //const { firebaseAdmin } = require('firebase-admin');
 
@@ -264,12 +268,35 @@ export default class UsersController {
         await user.save();
         return { message: "The password has been updated!" };
     }
-    public async destory(ctx: HttpContextContract) {
-        var id = ctx.params.id;
-        var user = await User.findOrFail(id);
-        await user.delete();
-        return { message: "The user has been deleted!" };
-    }
+    public async destroy(ctx: HttpContextContract) {
+        const id = ctx.params.id;
+      
+        
+      
+        const user = await User.findOrFail(id);
+      
+        const orders = await Order.query().where('user_id', user.id).preload('orderAddress').preload('orderProducts');
+      
+        for (const order of orders) {
+          for (const orderProduct of order.orderProducts) {
+            await orderProduct.delete();
+          }
+      
+          if (order.orderAddress) {
+            await order.orderAddress.delete();
+          }
+      
+          await order.delete();
+        }
+      
+        
+      
+        return { message: "The user and associated records have been deleted!" };
+      }
+      
+      
+      
+      
     public async checkEmail(ctx: HttpContextContract) {
         var email = ctx.params.email;
         var result = User.query().select('email').where("email", email);
@@ -317,6 +344,19 @@ export default class UsersController {
             return error
         }
     }
+    public async getUserByTypeIdSub() {
+        
+        var result = await User.query().where('type_id', 1);
+        return result;
+    }
+
+    public async getUserByTypeIdBase() {
+        
+        var result = await User.query().where('type_id', 2).whereNot("id",41);
+        return result;
+    }
+
+
     // public async resetPassword({ request, response }) {
     //     const { email, newPassword } = request.only(['email', 'newPassword']);
 

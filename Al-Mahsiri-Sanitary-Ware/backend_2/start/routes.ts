@@ -44,9 +44,11 @@ Route.group(() => {
     Route.delete("/:id", "GendersController.destory");
   }).prefix("/Genders");
   Route.group(() => {
+    Route.get("/callOrder", "OrdersController.callOrder");
     Route.get("/:userId", "OrdersController.getById");
     Route.get("/", "OrdersController.getAll");
     Route.post("/", "OrdersController.create");
+    Route.put("/modifyStatusOrder", "OrdersController.modifyStatusOrder");
     Route.put("/", "OrdersController.update");
     Route.delete("/:id", "OrdersController.destory");
   }).prefix("/Orders");
@@ -90,6 +92,8 @@ Route.group(() => {
     Route.get("/username/:userName", "UsersController.checkUserName");
     Route.get("/phonenumber/:phoneNumber", "UsersController.checkPhoneNumber");
     Route.get("/email/:email", "UsersController.checkEmail");
+    Route.get("/BaseAdmin/", "UsersController.getUserByTypeIdBase");
+    Route.get("/SubAdmin/", "UsersController.getUserByTypeIdSub");
     Route.get("/:id", "UsersController.getById");
     Route.get("/", "UsersController.getAll");
   // Route.post('/password/reset', 'UsersController.resetPassword');
@@ -100,6 +104,10 @@ Route.group(() => {
     Route.post("/", "UsersController.create");
     Route.put("/updatePassword", "UsersController.updatePassword");
     Route.put("/", "UsersController.update");
-    Route.delete("/:id", "UsersController.destory");
+    Route.delete("/:id", "UsersController.destroy");
   }).prefix("/Users");
+  Route.group(() => {
+   
+    Route.delete("/:id", "ApiTokenController.destory");
+  }).prefix("/ApiToken");
 }).prefix("api")
