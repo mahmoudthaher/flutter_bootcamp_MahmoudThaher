@@ -440,7 +440,7 @@ class _CreateSubAdminState extends State<CreateSubAdmin> {
                                       style: const TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.w600,
-                                          height: 1.5),
+                                          height: 1),
                                     ),
                                   );
                                 }).toList(),

@@ -27,7 +27,7 @@ enum SingingCharacter { Male, Female }
 
 class _ProfilePageState extends State<ProfilePage> {
   final storage = FlutterSecureStorage();
-
+  int typeId = 1;
   bool _isLoggedIn = false;
   String? idUser;
   String? phoneNumber2;
@@ -72,11 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     var provider = Provider.of<CityProvider>(context, listen: false);
     provider.getAllCities();
-    // checkType().then((value) {
-    //   if (typeId == 2) {
-    //     _character2 = SingingCharacter2.Admin;
-    //   }
-    // });
+    checkType();
 
     _checkLogin().then(
       (isLoggedIn) {
@@ -809,7 +805,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 selectedName!.toString(),
                                                 (_character!.index + 1)
                                                     .toString(),
-                                                1.toString(),
+                                                typeId.toString(),
                                                 passwordController.text))
                                             .then((value) {
                                           UserController()
@@ -869,14 +865,14 @@ class _ProfilePageState extends State<ProfilePage> {
         ));
   }
 
-  int? typeId;
   Future<void> checkType() async {
     if (await const FlutterSecureStorage().containsKey(key: 'token')) {
       String? type = await FlutterSecureStorage().read(key: 'typeId');
-
-      setState(() {
-        typeId = int.parse(type!);
-      });
+      if (int.parse(type!) == 2) {
+        setState(() {
+          typeId = 2;
+        });
+      }
     }
   }
 

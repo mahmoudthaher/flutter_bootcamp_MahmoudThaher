@@ -1,29 +1,31 @@
 import 'package:project/models/status_model.dart';
+import 'package:project/models/user_model.dart';
 
 class OrderModel {
   int id;
-  int userId;
+  UserModel? user;
+
   int paymentMethodId;
   double total;
   double taxAmount;
   double subTotal;
-  late StatusModel status;
+  StatusModel? status;
   String? createdAt;
 
   OrderModel(
       {required this.id,
-      required this.userId,
+      this.user,
       required this.paymentMethodId,
       required this.total,
       required this.taxAmount,
       required this.subTotal,
-      required this.status,
+      this.status,
       this.createdAt});
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return OrderModel(
       id: json["id"],
-      userId: json["user_id"],
+      user: UserModel.fromJson(json["user"]),
       paymentMethodId: json["payment_method_id"],
       total: double.parse(json["total"].toString()),
       taxAmount: double.parse(json["tax_amount"].toString()),
@@ -35,12 +37,16 @@ class OrderModel {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "user_id": userId,
+        "user": user?.toJson(),
         "sub_total": subTotal,
         "tax_amount": taxAmount,
         "total": total,
         "payment_method_id": paymentMethodId,
-        "status": status.toJson(),
+        "status": status?.toJson(),
         "created_at": createdAt
+      };
+
+  Map<String, dynamic> toJsonU() => {
+        "id": id.toString(),
       };
 }

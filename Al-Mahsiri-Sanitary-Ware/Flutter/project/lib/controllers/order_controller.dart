@@ -23,4 +23,35 @@ class OrderController {
       rethrow;
     }
   }
+
+  Future<List<OrderModel>> callOrder() async {
+    try {
+      dynamic jsonObject =
+          await ApiHelper().getRequest2("api/Orders/callOrder");
+      List<OrderModel> orders = [];
+      jsonObject.forEach((v) => {orders.add(OrderModel.fromJson(v))});
+      return orders;
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  void modifyStatusOrder(OrderModel order) async {
+    try {
+      await ApiHelper()
+          .putRequest("api/Orders/modifyStatusOrder", order.toJsonU());
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  void delete(int id) async {
+    try {
+      await ApiHelper().deleteRequest(
+        "api/Orders/$id",
+      );
+    } catch (ex) {
+      rethrow;
+    }
+  }
 }

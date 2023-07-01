@@ -93,8 +93,14 @@ class _MyOrederPageState extends State<MyOrederPage> {
                                       "المجموع بدون الضريبة : ${order.subTotal.toStringAsFixed(2)}",
                                       style: const TextStyle(fontSize: 13),
                                     ),
-                                    trailing:
-                                        Text("الحالة : ${order.status.status}"),
+                                    trailing: Column(
+                                      children: [
+                                        SizedBox(
+                                            width: 120,
+                                            child: Text(
+                                                "الحالة : ${order.status?.status}")),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 onTap: () {

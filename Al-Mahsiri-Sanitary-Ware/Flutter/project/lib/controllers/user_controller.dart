@@ -92,4 +92,28 @@ class UserController {
     dynamic jsonObject = await ApiHelper().getRequest("api/users");
     return UserModel.fromJson(jsonObject);
   }
+
+  Future<List<UserModel>> getUserByTypeId1() async {
+    dynamic jsonObject = await ApiHelper().getRequest("api/Users/SubAdmin");
+    List<UserModel> users = [];
+    jsonObject.forEach((v) => {users.add(UserModel.fromJson(v))});
+    return users;
+  }
+
+  Future<List<UserModel>> getUserByTypeId2() async {
+    dynamic jsonObject = await ApiHelper().getRequest("api/Users/BaseAdmin");
+    List<UserModel> users = [];
+    jsonObject.forEach((v) => {users.add(UserModel.fromJson(v))});
+    return users;
+  }
+
+  void delete(int id) async {
+    try {
+      await ApiHelper().deleteRequest(
+        "api/Users/$id",
+      );
+    } catch (ex) {
+      rethrow;
+    }
+  }
 }

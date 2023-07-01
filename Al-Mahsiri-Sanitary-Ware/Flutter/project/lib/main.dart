@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously, curly_braces_in_flow_control_structures
-
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -116,6 +114,7 @@ class MyApp extends StatelessWidget {
             "/dashBoard": (context) => const DashBoard(),
             "/bottomNavigationAdmin": (context) =>
                 const BottomNavigationAdmin(),
+            // "/splashScreen2": (context) => const SplashScreen2(),
           };
           WidgetBuilder builder = routes[settings.name]!;
           return MaterialPageRoute(builder: (ctx) => builder(ctx));
@@ -161,6 +160,7 @@ class _LogoPageState extends State<LogoPage> {
   int? typeId;
   Future<void> checkType() async {
     if (await const FlutterSecureStorage().containsKey(key: 'token')) {
+      // await FlutterSecureStorage().deleteAll();
       String? type = await FlutterSecureStorage().read(key: 'typeId');
 
       if (int.parse(type!) == 2) {

@@ -8,6 +8,9 @@ import 'package:project/Providers/category_provider.dart';
 import 'package:project/Providers/product_provider.dart';
 import 'package:project/views/Admin/categories_page.dart';
 import 'package:project/views/Admin/create_subAdmin.dart';
+import 'package:project/views/Admin/delete_subadmin.dart';
+import 'package:project/views/Admin/delete_users.dart';
+import 'package:project/views/Admin/order.dart';
 import 'package:project/views/Admin/product_page.dart';
 import 'package:project/views/profile_page_basic.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +25,30 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard> {
   Widget currentPage = const DashBoard();
   bool _isDisposed = false;
+  bool isLoading = true;
   String? name;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _checkTypeA();
+  }
+
+  _checkTypeA() async {
+    if (await const FlutterSecureStorage().containsKey(key: "token")) {
+      String? id = await const FlutterSecureStorage().read(key: 'id');
+
+      setState(() {
+        if (int.parse(id!) != 41) {
+          currentPage = DeleteSubAdmin(
+            onBack: () {},
+          );
+        }
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   void dispose() {
     _isDisposed = true;
@@ -38,110 +64,123 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/2.png'),
-            fit: BoxFit.cover,
+    if (isLoading) {
+      return Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/2.png'),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: currentPage is DashBoard
-              ? Column(
-                  children: [
-                    const SizedBox(
-                      height: 200,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 80),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: InkWell(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () {
-                            setState(() {
-                              currentPage = CreateSubAdmin(
-                                onBack: () {
-                                  setState(() {
-                                    currentPage = const DashBoard();
-                                  });
-                                },
-                              );
-                            });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black,
-                                width: 3.0,
+          child: Scaffold(
+            body: Container(),
+          ));
+    } else {
+      return Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/2.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: currentPage is DashBoard
+                ? Column(
+                    children: [
+                      const SizedBox(
+                        height: 200,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 80),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: InkWell(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () {
+                              setState(() {
+                                currentPage = CreateSubAdmin(
+                                  onBack: () {
+                                    setState(() {
+                                      currentPage = const DashBoard();
+                                    });
+                                  },
+                                );
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 3.0,
+                                ),
+                                borderRadius: BorderRadius.circular(40),
+                                //
                               ),
-                              borderRadius: BorderRadius.circular(40),
-                              //
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'اضافة ادمن فرعي',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
+                              child: const Center(
+                                child: Text(
+                                  'اضافة ادمن فرعي',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 100,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 80),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: InkWell(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () {
-                            setState(() {
-                              currentPage = CreateSubAdmin(
-                                onBack: () {
-                                  setState(() {
-                                    currentPage = const DashBoard();
-                                  });
-                                },
-                              );
-                            });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black,
-                                width: 3.0,
+                      const SizedBox(
+                        height: 100,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 80),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: InkWell(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () {
+                              setState(() {
+                                currentPage = DeleteUsers(
+                                  onBack: () {
+                                    setState(() {
+                                      currentPage = const DashBoard();
+                                    });
+                                  },
+                                );
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 3.0,
+                                ),
+                                borderRadius: BorderRadius.circular(40),
+                                //
                               ),
-                              borderRadius: BorderRadius.circular(40),
-                              //
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'إدارة الحسابات',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
+                              child: const Center(
+                                child: Text(
+                                  'إدارة الحسابات',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-              : currentPage,
-        ));
+                    ],
+                  )
+                : currentPage,
+          ));
+    }
   }
 
   Future<void> showName() async {
@@ -177,9 +216,9 @@ class BottomNavigationAdmin extends StatefulWidget {
 class _BottomNavigationAdminState extends State<BottomNavigationAdmin> {
   List pages = [
     const DashBoard(),
+    const OrdersPage(),
     const CategoriesAdmin(),
     const ProductAdmin(),
-    // const MyOrederPage(),
     const ProfilePageBasic(),
   ];
   int currentIndex = 0;
@@ -225,7 +264,7 @@ class _BottomNavigationAdminState extends State<BottomNavigationAdmin> {
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
-    var products = productProvider.products;
+
     setState(() {
       _currentPage ??= pages[currentIndex];
     });
@@ -323,6 +362,12 @@ class _BottomNavigationAdminState extends State<BottomNavigationAdmin> {
                         Icons.home,
                       ),
                       label: "الرئيسة",
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.request_page,
+                      ),
+                      label: "الطلبات",
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.category),
